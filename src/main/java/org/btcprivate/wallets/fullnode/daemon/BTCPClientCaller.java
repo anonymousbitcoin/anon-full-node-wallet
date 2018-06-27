@@ -26,6 +26,19 @@ public class BTCPClientCaller {
         public double totalUnconfirmedBalance;
     }
 
+    public static class Masternode {
+        // status protocol payee lastseen activeseconds lastpaidtime lastpaidblock IP
+        public String mnStatus;
+        public int mnProtocol;
+        public String mnPayee;
+        public Date mnLastSeen;
+        public int mnActiveSeconds;
+        public Date mnLastPaidTime;
+        public int mnLastPaidBlock;
+        public String mnIP;
+
+    }
+
     public static class ShieldCoinbaseResponse {
         public String operationid;
         public int shieldedUTXOs;
@@ -165,6 +178,24 @@ public class BTCPClientCaller {
     }
 
 
+    public synchronized String getMasternodeList() throws WalletCallException, IOException, InterruptedException {
+        Masternode mNode = new Masternode();
+
+        JsonObject objResponse = this.executeCommandAndGetJsonObject("masternodelist", null);
+
+        Log.info("objResponse" + objResponse.toString());
+        // objResponse = this.executeCommandAndGetJsonObject("z_gettotalbalance", "0");
+
+        // balance.transparentUnconfirmedBalance = Double.valueOf(objResponse.getString("transparent", "-1"));
+        // balance.privateUnconfirmedBalance = Double.valueOf(objResponse.getString("private", "-1"));
+        // balance.totalUnconfirmedBalance = Double.valueOf(objResponse.getString("total", "-1"));
+
+        String dog = "dog";
+        return dog;
+    }
+
+
+
     public synchronized String[][] getWalletPublicTransactions()
             throws WalletCallException, IOException, InterruptedException {
         String notListed = "\u26D4";
@@ -207,6 +238,7 @@ public class BTCPClientCaller {
 
         return strAddresses;
     }
+
 
 
     public synchronized String[][] getWalletZReceivedTransactions()

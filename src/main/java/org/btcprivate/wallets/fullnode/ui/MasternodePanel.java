@@ -1,5 +1,6 @@
 package org.btcprivate.wallets.fullnode.ui;
 
+import org.btcprivate.wallets.fullnode.daemon.BTCPClientCaller;
 import org.btcprivate.wallets.fullnode.util.Log;
 import org.btcprivate.wallets.fullnode.util.OSUtil;
 import org.btcprivate.wallets.fullnode.util.Util;
@@ -27,6 +28,7 @@ import java.util.Set;
 
 public class MasternodePanel extends JPanel {
 
+    BTCPClientCaller clientCaller;
     private static final String ADDRESS_BOOK_FILE = "addressBook.csv";
 
     private static final String LOCAL_MENU_NEW_CONTACT = Util.local("LOCAL_MENU_NEW_CONTACT");
@@ -62,9 +64,10 @@ public class MasternodePanel extends JPanel {
 
     private JTable table;
 
+    // private JButton sendCashButton, deleteContactButton, copyToClipboardButton, getMasterNodeList;
     private JButton sendCashButton, deleteContactButton, copyToClipboardButton, getMasterNodeList;
 
-    private final SendCashPanel sendCashPanel;
+    // // private final SendCashPanel sendCashPanel;
     private final JTabbedPane tabs;
 
     private JScrollPane buildTablePanel() {
@@ -95,7 +98,8 @@ public class MasternodePanel extends JPanel {
         // newContactButton.addActionListener(new NewContactActionListener());
         // panel.add(newContactButton);
 
-        getMasterNodeList = new JButton(MASTERNODE_LIST);
+        JButton getMasterNodeList = new JButton(MASTERNODE_LIST);
+        getMasterNodeList.addActionListener(new GetMasternodeListener());
         panel.add(getMasterNodeList);
 
         // copyToClipboardButton = new JButton(LOCAL_MENU_COPY_ADDRESS_TO_CLIPBOARD);
@@ -111,8 +115,9 @@ public class MasternodePanel extends JPanel {
         return panel;
     }
 
-    public MasternodePanel(SendCashPanel sendCashPanel, JTabbedPane tabs) throws IOException {
-        this.sendCashPanel = sendCashPanel;
+    public MasternodePanel(BTCPClientCaller clientCaller, JTabbedPane tabs) throws IOException {
+        // // this.sendCashPanel = sendCashPanel;
+        this.clientCaller = clientCaller;
         this.tabs = tabs;
         BoxLayout boxLayout = new BoxLayout(this, BoxLayout.Y_AXIS);
         setLayout(boxLayout);
@@ -189,6 +194,17 @@ public class MasternodePanel extends JPanel {
         }
     }
 
+    private class GetMasternodeListener implements ActionListener{
+        public void actionPerformed(ActionEvent e) {
+
+            try{
+                String response = MasternodePanel.this.clientCaller.getMasternodeList();
+            } catch(Exception ex){
+                System.out.println(ex);
+            }
+        }
+    }
+
     private class NewContactActionListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             String name = (String) JOptionPane.showInputDialog(MasternodePanel.this, LOCAL_MSG_INPUT_CONTACT_NAME,
@@ -224,7 +240,7 @@ public class MasternodePanel extends JPanel {
             if (row < 0)
                 return;
             AddressBookEntry entry = entries.get(row);
-            sendCashPanel.prepareForSending(entry.address);
+            // sendCashPanel.prepareForSending(entry.address);
             tabs.setSelectedIndex(2);
         }
     }
