@@ -600,16 +600,10 @@ public class BTCPClientCaller {
         Log.info("Operation " + opID + " status is " + response + ".");
 
         if (status.equalsIgnoreCase("success")) {
-            Log.info("true?");
-            Log.info(status);
             return true;
         } else if (status.equalsIgnoreCase("error") || status.equalsIgnoreCase("failed")) {
-            Log.info("false?");
-            Log.info(status);
             return false;
         } else {
-            Log.info("else?");
-            Log.info(status);
             throw new WalletCallException("Unexpected final operation status response from wallet: " + response.toString());
         }
     }
