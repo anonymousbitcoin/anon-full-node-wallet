@@ -45,6 +45,7 @@ public class BTCPWalletUI extends JFrame {
     private SendCashPanel sendPanel;
     private AddressBookPanel addressBookPanel;
     private MessagingPanel messagingPanel;
+    private MasternodePanel masternodePanel;
 
 
     private JMenuItem langEnglish;
@@ -64,6 +65,7 @@ public class BTCPWalletUI extends JFrame {
     private static final String LOCAL_MSG_TAB_SEND = Util.local("LOCAL_MSG_TAB_SEND");
     private static final String LOCAL_MSG_TAB_ADDRESS_BOOK = Util.local("LOCAL_MSG_TAB_ADDRESS_BOOK");
     private static final String LOCAL_MSG_TAB_MSG = Util.local("LOCAL_MSG_TAB_MSG");
+    private static final String LOCAL_MSG_TAB_MSTRNDE = Util.local("LOCAL_MSG_TAB_MSTRNDE");
     private static final String LOCAL_MENU_MAIN = Util.local("LOCAL_MENU_MAIN");
     private static final String LOCAL_MENU_ABOUT = Util.local("LOCAL_MENU_ABOUT");
     private static final String LOCAL_MENU_QUIT = Util.local("LOCAL_MENU_QUIT");
@@ -148,6 +150,10 @@ public class BTCPWalletUI extends JFrame {
         tabs.addTab(LOCAL_MSG_TAB_MSG,
             new ImageIcon(cl.getResource(IMG_TAB_MSG)),
             messagingPanel = new MessagingPanel(this, sendPanel, tabs, clientCaller, errorReporter));
+        tabs.addTab(LOCAL_MSG_TAB_MSTRNDE,
+            new ImageIcon(cl.getResource(IMG_TAB_SEND)),
+            masternodePanel = new MasternodePanel(sendPanel,tabs));
+
         contentPane.add(tabs);
 
         this.walletOps = new WalletOperations(
