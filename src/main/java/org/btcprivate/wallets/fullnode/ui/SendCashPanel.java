@@ -357,7 +357,7 @@ public class SendCashPanel
 
     // Prevent accidental sending to non-BTCP addresses (as seems to be supported by daemon)
     if (!installationObserver.isOnTestNet()) {
-      if (!(destinationAddress.startsWith("zk") ||
+      if (!(destinationAddress.startsWith("zz") ||
           destinationAddress.startsWith("b1") ||
           destinationAddress.startsWith("bx"))) {
         Object[] options = {"OK"};
@@ -382,8 +382,8 @@ public class SendCashPanel
 
     final int B_ADDRESS_PROPER_LENGTH = 35;
     final int Z_ADDRESS_PROPER_LENGTH = 95;
-    int sourceAddressProperLength = (sourceAddress.startsWith("zk")) ? Z_ADDRESS_PROPER_LENGTH : B_ADDRESS_PROPER_LENGTH;
-    int destinationAddressProperLength = (destinationAddress.startsWith("zk")) ? Z_ADDRESS_PROPER_LENGTH : B_ADDRESS_PROPER_LENGTH;
+    int sourceAddressProperLength = (sourceAddress.startsWith("zz")) ? Z_ADDRESS_PROPER_LENGTH : B_ADDRESS_PROPER_LENGTH;
+    int destinationAddressProperLength = (destinationAddress.startsWith("zz")) ? Z_ADDRESS_PROPER_LENGTH : B_ADDRESS_PROPER_LENGTH;
 
     if ((sourceAddress == null) || (sourceAddress.trim().length() < sourceAddressProperLength)) {
       errorMessage = "'From' address is invalid; it is too short or missing.";
@@ -622,7 +622,9 @@ public class SendCashPanel
 
   private void reportCompleteOperationToTheUser(String amount, String sourceAddress, String destinationAddress)
       throws InterruptedException, WalletCallException, IOException, URISyntaxException {
+        Log.info("THIS IS WORKING HERE LINE 625");
     if (clientCaller.isCompletedOperationSuccessful(operationStatusID)) {
+      Log.info("GOT INTO THE IF STATEMENT LINE 627");
       operationStatusLabel.setText(
           "<html><span style=\"color:green;font-weight:bold\">" + LOCAL_MSG_SUCCESSFUL + "</span></html>");
       String TXID = clientCaller.getSuccessfulOperationTXID(operationStatusID);
@@ -643,10 +645,12 @@ public class SendCashPanel
           options[0]);
 
       if (option == 1) {
+        Log.info("OPTION ONE!!!");
         // Copy the transaction ID to clipboard
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(TXID), null);
       } else if (option == 2) {
+        Log.info("OPTION TWO!!!");
         // Open block explorer
         Log.info("Transaction ID for block explorer is: " + TXID);
         String urlPrefix = "https://explorer.btcprivate.org/tx/";
@@ -659,6 +663,7 @@ public class SendCashPanel
       // Call the backup tracker - to remind the user
       this.backupTracker.handleNewTransaction();
     } else {
+      Log.info("FAILED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       String errorMessage = clientCaller.getOperationFinalErrorMessage(operationStatusID);
       operationStatusLabel.setText(
           "<html><span style=\"color:red;font-weight:bold\">ERROR: " + errorMessage + "</span></html>");

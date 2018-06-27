@@ -338,7 +338,7 @@ public class Util {
   // Testnet: "zz", "zt"
   public static boolean isZAddress(String address) {
     return (address != null) &&
-        (address.startsWith("zk")) &&
+        (address.startsWith("zz")) &&
 //                (address.startsWith("zk") || address.startsWith("zz") || address.startsWith("zt")) &&
         (address.length() > 40);
   }
