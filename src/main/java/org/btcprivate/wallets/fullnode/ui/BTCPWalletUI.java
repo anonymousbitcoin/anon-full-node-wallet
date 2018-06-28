@@ -152,7 +152,7 @@ public class BTCPWalletUI extends JFrame {
             messagingPanel = new MessagingPanel(this, sendPanel, tabs, clientCaller, errorReporter));
         tabs.addTab(LOCAL_MSG_TAB_MSTRNDE,
             new ImageIcon(cl.getResource(IMG_TAB_SEND)),
-            masternodePanel = new MasternodePanel(clientCaller,tabs));
+            masternodePanel = new MasternodePanel(this, clientCaller,tabs));
 
         contentPane.add(tabs);
 

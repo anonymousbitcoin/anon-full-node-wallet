@@ -130,8 +130,7 @@ public class DashboardPanel
     // Table of transactions
     lastTransactionsData = getTransactionsDataFromWallet();
     dashboard.add(transactionsTablePane = new JScrollPane(
-            transactionsTable = this.createTransactionsTable(lastTransactionsData)),
-        BorderLayout.CENTER);
+            transactionsTable = this.createTransactionsTable(lastTransactionsData)),BorderLayout.CENTER);
 
     // Lower panel with installation status
     JPanel installationStatusPanel = new JPanel();

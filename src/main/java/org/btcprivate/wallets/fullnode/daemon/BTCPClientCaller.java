@@ -28,13 +28,22 @@ public class BTCPClientCaller {
 
     public static class Masternode {
         // status protocol payee lastseen activeseconds lastpaidtime lastpaidblock IP
+        // public String mnStatus;
+        // public int mnProtocol;
+        // public String mnPayee;
+        // public Date mnLastSeen;
+        // public int mnActiveSeconds;
+        // public Date mnLastPaidTime;
+        // public int mnLastPaidBlock;
+        // public String mnIP;
+
         public String mnStatus;
-        public int mnProtocol;
+        public String mnProtocol;
         public String mnPayee;
-        public Date mnLastSeen;
-        public int mnActiveSeconds;
-        public Date mnLastPaidTime;
-        public int mnLastPaidBlock;
+        public String mnLastSeen;
+        public String mnActiveSeconds;
+        public String mnLastPaidTime;
+        public String mnLastPaidBlock;
         public String mnIP;
 
     }
@@ -177,21 +186,48 @@ public class BTCPClientCaller {
         return balance;
     }
 
+    public synchronized Masternode getMasternodeList() throws WalletCallException, IOException, InterruptedException {
 
-    public synchronized String getMasternodeList() throws WalletCallException, IOException, InterruptedException {
         Masternode mNode = new Masternode();
 
-        JsonObject objResponse = this.executeCommandAndGetJsonObject("masternodelist", null);
+        JsonArray objResponse = this.executeCommandAndGetJsonArray("masternodelist", null);
 
-        Log.info("objResponse" + objResponse.toString());
+        Log.info("objResponse" + objResponse);
         // objResponse = this.executeCommandAndGetJsonObject("z_gettotalbalance", "0");
 
         // balance.transparentUnconfirmedBalance = Double.valueOf(objResponse.getString("transparent", "-1"));
         // balance.privateUnconfirmedBalance = Double.valueOf(objResponse.getString("private", "-1"));
         // balance.totalUnconfirmedBalance = Double.valueOf(objResponse.getString("total", "-1"));
 
-        String dog = "dog";
-        return dog;
+        mNode.mnStatus = String.valueOf(objResponse.get(0));
+        mNode.mnProtocol = String.valueOf(objResponse.get(1));
+        // mNode.mnProtocol = Integer.parseInt(st);
+        mNode.mnPayee = String.valueOf(objResponse.get(2));
+        mNode.mnLastSeen = String.valueOf(objResponse.get(3));
+        mNode.mnActiveSeconds = String.valueOf(objResponse.get(4));
+        mNode.mnLastPaidTime = String.valueOf(objResponse.get(5));
+        mNode.mnLastPaidBlock = String.valueOf(objResponse.get(6));
+        mNode.mnIP = String.valueOf(objResponse.get(7));
+
+        return mNode;
+    }
+
+    public synchronized String[][] getMasternodeArray() throws WalletCallException, IOException, InterruptedException {
+        String[][] mnList = new String[7][];
+        JsonArray objResponse = this.executeCommandAndGetJsonArray("masternodelist", null);
+
+        mnList[0][0] = String.valueOf(objResponse.get(0));
+        mnList[1][0] = String.valueOf(objResponse.get(1));
+        mnList[2][0] = String.valueOf(objResponse.get(2));
+        mnList[3][0] = String.valueOf(objResponse.get(3));
+        mnList[4][0] = String.valueOf(objResponse.get(4));
+        mnList[5][0] = String.valueOf(objResponse.get(5));
+        mnList[6][0] = String.valueOf(objResponse.get(6));
+        mnList[7][0] = String.valueOf(objResponse.get(7));
+        
+        return mnList;
+
+        
     }
 
 
