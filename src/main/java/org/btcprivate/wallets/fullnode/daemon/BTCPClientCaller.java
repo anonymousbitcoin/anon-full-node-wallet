@@ -191,25 +191,10 @@ public class BTCPClientCaller {
         JsonArray objResponse = this.executeCommandAndGetJsonArray("masternodelist", "walletarray");
 
         Log.info("objResponse" + objResponse);
-        // objResponse = this.executeCommandAndGetJsonObject("z_gettotalbalance", "0");
-
-        // balance.transparentUnconfirmedBalance = Double.valueOf(objResponse.getString("transparent", "-1"));
-        // balance.privateUnconfirmedBalance = Double.valueOf(objResponse.getString("private", "-1"));
-        // balance.totalUnconfirmedBalance = Double.valueOf(objResponse.getString("total", "-1"));
-
-        // mNode.mnStatus = String.valueOf(objResponse.get(0));
-        // mNode.mnProtocol = String.valueOf(objResponse.get(1));
-        // // mNode.mnProtocol = Integer.parseInt(st);
-        // mNode.mnPayee = String.valueOf(objResponse.get(2));
-        // mNode.mnLastSeen = String.valueOf(objResponse.get(3));
-        // mNode.mnActiveSeconds = String.valueOf(objResponse.get(4));
-        // mNode.mnLastPaidTime = String.valueOf(objResponse.get(5));
-        // mNode.mnLastPaidBlock = String.valueOf(objResponse.get(6));
-        // mNode.mnIP = String.valueOf(objResponse.get(7));
 
         String[][] finalArr = new String [objResponse.size()][];
         for(int i = 1 ; i < objResponse.size() ; i ++){
-            finalArr[i] = new String[8];
+            finalArr[i] = new String[7];
             JsonArray trans = objResponse.get(i).asArray();
             finalArr[i][0] = trans.get(0).toString();
             finalArr[i][1] = trans.get(1).toString();
@@ -218,9 +203,10 @@ public class BTCPClientCaller {
             finalArr[i][4] = trans.get(4).toString();
             finalArr[i][5] = trans.get(5).toString();
             finalArr[i][6] = trans.get(6).toString();
-            // finalArr[i][7] = trans.get(7).toString();
         }
-            
+        Log.info("----------------------------------\n");
+        Log.info(finalArr[1][1].toString());
+        Log.info("----------------------------------");
         return finalArr;
     }
 

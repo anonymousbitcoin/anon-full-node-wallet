@@ -550,6 +550,7 @@ public class DashboardPanel
     }
     String[][] mnListArrays = this.clientCaller.getMasternodeList();
 
+    // return allTransactions;
     return mnListArrays;
   }
 } // End class
