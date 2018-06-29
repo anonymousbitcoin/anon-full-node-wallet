@@ -46,6 +46,7 @@ public class BTCPWalletUI extends JFrame {
     private AddressBookPanel addressBookPanel;
     private MessagingPanel messagingPanel;
     private MasternodePanel masternodePanel;
+    private MyMasternodePanel myMasternodePanel;
 
 
     private JMenuItem langEnglish;
@@ -66,6 +67,7 @@ public class BTCPWalletUI extends JFrame {
     private static final String LOCAL_MSG_TAB_ADDRESS_BOOK = Util.local("LOCAL_MSG_TAB_ADDRESS_BOOK");
     private static final String LOCAL_MSG_TAB_MSG = Util.local("LOCAL_MSG_TAB_MSG");
     private static final String LOCAL_MSG_TAB_MSTRNDE = Util.local("LOCAL_MSG_TAB_MSTRNDE");
+    private static final String LOCAL_MSG_TAB_MYMSTRNDE = Util.local("LOCAL_MSG_TAB_MYMSTRNDE");
     private static final String LOCAL_MENU_MAIN = Util.local("LOCAL_MENU_MAIN");
     private static final String LOCAL_MENU_ABOUT = Util.local("LOCAL_MENU_ABOUT");
     private static final String LOCAL_MENU_QUIT = Util.local("LOCAL_MENU_QUIT");
@@ -153,6 +155,9 @@ public class BTCPWalletUI extends JFrame {
         tabs.addTab(LOCAL_MSG_TAB_MSTRNDE,
             new ImageIcon(cl.getResource(IMG_TAB_SEND)),
             masternodePanel = new MasternodePanel(this, installationObserver, clientCaller, errorReporter, backupTracker));
+        tabs.addTab(LOCAL_MSG_TAB_MYMSTRNDE,
+            new ImageIcon(cl.getResource(IMG_TAB_SEND)),
+            myMasternodePanel = new MyMasternodePanel(this, installationObserver, clientCaller, errorReporter, backupTracker));
 
         contentPane.add(tabs);
 

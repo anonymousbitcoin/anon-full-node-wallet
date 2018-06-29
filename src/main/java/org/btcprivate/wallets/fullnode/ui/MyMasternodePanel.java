@@ -27,7 +27,7 @@ import java.util.Date;
  * @author Ivan Vaklinov <ivan@vaklinov.com>
  */
 @SuppressWarnings({"deprecation"})
-public class MasternodePanel
+public class MyMasternodePanel
     extends WalletTabPanel {
   private JFrame parentFrame;
   private BTCPInstallationObserver installationObserver;
@@ -76,15 +76,13 @@ public class MasternodePanel
   private static final String LOCAL_MSG_UNCONFIRMED_TOOLTIP = Util.local("LOCAL_MSG_UNCONFIRMED_TOOLTIP");
   private static final String LOCAL_MSG_UNCONFIRMED_TOOLTIP_B = Util.local("LOCAL_MSG_UNCONFIRMED_TOOLTIP_B");
   private static final String LOCAL_MSG_UNCONFIRMED_TOOLTIP_Z = Util.local("LOCAL_MSG_UNCONFIRMED_TOOLTIP_Z");
-  private static final String LOCAL_MSG_MSTRNDE_ALIAS = Util.local("LOCAL_MSG_MSTRNDE_ALIAS");
-  private static final String LOCAL_MSG_MSTRNDE_STATUS = Util.local("LOCAL_MSG_MSTRNDE_STATUS");
-  private static final String LOCAL_MSG_MSTRNDE_PROTOCOL = Util.local("LOCAL_MSG_MSTRNDE_PROTOCOL");
-  private static final String LOCAL_MSG_MSTRNDE_PAYEE = Util.local("LOCAL_MSG_MSTRNDE_PAYEE");
-  private static final String LOCAL_MSG_MSTRNDE_LASTSEEN = Util.local("LOCAL_MSG_MSTRNDE_LASTSEEN");
-  private static final String LOCAL_MSG_MSTRNDE_ACTIVETIME = Util.local("LOCAL_MSG_MSTRNDE_ACTIVETIME");
-  private static final String LOCAL_MSG_MSTRNDE_LASTPAIDTIME = Util.local("LOCAL_MSG_MSTRNDE_LASTPAIDTIME");
-  private static final String LOCAL_MSG_MSTRNDE_LASTBLOCK = Util.local("LOCAL_MSG_MSTRNDE_LASTBLOCK");
-  private static final String LOCAL_MSG_MSTRNDE_IP = Util.local("LOCAL_MSG_MSTRNDE_IP");
+
+  private static final String LOCAL_MSG_MYMSTRNDE_ALIAS = Util.local("LOCAL_MSG_MYMSTRNDE_ALIAS");
+  private static final String LOCAL_MSG_MYMSTRNDE_ADDRESS = Util.local("LOCAL_MSG_MYMSTRNDE_ADDRESS");
+  private static final String LOCAL_MSG_MYMSTRNDE_PRIVATEKEY = Util.local("LOCAL_MSG_MYMSTRNDE_PRIVATEKEY");
+  private static final String LOCAL_MSG_MYMSTRNDE_TXHASH = Util.local("LOCAL_MSG_MYMSTRNDE_TXHASH");
+  private static final String LOCAL_MSG_MYMSTRNDE_OUTPUTINDEX = Util.local("LOCAL_MSG_MYMSTRNDE_OUTPUTINDEX");
+  private static final String LOCAL_MSG_MYMSTRNDE_STATUS = Util.local("LOCAL_MSG_MYMSTRNDE_STATUS");
 
   private static final String LOCAL_MSG_SYNC = Util.local("LOCAL_MSG_SYNC");
   private static final String LOCAL_MSG_BLOCK = Util.local("LOCAL_MSG_BLOCK");
@@ -95,7 +93,7 @@ public class MasternodePanel
   private static final String daemon_txn_unconfirmed = "immature";
 
 
-  public MasternodePanel(JFrame parentFrame,
+  public MyMasternodePanel(JFrame parentFrame,
                         BTCPInstallationObserver installationObserver,
                         BTCPClientCaller clientCaller,
                         StatusUpdateErrorReporter errorReporter,
@@ -152,7 +150,7 @@ public class MasternodePanel
     // this.daemonInfoGatheringThread = new DataGatheringThread<>(
     //     () -> {
     //       long start = System.currentTimeMillis();
-    //       DaemonInfo daemonInfo = MasternodePanel.this.installationObserver.getDaemonInfo();
+    //       DaemonInfo daemonInfo = MyMasternodePanel.this.installationObserver.getDaemonInfo();
     //       long end = System.currentTimeMillis();
     //       Log.info("Gathering of dashboard daemon status data done in " + (end - start) + "ms.");
 
@@ -163,10 +161,10 @@ public class MasternodePanel
 
     // ActionListener alDeamonStatus = e -> {
     //   try {
-    //     MasternodePanel.this.updateStatusLabels();
+    //     MyMasternodePanel.this.updateStatusLabels();
     //   } catch (Exception ex) {
     //     Log.error("Unexpected error: ", ex);
-    //     MasternodePanel.this.errorReporter.reportError(ex);
+    //     MyMasternodePanel.this.errorReporter.reportError(ex);
     //   }
     // };
     // Timer t = new Timer(1000, alDeamonStatus);
@@ -177,13 +175,13 @@ public class MasternodePanel
     // this.walletBalanceGatheringThread = new DataGatheringThread<>(
     //     () -> {
     //       long start = System.currentTimeMillis();
-    //       WalletBalance balance = MasternodePanel.this.clientCaller.getWalletInfo();
+    //       WalletBalance balance = MyMasternodePanel.this.clientCaller.getWalletInfo();
     //       long end = System.currentTimeMillis();
 
     //       // TODO: move this call to a dedicated one-off gathering thread - this is the wrong place
     //       // it works but a better design is needed.
-    //       if (MasternodePanel.this.walletIsEncrypted == null) {
-    //         MasternodePanel.this.walletIsEncrypted = MasternodePanel.this.clientCaller.isWalletEncrypted();
+    //       if (MyMasternodePanel.this.walletIsEncrypted == null) {
+    //         MyMasternodePanel.this.walletIsEncrypted = MyMasternodePanel.this.clientCaller.isWalletEncrypted();
     //       }
 
     //       Log.info("Gathering of dashboard wallet balance data done in " + (end - start) + "ms.");
@@ -195,10 +193,10 @@ public class MasternodePanel
 
     // ActionListener alWalletBalance = e -> {
     //   try {
-    //     MasternodePanel.this.updateWalletStatusLabel();
+    //     MyMasternodePanel.this.updateWalletStatusLabel();
     //   } catch (Exception ex) {
     //     Log.error("Unexpected error: ", ex);
-    //     MasternodePanel.this.errorReporter.reportError(ex);
+    //     MyMasternodePanel.this.errorReporter.reportError(ex);
     //   }
     // };
     // Timer walletBalanceTimer = new Timer(2000, alWalletBalance);
@@ -210,7 +208,7 @@ public class MasternodePanel
     this.transactionGatheringThread = new DataGatheringThread<>(
         () -> {
           long start = System.currentTimeMillis();
-          String[][] data = MasternodePanel.this.getMasternodeListFromRPC();
+          String[][] data = MyMasternodePanel.this.getMasternodeListFromRPC();
           long end = System.currentTimeMillis();
           Log.info("Gathering of dashboard wallet transactions table data done in " + (end - start) + "ms.");
 
@@ -221,10 +219,10 @@ public class MasternodePanel
 
     // ActionListener alMasternodes = e -> {
     //   try {
-    //     MasternodePanel.this.updateWalletMasternodesTable();
+    //     MyMasternodePanel.this.updateWalletMasternodesTable();
     //   } catch (Exception ex) {
     //     Log.error("Unexpected error: ", ex);
-    //     MasternodePanel.this.errorReporter.reportError(ex);
+    //     MyMasternodePanel.this.errorReporter.reportError(ex);
     //   }
     // };
     // t = new Timer(5000, alMasternodes);
@@ -235,7 +233,7 @@ public class MasternodePanel
     // this.netInfoGatheringThread = new DataGatheringThread<>(
     //     () -> {
     //       long start = System.currentTimeMillis();
-    //       NetworkAndBlockchainInfo data = MasternodePanel.this.clientCaller.getNetworkAndBlockchainInfo();
+    //       NetworkAndBlockchainInfo data = MyMasternodePanel.this.clientCaller.getNetworkAndBlockchainInfo();
     //       long end = System.currentTimeMillis();
     //       Log.info("Gathering of network and blockchain info data done in " + (end - start) + "ms.");
 
@@ -246,10 +244,10 @@ public class MasternodePanel
 
     // ActionListener alNetAndBlockchain = e -> {
     //   try {
-    //     MasternodePanel.this.updateStatusLabels();
+    //     MyMasternodePanel.this.updateStatusLabels();
     //   } catch (Exception ex) {
     //     Log.error("Unexpected error: ", ex);
-    //     MasternodePanel.this.errorReporter.reportError(ex);
+    //     MyMasternodePanel.this.errorReporter.reportError(ex);
     //   }
     // };
     // Timer netAndBlockchainTimer = new Timer(5000, alNetAndBlockchain);
@@ -446,11 +444,12 @@ public class MasternodePanel
   //   this.repaint();
   // }
 
-   
 
   private JTable createMasternodesTable(String rowData[][])
       throws WalletCallException, IOException, InterruptedException {
-    String columnNames[] = {LOCAL_MSG_MSTRNDE_ALIAS, LOCAL_MSG_MSTRNDE_STATUS, LOCAL_MSG_MSTRNDE_PROTOCOL, LOCAL_MSG_MSTRNDE_PAYEE, LOCAL_MSG_MSTRNDE_LASTSEEN, LOCAL_MSG_MSTRNDE_ACTIVETIME, LOCAL_MSG_MSTRNDE_LASTPAIDTIME, LOCAL_MSG_MSTRNDE_LASTBLOCK, LOCAL_MSG_MSTRNDE_IP};
+    String columnNames[] = {LOCAL_MSG_MYMSTRNDE_ALIAS, LOCAL_MSG_MYMSTRNDE_ADDRESS, LOCAL_MSG_MYMSTRNDE_PRIVATEKEY, LOCAL_MSG_MYMSTRNDE_TXHASH, LOCAL_MSG_MYMSTRNDE_OUTPUTINDEX, LOCAL_MSG_MYMSTRNDE_STATUS};
+    
+    
     JTable table = new MasternodeTable(
         rowData, columnNames, this.parentFrame, this.clientCaller, this.installationObserver);
     table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
@@ -460,9 +459,6 @@ public class MasternodePanel
     table.getColumnModel().getColumn(3).setPreferredWidth(300);
     table.getColumnModel().getColumn(4).setPreferredWidth(180);
     table.getColumnModel().getColumn(5).setPreferredWidth(100);
-    table.getColumnModel().getColumn(6).setPreferredWidth(50);
-    table.getColumnModel().getColumn(7).setPreferredWidth(50);
-    table.getColumnModel().getColumn(8).setPreferredWidth(250);
 
     return table;
   }
@@ -561,10 +557,10 @@ public class MasternodePanel
     //         " - " + nfe.getMessage() + "!");
     //   }
     // }
-    String[][] mnListArrays = this.clientCaller.getMasternodeList();
-    // String[][] mnListArrays = this.clientCaller.getMyMasternodes();
+    // String[][] mnListArrays = this.clientCaller.getMasternodeList();
+    String[][] myMasternodes = this.clientCaller.getMyMasternodes();
 
     // return allMasternodes;
-    return mnListArrays;
+    return myMasternodes;
   }
 } // End class

@@ -181,7 +181,7 @@ public class BTCPClientCaller {
 
         JsonArray objResponse = this.executeCommandAndGetJsonArray("masternodelist", "walletarray");
 
-        Log.info("objResponse" + objResponse);
+        // Log.info("objResponse" + objResponse);
 
         String[][] finalArr = new String [objResponse.size()][];
         for(int i = 0 ; i < objResponse.size() ; i ++){
@@ -210,6 +210,28 @@ public class BTCPClientCaller {
         // Log.info("----------------------------------\n");
         // Log.info(finalArr[1][1].toString());
         // Log.info("----------------------------------");
+        return finalArr;
+    }
+
+    public synchronized String[][] getMyMasternodes() throws WalletCallException, IOException, InterruptedException {
+
+        JsonArray objResponse = this.executeCommandAndGetJsonArray("masternode", "mymasternodes");
+
+        // Log.info("objResponse" + objResponse);
+
+        String[][] finalArr = new String [objResponse.size()][];
+        for(int i = 0 ; i < objResponse.size() ; i ++){
+            finalArr[i] = new String[6];
+            JsonArray trans = objResponse.get(i).asArray();
+
+            finalArr[i][0] = trans.get(0).toString();
+            finalArr[i][1] = trans.get(1).toString();
+            finalArr[i][2] = trans.get(2).toString();
+            finalArr[i][3] = trans.get(3).toString();
+            finalArr[i][4] = trans.get(4).toString();
+            finalArr[i][5] = trans.get(5).toString();
+        }
+
         return finalArr;
     }
 
