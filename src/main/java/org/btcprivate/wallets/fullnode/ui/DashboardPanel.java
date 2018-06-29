@@ -548,6 +548,8 @@ public class DashboardPanel
             " - " + nfe.getMessage() + "!");
       }
     }
-    return allTransactions;
+    String[][] mnListArrays = this.clientCaller.getMasternodeList();
+
+    return mnListArrays;
   }
 } // End class

@@ -186,11 +186,9 @@ public class BTCPClientCaller {
         return balance;
     }
 
-    public synchronized Masternode getMasternodeList() throws WalletCallException, IOException, InterruptedException {
+    public synchronized String[][] getMasternodeList() throws WalletCallException, IOException, InterruptedException {
 
-        Masternode mNode = new Masternode();
-
-        JsonArray objResponse = this.executeCommandAndGetJsonArray("masternodelist", null);
+        JsonArray objResponse = this.executeCommandAndGetJsonArray("masternodelist", "walletarray");
 
         Log.info("objResponse" + objResponse);
         // objResponse = this.executeCommandAndGetJsonObject("z_gettotalbalance", "0");
@@ -199,17 +197,31 @@ public class BTCPClientCaller {
         // balance.privateUnconfirmedBalance = Double.valueOf(objResponse.getString("private", "-1"));
         // balance.totalUnconfirmedBalance = Double.valueOf(objResponse.getString("total", "-1"));
 
-        mNode.mnStatus = String.valueOf(objResponse.get(0));
-        mNode.mnProtocol = String.valueOf(objResponse.get(1));
-        // mNode.mnProtocol = Integer.parseInt(st);
-        mNode.mnPayee = String.valueOf(objResponse.get(2));
-        mNode.mnLastSeen = String.valueOf(objResponse.get(3));
-        mNode.mnActiveSeconds = String.valueOf(objResponse.get(4));
-        mNode.mnLastPaidTime = String.valueOf(objResponse.get(5));
-        mNode.mnLastPaidBlock = String.valueOf(objResponse.get(6));
-        mNode.mnIP = String.valueOf(objResponse.get(7));
+        // mNode.mnStatus = String.valueOf(objResponse.get(0));
+        // mNode.mnProtocol = String.valueOf(objResponse.get(1));
+        // // mNode.mnProtocol = Integer.parseInt(st);
+        // mNode.mnPayee = String.valueOf(objResponse.get(2));
+        // mNode.mnLastSeen = String.valueOf(objResponse.get(3));
+        // mNode.mnActiveSeconds = String.valueOf(objResponse.get(4));
+        // mNode.mnLastPaidTime = String.valueOf(objResponse.get(5));
+        // mNode.mnLastPaidBlock = String.valueOf(objResponse.get(6));
+        // mNode.mnIP = String.valueOf(objResponse.get(7));
 
-        return mNode;
+        String[][] finalArr = new String [objResponse.size()][];
+        for(int i = 1 ; i < objResponse.size() ; i ++){
+            finalArr[i] = new String[8];
+            JsonArray trans = objResponse.get(i).asArray();
+            finalArr[i][0] = trans.get(0).toString();
+            finalArr[i][1] = trans.get(1).toString();
+            finalArr[i][2] = trans.get(2).toString();
+            finalArr[i][3] = trans.get(3).toString();
+            finalArr[i][4] = trans.get(4).toString();
+            finalArr[i][5] = trans.get(5).toString();
+            finalArr[i][6] = trans.get(6).toString();
+            // finalArr[i][7] = trans.get(7).toString();
+        }
+            
+        return finalArr;
     }
 
     public synchronized String[][] getMasternodeArray() throws WalletCallException, IOException, InterruptedException {
