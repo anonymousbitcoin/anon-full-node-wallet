@@ -27,15 +27,6 @@ public class BTCPClientCaller {
     }
 
     public static class Masternode {
-        // status protocol payee lastseen activeseconds lastpaidtime lastpaidblock IP
-        // public String mnStatus;
-        // public int mnProtocol;
-        // public String mnPayee;
-        // public Date mnLastSeen;
-        // public int mnActiveSeconds;
-        // public Date mnLastPaidTime;
-        // public int mnLastPaidBlock;
-        // public String mnIP;
 
         public String mnStatus;
         public String mnProtocol;
@@ -194,7 +185,7 @@ public class BTCPClientCaller {
 
         String[][] finalArr = new String [objResponse.size()][];
         for(int i = 0 ; i < objResponse.size() ; i ++){
-            finalArr[i] = new String[7];
+            finalArr[i] = new String[8];
             JsonArray trans = objResponse.get(i).asArray();
 
             finalArr[i][0] = trans.get(0).toString();
@@ -204,7 +195,8 @@ public class BTCPClientCaller {
             finalArr[i][4] = trans.get(4).toString();
             finalArr[i][5] = trans.get(5).toString();
             finalArr[i][6] = trans.get(6).toString();
-            String[] ar = finalArr[i];
+            finalArr[i][7] = trans.get(7).toString();
+            // String[] ar = finalArr[i];
             // for(int j = 0; j < ar.length; j++) {
             //     Log.info("----------------------------------\n");
             //     Log.info(finalArr[i][j]);
@@ -220,23 +212,23 @@ public class BTCPClientCaller {
         return finalArr;
     }
 
-    public synchronized String[][] getMasternodeArray() throws WalletCallException, IOException, InterruptedException {
-        String[][] mnList = new String[7][];
-        JsonArray objResponse = this.executeCommandAndGetJsonArray("masternodelist", null);
+    // public synchronized String[][] getMasternodeArray() throws WalletCallException, IOException, InterruptedException {
+    //     String[][] mnList = new String[7][];
+    //     JsonArray objResponse = this.executeCommandAndGetJsonArray("masternodelist", null);
 
-        mnList[0][0] = String.valueOf(objResponse.get(0));
-        mnList[1][0] = String.valueOf(objResponse.get(1));
-        mnList[2][0] = String.valueOf(objResponse.get(2));
-        mnList[3][0] = String.valueOf(objResponse.get(3));
-        mnList[4][0] = String.valueOf(objResponse.get(4));
-        mnList[5][0] = String.valueOf(objResponse.get(5));
-        mnList[6][0] = String.valueOf(objResponse.get(6));
-        mnList[7][0] = String.valueOf(objResponse.get(7));
+    //     mnList[0][0] = String.valueOf(objResponse.get(0));
+    //     mnList[1][0] = String.valueOf(objResponse.get(1));
+    //     mnList[2][0] = String.valueOf(objResponse.get(2));
+    //     mnList[3][0] = String.valueOf(objResponse.get(3));
+    //     mnList[4][0] = String.valueOf(objResponse.get(4));
+    //     mnList[5][0] = String.valueOf(objResponse.get(5));
+    //     mnList[6][0] = String.valueOf(objResponse.get(6));
+    //     mnList[7][0] = String.valueOf(objResponse.get(7));
         
-        return mnList;
+    //     return mnList;
 
         
-    }
+    // }
 
 
 

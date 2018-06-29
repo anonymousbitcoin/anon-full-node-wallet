@@ -1,419 +1,567 @@
 package org.btcprivate.wallets.fullnode.ui;
 
 import org.btcprivate.wallets.fullnode.daemon.BTCPClientCaller;
-// import org.btcprivate.wallets.fullnode.daemon.BTCPClientCaller.Masternode;
-import org.btcprivate.wallets.fullnode.util.Log;
-import org.btcprivate.wallets.fullnode.util.OSUtil;
-import org.btcprivate.wallets.fullnode.util.Util;
-import org.btcprivate.wallets.fullnode.daemon.BTCPClientCaller.Masternode;
+import org.btcprivate.wallets.fullnode.daemon.BTCPClientCaller.NetworkAndBlockchainInfo;
+import org.btcprivate.wallets.fullnode.daemon.BTCPClientCaller.WalletBalance;
 import org.btcprivate.wallets.fullnode.daemon.BTCPClientCaller.WalletCallException;
 import org.btcprivate.wallets.fullnode.daemon.BTCPInstallationObserver;
 import org.btcprivate.wallets.fullnode.daemon.BTCPInstallationObserver.DaemonInfo;
+import org.btcprivate.wallets.fullnode.daemon.DataGatheringThread;
+import org.btcprivate.wallets.fullnode.util.*;
+import org.btcprivate.wallets.fullnode.util.OSUtil.OS_TYPE;
 
 import javax.swing.*;
-import javax.swing.border.EtchedBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableColumnModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-
-import com.eclipsesource.json.JsonObject;
-
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.*;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.Date;
 
-public class MasternodePanel extends JPanel {
 
-    private JFrame parentFrame;
-    private BTCPInstallationObserver installationObserver;
-    private BTCPClientCaller clientCaller;
-    private static final String ADDRESS_BOOK_FILE = "addressBook.csv";
-    private JTable masternodeTable = null; 
-    private JScrollPane masternodeTablePane = null;
-    private String[][] masternodeData = null;
+/**
+ * Dashboard ...
+ *
+ * @author Ivan Vaklinov <ivan@vaklinov.com>
+ */
+@SuppressWarnings({"deprecation"})
+public class MasternodePanel
+    extends WalletTabPanel {
+  private JFrame parentFrame;
+  private BTCPInstallationObserver installationObserver;
+  private BTCPClientCaller clientCaller;
+  private StatusUpdateErrorReporter errorReporter;
+  private BackupTracker backupTracker;
 
-    private static final String LOCAL_MENU_NEW_CONTACT = Util.local("LOCAL_MENU_NEW_CONTACT");
-    private static final String LOCAL_MENU_SEND_BTCP = Util.local("LOCAL_MENU_SEND_BTCP");
-    private static final String MASTERNODE_LIST = Util.local("MASTERNODE_LIST");
-    private static final String LOCAL_MENU_COPY_ADDRESS_TO_CLIPBOARD = Util.local("LOCAL_MENU_COPY_ADDRESS_TO_CLIPBOARD");
-    private static final String LOCAL_MENU_DELETE_CONTACT = Util.local("LOCAL_MENU_DELETE_CONTACT");
-    private static final String LOCAL_MENU_COLUMN_NAME = Util.local("LOCAL_MENU_COLUMN_NAME");
-    private static final String LOCAL_MENU_COLUMN_ADDRESS = Util.local("LOCAL_MENU_COLUMN_ADDRESS");
+  private DataGatheringThread<NetworkAndBlockchainInfo> netInfoGatheringThread = null;
 
-    private static final String LOCAL_MSG_ADDRESS_BOOK_CORRUPT = Util.local("LOCAL_MSG_ADDRESS_BOOK_CORRUPT");
-    private static final String LOCAL_MSG_INPUT_CONTACT_NAME = Util.local("LOCAL_MSG_INPUT_CONTACT_NAME");
-    private static final String LOCAL_MSG_CREATE_CONTACT_STEP_1 = Util.local("LOCAL_MSG_CREATE_CONTACT_STEP_1");
-    private static final String LOCAL_MSG_CREATE_CONTACT_STEP_2 = Util.local("LOCAL_MSG_CREATE_CONTACT_STEP_2");
-    private static final String LOCAL_MSG_INPUT_CONTACT_ADDRESS = Util.local("LOCAL_MSG_INPUT_CONTACT_ADDRESS");
-    private static final String LOCAL_MSG_SEND_BTCP = Util.local("LOCAL_MSG_SEND_BTCP");
-    private static final String LOCAL_MSG_DELETE_CONJUGATED = Util.local("LOCAL_MSG_DELETE_CONJUGATED");
-    private static final String LOCAL_MSG_FROM_CONTACTS = Util.local("LOCAL_MSG_FROM_CONTACTS");
-    private static final String LOCAL_MSG_DELETE_CONTACT = Util.local("LOCAL_MSG_DELETE_CONTACT");
+  private Boolean walletIsEncrypted = null;
+  private Integer blockchainPercentage = null;
 
-    private static final String LOCAL_MSG_MSTRNDE_STATUS  = Util.local("LOCAL_MSG_MSTRNDE_STATUS");
-    private static final String LOCAL_MSG_MSTRNDE_PROTOCOL = Util.local("LOCAL_MSG_MSTRNDE_PROTOCOL");
-    private static final String LOCAL_MSG_MSTRNDE_PAYEE = Util.local("LOCAL_MSG_MSTRNDE_PAYEE");
-    private static final String LOCAL_MSG_MSTRNDE_LASTSEEN = Util.local("LOCAL_MSG_MSTRNDE_LASTSEEN");
-    private static final String LOCAL_MSG_MSTRNDE_ACTIVETIME = Util.local("LOCAL_MSG_MSTRNDE_ACTIVETIME");
-    private static final String LOCAL_MSG_MSTRNDE_LASTPAIDTIME = Util.local("LOCAL_MSG_MSTRNDE_LASTPAIDTIME");
-    private static final String LOCAL_MSG_MSTRNDE_LASTBLOCK = Util.local("LOCAL_MSG_MSTRNDE_LASTBLOCK");
-    private static final String LOCAL_MSG_MSTRNDE_IP = Util.local("LOCAL_MSG_MSTRNDE_IP");
+  private JLabel daemonStatusLabel = null;
+  private DataGatheringThread<DaemonInfo> daemonInfoGatheringThread = null;
 
-    private static class AddressBookEntry {
-        final String name, address;
+  private JLabel walletBalanceLabel = null;
+  private DataGatheringThread<WalletBalance> walletBalanceGatheringThread = null;
 
-        AddressBookEntry(String name, String address) {
-            this.name = name;
-            this.address = address;
+  private JTable transactionsTable = null;
+  private JScrollPane transactionsTablePane = null;
+  private String[][] lastTransactionsData = null;
+  private DataGatheringThread<String[][]> transactionGatheringThread = null;
+
+  private static final String small_icon_resource = "images/btcp-44.png";
+
+  private static final String LOCAL_MSG_BTCP_WALLET_TITLE = Util.local("LOCAL_MSG_BTCP_WALLET_TITLE");
+  private static final String LOCAL_MSG_BTCP_WALLET_TOOLTIP = Util.local("LOCAL_MSG_BTCP_WALLET_TOOLTIP");
+  private static final String LOCAL_MSG_DAEMON_SINGLE_CONNECTION = Util.local("LOCAL_MSG_DAEMON_SINGLE_CONNECTION");
+  private static final String LOCAL_MSG_DAEMON_CONNECTIONS = Util.local("LOCAL_MSG_DAEMON_CONNECTIONS");
+  private static final String LOCAL_MSG_LOOKING_PEERS = Util.local("LOCAL_MSG_LOOKING_PEERS");
+  private static final String LOCAL_MSG_T_BALANCE = Util.local("LOCAL_MSG_T_BALANCE");
+  private static final String LOCAL_MSG_Z_BALANCE = Util.local("LOCAL_MSG_Z_BALANCE");
+  private static final String LOCAL_MSG_TOTAL_BALANCE = Util.local("LOCAL_MSG_TOTAL_BALANCE");
+  private static final String LOCAL_MSG_YES = Util.local("LOCAL_MSG_YES");
+  private static final String LOCAL_MSG_NO = Util.local("LOCAL_MSG_NO");
+  private static final String LOCAL_MSG_IMMATURE = Util.local("LOCAL_MSG_IMMATURE");
+  private static final String LOCAL_MSG_IN = Util.local("LOCAL_MSG_IN");
+  private static final String LOCAL_MSG_OUT = Util.local("LOCAL_MSG_OUT");
+  private static final String LOCAL_MSG_MINED = Util.local("LOCAL_MSG_MINED");
+  private static final String LOCAL_MSG_TXN_TYPE = Util.local("LOCAL_MSG_TXN_TYPE");
+  private static final String LOCAL_MSG_TXN_DIRECTION = Util.local("LOCAL_MSG_TXN_DIRECTION");
+  private static final String LOCAL_MSG_TXN_IS_CONFIRMED = Util.local("LOCAL_MSG_TXN_IS_CONFIRMED");
+  private static final String LOCAL_MSG_TXN_AMOUNT = Util.local("LOCAL_MSG_TXN_AMOUNT");
+  private static final String LOCAL_MSG_TXN_DATE = Util.local("LOCAL_MSG_TXN_DATE");
+  private static final String LOCAL_MSG_TXN_DESTINATION = Util.local("LOCAL_MSG_TXN_DESTINATION");
+  private static final String LOCAL_MSG_UNCONFIRMED_TOOLTIP = Util.local("LOCAL_MSG_UNCONFIRMED_TOOLTIP");
+  private static final String LOCAL_MSG_UNCONFIRMED_TOOLTIP_B = Util.local("LOCAL_MSG_UNCONFIRMED_TOOLTIP_B");
+  private static final String LOCAL_MSG_UNCONFIRMED_TOOLTIP_Z = Util.local("LOCAL_MSG_UNCONFIRMED_TOOLTIP_Z");
+  private static final String LOCAL_MSG_MSTRNDE_STATUS = Util.local("LOCAL_MSG_MSTRNDE_STATUS");
+  private static final String LOCAL_MSG_MSTRNDE_PROTOCOL = Util.local("LOCAL_MSG_MSTRNDE_PROTOCOL");
+  private static final String LOCAL_MSG_MSTRNDE_PAYEE = Util.local("LOCAL_MSG_MSTRNDE_PAYEE");
+  private static final String LOCAL_MSG_MSTRNDE_LASTSEEN = Util.local("LOCAL_MSG_MSTRNDE_LASTSEEN");
+  private static final String LOCAL_MSG_MSTRNDE_ACTIVETIME = Util.local("LOCAL_MSG_MSTRNDE_ACTIVETIME");
+  private static final String LOCAL_MSG_MSTRNDE_LASTPAIDTIME = Util.local("LOCAL_MSG_MSTRNDE_LASTPAIDTIME");
+  private static final String LOCAL_MSG_MSTRNDE_LASTBLOCK = Util.local("LOCAL_MSG_MSTRNDE_LASTBLOCK");
+  private static final String LOCAL_MSG_MSTRNDE_IP = Util.local("LOCAL_MSG_MSTRNDE_IP");
+
+  private static final String LOCAL_MSG_SYNC = Util.local("LOCAL_MSG_SYNC");
+  private static final String LOCAL_MSG_BLOCK = Util.local("LOCAL_MSG_BLOCK");
+
+  private static final String daemon_txn_receive = "receive";
+  private static final String daemon_txn_send = "send";
+  private static final String daemon_txn_mined = "generate";
+  private static final String daemon_txn_unconfirmed = "immature";
+
+
+  public MasternodePanel(JFrame parentFrame,
+                        BTCPInstallationObserver installationObserver,
+                        BTCPClientCaller clientCaller,
+                        StatusUpdateErrorReporter errorReporter,
+                        BackupTracker backupTracker)
+      throws IOException, InterruptedException, WalletCallException {
+    this.parentFrame = parentFrame;
+    this.installationObserver = installationObserver;
+    this.clientCaller = clientCaller;
+    this.errorReporter = errorReporter;
+    this.backupTracker = backupTracker;
+
+    this.timers = new ArrayList<>();
+    this.threads = new ArrayList<>();
+
+    // Build content
+    JPanel dashboard = this;
+    dashboard.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+    dashboard.setLayout(new BorderLayout(0, 0));
+
+    // Upper panel with wallet balance
+    JPanel balanceStatusPanel = new JPanel();
+    // Use border layout to have balances to the left
+    balanceStatusPanel.setLayout(new BorderLayout(3, 3));
+
+    JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 9));
+    JLabel logoLabel = new JLabel(new ImageIcon(
+        this.getClass().getClassLoader().getResource(small_icon_resource)));
+    tempPanel.add(logoLabel);
+    JLabel btcpLabel = new JLabel(LOCAL_MSG_BTCP_WALLET_TITLE);
+    btcpLabel.setFont(new Font("Helvetica", Font.BOLD, 28));
+    tempPanel.add(btcpLabel);
+    tempPanel.setToolTipText(LOCAL_MSG_BTCP_WALLET_TOOLTIP);
+    balanceStatusPanel.add(tempPanel, BorderLayout.WEST);
+
+    balanceStatusPanel.add(tempPanel, BorderLayout.CENTER);
+
+    balanceStatusPanel.add(walletBalanceLabel = new JLabel(), BorderLayout.EAST);
+
+    dashboard.add(balanceStatusPanel, BorderLayout.NORTH);
+
+    // Table of transactions
+    lastTransactionsData = getTransactionsDataFromWallet();
+    dashboard.add(transactionsTablePane = new JScrollPane(
+            transactionsTable = this.createTransactionsTable(lastTransactionsData)),BorderLayout.CENTER);
+
+    // Lower panel with installation status
+    JPanel installationStatusPanel = new JPanel();
+    installationStatusPanel.setLayout(new BorderLayout());
+    installationStatusPanel.add(daemonStatusLabel = new JLabel(), BorderLayout.WEST);
+
+    dashboard.add(installationStatusPanel, BorderLayout.SOUTH);
+
+    // Thread and timer to update the daemon status
+    this.daemonInfoGatheringThread = new DataGatheringThread<>(
+        () -> {
+          long start = System.currentTimeMillis();
+          DaemonInfo daemonInfo = MasternodePanel.this.installationObserver.getDaemonInfo();
+          long end = System.currentTimeMillis();
+          Log.info("Gathering of dashboard daemon status data done in " + (end - start) + "ms.");
+
+          return daemonInfo;
+        },
+        this.errorReporter, 2000, true);
+    this.threads.add(this.daemonInfoGatheringThread);
+
+    ActionListener alDeamonStatus = e -> {
+      try {
+        MasternodePanel.this.updateStatusLabels();
+      } catch (Exception ex) {
+        Log.error("Unexpected error: ", ex);
+        MasternodePanel.this.errorReporter.reportError(ex);
+      }
+    };
+    Timer t = new Timer(1000, alDeamonStatus);
+    t.start();
+    this.timers.add(t);
+
+    // Thread and timer to update the wallet balance
+    this.walletBalanceGatheringThread = new DataGatheringThread<>(
+        () -> {
+          long start = System.currentTimeMillis();
+          WalletBalance balance = MasternodePanel.this.clientCaller.getWalletInfo();
+          long end = System.currentTimeMillis();
+
+          // TODO: move this call to a dedicated one-off gathering thread - this is the wrong place
+          // it works but a better design is needed.
+          if (MasternodePanel.this.walletIsEncrypted == null) {
+            MasternodePanel.this.walletIsEncrypted = MasternodePanel.this.clientCaller.isWalletEncrypted();
+          }
+
+          Log.info("Gathering of dashboard wallet balance data done in " + (end - start) + "ms.");
+
+          return balance;
+        },
+        this.errorReporter, 8000, true);
+    this.threads.add(this.walletBalanceGatheringThread);
+
+    ActionListener alWalletBalance = e -> {
+      try {
+        MasternodePanel.this.updateWalletStatusLabel();
+      } catch (Exception ex) {
+        Log.error("Unexpected error: ", ex);
+        MasternodePanel.this.errorReporter.reportError(ex);
+      }
+    };
+    Timer walletBalanceTimer = new Timer(2000, alWalletBalance);
+    walletBalanceTimer.setInitialDelay(1000);
+    walletBalanceTimer.start();
+    this.timers.add(walletBalanceTimer);
+
+    // Thread and timer to update the transactions table
+    this.transactionGatheringThread = new DataGatheringThread<>(
+        () -> {
+          long start = System.currentTimeMillis();
+          String[][] data = MasternodePanel.this.getTransactionsDataFromWallet();
+          long end = System.currentTimeMillis();
+          Log.info("Gathering of dashboard wallet transactions table data done in " + (end - start) + "ms.");
+
+          return data;
+        },
+        this.errorReporter, 20000);
+    this.threads.add(this.transactionGatheringThread);
+
+    ActionListener alTransactions = e -> {
+      try {
+        MasternodePanel.this.updateWalletTransactionsTable();
+      } catch (Exception ex) {
+        Log.error("Unexpected error: ", ex);
+        MasternodePanel.this.errorReporter.reportError(ex);
+      }
+    };
+    t = new Timer(5000, alTransactions);
+    t.start();
+    this.timers.add(t);
+
+    // Thread and timer to update the network and blockchain details
+    this.netInfoGatheringThread = new DataGatheringThread<>(
+        () -> {
+          long start = System.currentTimeMillis();
+          NetworkAndBlockchainInfo data = MasternodePanel.this.clientCaller.getNetworkAndBlockchainInfo();
+          long end = System.currentTimeMillis();
+          Log.info("Gathering of network and blockchain info data done in " + (end - start) + "ms.");
+
+          return data;
+        },
+        this.errorReporter, 5000, true);
+    this.threads.add(this.netInfoGatheringThread);
+
+    ActionListener alNetAndBlockchain = e -> {
+      try {
+        MasternodePanel.this.updateStatusLabels();
+      } catch (Exception ex) {
+        Log.error("Unexpected error: ", ex);
+        MasternodePanel.this.errorReporter.reportError(ex);
+      }
+    };
+    Timer netAndBlockchainTimer = new Timer(5000, alNetAndBlockchain);
+    netAndBlockchainTimer.setInitialDelay(1000);
+    netAndBlockchainTimer.start();
+    this.timers.add(netAndBlockchainTimer);
+  }
+
+  private void updateStatusLabels()
+      throws IOException, InterruptedException {
+    NetworkAndBlockchainInfo info = this.netInfoGatheringThread.getLastData();
+
+    // It is possible there has been no gathering initially
+    if (info == null) {
+      return;
+    }
+
+    DaemonInfo daemonInfo = this.daemonInfoGatheringThread.getLastData();
+
+    // It is possible there has been no gathering initially
+    if (daemonInfo == null) {
+      return;
+    }
+
+    // TODO: Get the start date right after ZClassic release - from first block!!!
+    final Date startDate = new Date("06 Nov 2016 02:00:00 GMT");
+    final Date nowDate = new Date(System.currentTimeMillis());
+
+    long fullTime = nowDate.getTime() - startDate.getTime();
+    long remainingTime = nowDate.getTime() - info.lastBlockDate.getTime();
+
+    String percentage = "100";
+    if (remainingTime > 20 * 60 * 1000) // TODO is this wrong? After 20 min we report 100% anyway
+    {
+      double dPercentage = 100d - (((double) remainingTime / (double) fullTime) * 100d);
+      if (dPercentage < 0) {
+        dPercentage = 0;
+      } else if (dPercentage > 100d) {
+        dPercentage = 100d;
+      }
+
+      //TODO #.00 until 100%
+      DecimalFormat df = new DecimalFormat("##0.##");
+      percentage = df.format(dPercentage);
+
+      // Also set a member that may be queried
+      this.blockchainPercentage = new Integer((int) dPercentage);
+    } else {
+      this.blockchainPercentage = 100;
+    }
+
+    // Just in case early on the call returns some junk date
+    if (info.lastBlockDate.before(startDate)) {
+      // TODO: write log that we fix minimum date! - this condition should not occur
+      info.lastBlockDate = startDate;
+    }
+
+    //String connections = " \u26D7";
+    String tickSymbol = " \u2705";
+    OS_TYPE os = OSUtil.getOSType();
+    // Handling special symbols on Mac OS/Windows
+    // TODO: isolate OS-specific symbol stuff in separate code
+    if ((os == OS_TYPE.MAC_OS) || (os == OS_TYPE.WINDOWS)) {
+      //connections = " \u21D4";
+      tickSymbol = " \u2606";
+    }
+
+    String tick = "<span style=\"font-weight:bold;color:green\">" + tickSymbol + "</span>";
+
+    String netColor = "black"; //"#808080";
+    if (info.numConnections > 2) {
+      netColor = "green";
+    } else if (info.numConnections > 0) {
+      netColor = "black";
+    }
+
+    String syncPercentageColor;
+    if (percentage.toString() == "100") {
+      syncPercentageColor = "green";
+    } else {
+      syncPercentageColor = "black";
+    }
+
+
+    DateFormat formatter = DateFormat.getDateTimeInstance();
+    String lastBlockDate = formatter.format(info.lastBlockDate);
+    StringBuilder stringBuilder = new StringBuilder();
+    stringBuilder.append("<html>");
+    stringBuilder.append("<span style=\"font-weight:bold;color:");
+    stringBuilder.append(netColor);
+    stringBuilder.append("\"> ");
+    if (info.numConnections == 1) {
+      stringBuilder.append("1 " + LOCAL_MSG_DAEMON_SINGLE_CONNECTION + "</span>");
+    } else if (info.numConnections > 1) {
+      stringBuilder.append(info.numConnections);
+      stringBuilder.append(" " + LOCAL_MSG_DAEMON_CONNECTIONS + "</span>");
+    } else {
+      stringBuilder.append(LOCAL_MSG_LOOKING_PEERS + "</span>");
+    }
+    stringBuilder.append("<br/><span style=\"font-weight:bold\">" + LOCAL_MSG_SYNC + " &nbsp;-&nbsp;</span><span style=\"font-weight:bold;color:");
+    stringBuilder.append(syncPercentageColor);
+    stringBuilder.append("\">");
+    stringBuilder.append(percentage);
+    stringBuilder.append("%</span><br/>");
+    stringBuilder.append("<span style=\"font-weight:bold\">" + LOCAL_MSG_BLOCK + "&nbsp;-&nbsp;");
+    stringBuilder.append(info.lastBlockHeight.trim());
+    stringBuilder.append("</span>");
+    stringBuilder.append(", " + LOCAL_MSG_MINED + " ");
+    stringBuilder.append(lastBlockDate);
+    stringBuilder.append("</span>");
+    String text =
+        stringBuilder.toString();
+    this.daemonStatusLabel.setText(text);
+  }
+
+
+  private void updateWalletStatusLabel()
+      throws WalletCallException, IOException, InterruptedException {
+    WalletBalance balance = this.walletBalanceGatheringThread.getLastData();
+
+    // It is possible there has been no gathering initially
+    if (balance == null) {
+      return;
+    }
+
+    // Format double numbers - else sometimes we get exponential notation 1E-4 ZEN
+    DecimalFormat df = new DecimalFormat("########0.00######");
+
+    String transparentBalance = df.format(balance.transparentBalance);
+    String privateBalance = df.format(balance.privateBalance);
+    String totalBalance = df.format(balance.totalBalance);
+
+    String transparentUCBalance = df.format(balance.transparentUnconfirmedBalance);
+    String privateUCBalance = df.format(balance.privateUnconfirmedBalance);
+    String totalUCBalance = df.format(balance.totalUnconfirmedBalance);
+
+    String color1 = transparentBalance.equals(transparentUCBalance) ? "" : "color:#cc3300;";
+    String color2 = privateBalance.equals(privateUCBalance) ? "" : "color:#cc3300;";
+    String color3 = totalBalance.equals(totalUCBalance) ? "" : "color:#cc3300;";
+
+    String text =
+        "<html><p text-align: right>" +
+            "<span style=\"" + color1 + "\">" + LOCAL_MSG_T_BALANCE + ": " +
+            transparentUCBalance + " BTCP </span><br/> " +
+            "<span style=\"" + color2 + "\">" + LOCAL_MSG_Z_BALANCE + ": " +
+            privateUCBalance + " BTCP </span><br/> " +
+            "<span style=\"" + color3 + "\">" + LOCAL_MSG_TOTAL_BALANCE +
+            totalUCBalance + " BTCP </span>"
+            + "</p></html>";
+
+    this.walletBalanceLabel.setText(text);
+
+    String toolTip = null;
+    if ((!transparentBalance.equals(transparentUCBalance)) ||
+        (!privateBalance.equals(privateUCBalance)) ||
+        (!totalBalance.equals(totalUCBalance))) {
+      toolTip = "<html>" +
+          LOCAL_MSG_UNCONFIRMED_TOOLTIP +
+          "<span style=\"font-size:5px\"><br/></span>" +
+          LOCAL_MSG_UNCONFIRMED_TOOLTIP_B + ": " + transparentBalance + " BTCP<br/>" +
+          LOCAL_MSG_UNCONFIRMED_TOOLTIP_Z + ": <span>" + privateBalance + " BTCP</span><br/>" +
+          "Total: <span style=\"font-weight:bold\">" + totalBalance + " BTCP</span>" +
+          "</html>";
+    }
+
+    this.walletBalanceLabel.setToolTipText(toolTip);
+
+    if (this.parentFrame.isVisible()) {
+      this.backupTracker.handleWalletBalanceUpdate(balance.totalBalance);
+    }
+  }
+
+
+  private void updateWalletTransactionsTable()
+      throws WalletCallException, IOException, InterruptedException {
+    String[][] newTransactionsData = this.transactionGatheringThread.getLastData();
+
+    // May be null - not even gathered once
+    if (newTransactionsData == null) {
+      return;
+    }
+
+    if (Util.arraysAreDifferent(lastTransactionsData, newTransactionsData)) {
+      Log.info("Updating table of transactions");
+      this.remove(transactionsTablePane);
+      this.add(transactionsTablePane = new JScrollPane(
+              transactionsTable = this.createTransactionsTable(newTransactionsData)),
+          BorderLayout.CENTER);
+    }
+
+    lastTransactionsData = newTransactionsData;
+
+    this.validate();
+    this.repaint();
+  }
+
+   
+
+  private JTable createTransactionsTable(String rowData[][])
+      throws WalletCallException, IOException, InterruptedException {
+    String columnNames[] = {LOCAL_MSG_MSTRNDE_STATUS, LOCAL_MSG_MSTRNDE_PROTOCOL, LOCAL_MSG_MSTRNDE_PAYEE, LOCAL_MSG_MSTRNDE_LASTSEEN, LOCAL_MSG_MSTRNDE_ACTIVETIME, LOCAL_MSG_MSTRNDE_LASTPAIDTIME, LOCAL_MSG_MSTRNDE_LASTBLOCK, LOCAL_MSG_MSTRNDE_IP};
+    JTable table = new TransactionTable(
+        rowData, columnNames, this.parentFrame, this.clientCaller, this.installationObserver);
+    table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+    table.getColumnModel().getColumn(0).setPreferredWidth(200);
+    table.getColumnModel().getColumn(1).setPreferredWidth(200);
+    table.getColumnModel().getColumn(2).setPreferredWidth(200);
+    table.getColumnModel().getColumn(3).setPreferredWidth(200);
+    table.getColumnModel().getColumn(4).setPreferredWidth(200);
+    table.getColumnModel().getColumn(5).setPreferredWidth(200);
+    table.getColumnModel().getColumn(6).setPreferredWidth(200);
+    table.getColumnModel().getColumn(7).setPreferredWidth(200);
+
+    return table;
+  }
+
+
+  private String[][] getTransactionsDataFromWallet()
+      throws WalletCallException, IOException, InterruptedException {
+    // Get available public+private transactions and unify them.
+    String[][] publicTransactions = this.clientCaller.getWalletPublicTransactions();
+    String[][] zReceivedTransactions = this.clientCaller.getWalletZReceivedTransactions();
+
+    String[][] allTransactions = new String[publicTransactions.length + zReceivedTransactions.length][];
+
+    int i = 0;
+
+    for (String[] t : publicTransactions) {
+      allTransactions[i++] = t;
+    }
+
+    for (String[] t : zReceivedTransactions) {
+      allTransactions[i++] = t;
+    }
+
+    // Sort transactions by date
+    Arrays.sort(allTransactions, (o1, o2) -> {
+      Date d1 = new Date(0);
+      if (!o1[4].equals("N/A")) {
+        d1 = new Date(Long.valueOf(o1[4]).longValue() * 1000L);
+      }
+
+      Date d2 = new Date(0);
+      if (!o2[4].equals("N/A")) {
+        d2 = new Date(Long.valueOf(o2[4]).longValue() * 1000L);
+      }
+
+      if (d1.equals(d2)) {
+        return 0;
+      } else {
+        return d2.compareTo(d1);
+      }
+    });
+
+
+    // Confirmation symbols
+    String confirmed = "\u2690";
+    String notConfirmed = "\u2691";
+
+    // Windows does not support the flag symbol (Windows 7 by default)
+    // TODO: isolate OS-specific symbol codes in a separate class
+    OS_TYPE os = OSUtil.getOSType();
+    if (os == OS_TYPE.WINDOWS) {
+      confirmed = " \u25B7";
+      notConfirmed = " \u25B6";
+    }
+
+    DecimalFormat df = new DecimalFormat("########0.00######");
+
+    // Change the direction and date etc. attributes for presentation purposes
+    for (String[] trans : allTransactions) {
+      // Direction
+      if (trans[1].equals(daemon_txn_receive)) {
+        trans[1] = "\u21E8 " + LOCAL_MSG_IN;
+      } else if (trans[1].equals(daemon_txn_send)) {
+        trans[1] = "\u21E6 " + LOCAL_MSG_OUT;
+      } else if (trans[1].equals(daemon_txn_mined)) {
+        trans[1] = "\u2692\u2699 " + LOCAL_MSG_MINED;
+      } else if (trans[1].equals(daemon_txn_unconfirmed)) {
+        trans[1] = "\u2696 " + LOCAL_MSG_IMMATURE;
+      }
+      ;
+
+      // Date
+      if (!trans[4].equals("N/A")) {
+        trans[4] = new Date(Long.valueOf(trans[4]).longValue() * 1000L).toLocaleString();
+      }
+
+      // Amount
+      try {
+        double amount = Double.valueOf(trans[3]);
+        if (amount < 0d) {
+          amount = -amount;
         }
+        trans[3] = df.format(amount);
+      } catch (NumberFormatException nfe) {
+        Log.error("Error occurred while formatting amount: " + trans[3] +
+            " - " + nfe.getMessage() + "!");
+      }
+
+      // Confirmed?
+      try {
+        boolean isConfirmed = !trans[2].trim().equals("0");
+
+        trans[2] = isConfirmed ? (LOCAL_MSG_YES + " " + confirmed) : (LOCAL_MSG_NO + "  " + notConfirmed);
+      } catch (NumberFormatException nfe) {
+        Log.error("Error occurred while formatting confirmations: " + trans[2] +
+            " - " + nfe.getMessage() + "!");
+      }
     }
+    String[][] mnListArrays = this.clientCaller.getMasternodeList();
 
-    private final List<AddressBookEntry> entries = new ArrayList<>();
-
-    private final Set<String> names = new HashSet<>();
-
-    private JTable table;
-
-    // private JButton sendCashButton, deleteContactButton, copyToClipboardButton, getMasterNodeList;
-    private JButton sendCashButton, deleteContactButton, copyToClipboardButton;
-
-    // // private final SendCashPanel sendCashPanel;
-    private final JTabbedPane tabs;
-
-    private JTable buildTablePanel(String rowData[][]) throws Exception {
-
-        String columnNames[] = {LOCAL_MSG_MSTRNDE_STATUS,LOCAL_MSG_MSTRNDE_PROTOCOL,LOCAL_MSG_MSTRNDE_PAYEE,LOCAL_MSG_MSTRNDE_LASTSEEN, LOCAL_MSG_MSTRNDE_ACTIVETIME, LOCAL_MSG_MSTRNDE_LASTPAIDTIME, LOCAL_MSG_MSTRNDE_LASTBLOCK, LOCAL_MSG_MSTRNDE_IP};
-
-        JTable table = new TransactionTable(rowData, columnNames, this.parentFrame, this.clientCaller, this.installationObserver);
-
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-        table.getColumnModel().getColumn(0).setPreferredWidth(150);
-        table.getColumnModel().getColumn(1).setPreferredWidth(150);
-        table.getColumnModel().getColumn(2).setPreferredWidth(150);
-        table.getColumnModel().getColumn(3).setPreferredWidth(150);
-        table.getColumnModel().getColumn(4).setPreferredWidth(150);
-        table.getColumnModel().getColumn(5).setPreferredWidth(150);
-        table.getColumnModel().getColumn(6).setPreferredWidth(150);
-        table.getColumnModel().getColumn(7).setPreferredWidth(150);
-
-        // table.getColumnModel().getColumn(5).setPreferredWidth(800);
-
-        // table = new JTable(new AddressBookTableModel(), new DefaultTableColumnModel());
-        // TableColumn masternodeColumn = new TableColumn(0);
-        // TableColumn addressColumn = new TableColumn(1);
-        // table.addColumn(masternodeColumn);
-        // // table.addColumn(addressColumn);
-        // table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // one at a time
-        // table.getSelectionModel().addListSelectionListener(new AddressListSelectionListener());
-        // table.addMouseListener(new AddressMouseListener());
-
-        // // TODO: isolate in utility
-        // TableCellRenderer renderer = table.getCellRenderer(0, 0);
-        // Component comp = renderer.getTableCellRendererComponent(table, "123", false, false, 0, 0);
-        // table.setRowHeight(new Double(comp.getPreferredSize().getHeight()).intValue() + 2);
-
-        // JScrollPane scrollPane = new JScrollPane(table);
-
-
-        return table;
-    }
-
-    private JPanel buildButtonsPanel() {
-        JPanel panel = new JPanel();
-        panel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
-        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 3, 3));
-
-        // JButton newContactButton = new JButton(LOCAL_MENU_NEW_CONTACT);
-        // newContactButton.addActionListener(new NewContactActionListener());
-        // panel.add(newContactButton);
-
-        JButton getMasterNodeListButton = new JButton(MASTERNODE_LIST);
-        getMasterNodeListButton.addActionListener(new GetMasternodeListener());
-        panel.add(getMasterNodeListButton);
-
-        // copyToClipboardButton = new JButton(LOCAL_MENU_COPY_ADDRESS_TO_CLIPBOARD);
-        // copyToClipboardButton.setEnabled(false);
-        // copyToClipboardButton.addActionListener(new CopyToClipboardActionListener());
-        // panel.add(copyToClipboardButton);
-
-        // deleteContactButton = new JButton(LOCAL_MENU_DELETE_CONTACT);
-        // deleteContactButton.setEnabled(false);
-        // deleteContactButton.addActionListener(new DeleteAddressActionListener());
-        // panel.add(deleteContactButton);
-
-        return panel;
-    }
-
-    public MasternodePanel(JFrame parentFrame, 
-                           BTCPClientCaller clientCaller, 
-                           JTabbedPane tabs) 
-                           throws IOException, InterruptedException, WalletCallException {
-        // // this.sendCashPanel = sendCashPanel;
-        this.parentFrame = parentFrame;
-        // this.installationObserver = installationObserver;
-        this.clientCaller = clientCaller;
-        this.tabs = tabs;
-        BoxLayout boxLayout = new BoxLayout(this, BoxLayout.Y_AXIS);
-        setLayout(boxLayout);
-        add(buildButtonsPanel());
-
-        JPanel masternodeList = this;
-        masternodeList.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-        masternodeList.setLayout(new BorderLayout(0, 0));
-        masternodeData = this.clientCaller.getMasternodeArray();
-
-        try{
-            masternodeList.add(masternodeTablePane = new JScrollPane(
-                masternodeTable = this.buildTablePanel(masternodeData)));
-        }catch(Exception e){
-            System.out.println(e);
-        }
-
-        // add(buildTablePanel());
-
-
-
-        loadEntriesFromDisk();
-    }
-
-    private void loadEntriesFromDisk() throws IOException {
-        File addressBookFile = new File(OSUtil.getSettingsDirectory(), ADDRESS_BOOK_FILE);
-        if (!addressBookFile.exists())
-            return;
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(addressBookFile))) {
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                // format is address,name - this way name can contain commas ;-)
-                int addressEnd = line.indexOf(',');
-                if (addressEnd < 0)
-                    throw new IOException(LOCAL_MSG_ADDRESS_BOOK_CORRUPT);
-                String address = line.substring(0, addressEnd);
-                String name = line.substring(addressEnd + 1);
-                if (!names.add(name))
-                    continue; // duplicate
-                entries.add(new AddressBookEntry(name, address));
-            }
-        }
-
-        Log.info("loaded " + entries.size() + " address book entries");
-    }
-
-    private void saveEntriesToDisk() {
-        Log.info("Saving " + entries.size() + " addresses");
-        try {
-            File addressBookFile = new File(OSUtil.getSettingsDirectory(), ADDRESS_BOOK_FILE);
-            try (PrintWriter printWriter = new PrintWriter(new FileWriter(addressBookFile))) {
-                for (AddressBookEntry entry : entries)
-                    printWriter.println(entry.address + "," + entry.name);
-            }
-        } catch (IOException bad) {
-            // TODO: report error to the user!
-            Log.error("Saving Address Book Failed!!!!", bad);
-        }
-    }
-
-    private class DeleteAddressActionListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            int row = table.getSelectedRow();
-            if (row < 0)
-                return;
-            AddressBookEntry entry = entries.get(row);
-            entries.remove(row);
-            names.remove(entry.name);
-            deleteContactButton.setEnabled(false);
-            sendCashButton.setEnabled(false);
-            copyToClipboardButton.setEnabled(false);
-            table.repaint();
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    saveEntriesToDisk();
-                }
-            });
-        }
-    }
-
-    private class CopyToClipboardActionListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            int row = table.getSelectedRow();
-            if (row < 0)
-                return;
-            AddressBookEntry entry = entries.get(row);
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            clipboard.setContents(new StringSelection(entry.address), null);
-        }
-    }
-
-    private class GetMasternodeListener implements ActionListener{
-        public void actionPerformed(ActionEvent e) {
-
-            // String[][] mnArray = null;
-            try{
-                masternodeData = MasternodePanel.this.clientCaller.getMasternodeArray();
-            } catch(Exception ex){
-                // TODO: handle exceptions properly
-                System.out.println(ex);
-            }
-
-
-        }
-    }
-
-    private class NewContactActionListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            String name = (String) JOptionPane.showInputDialog(MasternodePanel.this, LOCAL_MSG_INPUT_CONTACT_NAME,
-                    LOCAL_MSG_CREATE_CONTACT_STEP_1, JOptionPane.PLAIN_MESSAGE, null, null, "");
-            if (name == null || "".equals(name))
-                return; // cancelled
-
-            // TODO: check for dupes
-            names.add(name);
-
-            String address = (String) JOptionPane.showInputDialog(MasternodePanel.this,
-                    LOCAL_MSG_INPUT_CONTACT_ADDRESS + " " + name, LOCAL_MSG_CREATE_CONTACT_STEP_2,
-                    JOptionPane.PLAIN_MESSAGE, null, null, "");
-            if (address == null || "".equals(address))
-                return; // cancelled
-            entries.add(new AddressBookEntry(name, address));
-
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                    table.invalidate();
-                    table.revalidate();
-                    table.repaint();
-
-                    saveEntriesToDisk();
-                }
-            });
-        }
-    }
-
-    // private class SendCashActionListener implements ActionListener {
-    //     public void actionPerformed(ActionEvent e) {
-    //         int row = table.getSelectedRow();
-    //         if (row < 0)
-    //             return;
-    //         AddressBookEntry entry = entries.get(row);
-    //         // sendCashPanel.prepareForSending(entry.address);
-    //         tabs.setSelectedIndex(2);
-    //     }
-    // }
-
-    // private class AddressMouseListener extends MouseAdapter {
-
-    //     @Override
-    //     public void mousePressed(MouseEvent e) {
-    //         if (e.isConsumed() || (!e.isPopupTrigger()))
-    //             return;
-
-    //         int row = table.rowAtPoint(e.getPoint());
-    //         int column = table.columnAtPoint(e.getPoint());
-    //         table.changeSelection(row, column, false, false);
-    //         AddressBookEntry entry = entries.get(row);
-
-    //         JPopupMenu menu = new JPopupMenu();
-
-    //         JMenuItem sendCash = new JMenuItem(LOCAL_MSG_SEND_BTCP + " " + entry.name);
-    //         sendCash.addActionListener(new SendCashActionListener());
-    //         menu.add(sendCash);
-
-    //         JMenuItem copyAddress = new JMenuItem(LOCAL_MENU_COPY_ADDRESS_TO_CLIPBOARD);
-    //         copyAddress.addActionListener(new CopyToClipboardActionListener());
-    //         menu.add(copyAddress);
-
-    //         JMenuItem deleteEntry = new JMenuItem(
-    //                 LOCAL_MSG_DELETE_CONJUGATED + " " + entry.name + " " + LOCAL_MSG_FROM_CONTACTS);
-    //         deleteEntry.addActionListener(new DeleteAddressActionListener());
-    //         menu.add(deleteEntry);
-
-    //         menu.show(e.getComponent(), e.getPoint().x, e.getPoint().y);
-    //         e.consume();
-    //     }
-
-    //     public void mouseReleased(MouseEvent e) {
-    //         if ((!e.isConsumed()) && e.isPopupTrigger()) {
-    //             mousePressed(e);
-    //         }
-    //     }
-    // }
-
-    // private class AddressListSelectionListener implements ListSelectionListener {
-
-    //     @Override
-    //     public void valueChanged(ListSelectionEvent e) {
-    //         int row = table.getSelectedRow();
-    //         if (row < 0) {
-    //             sendCashButton.setEnabled(false);
-    //             deleteContactButton.setEnabled(false);
-    //             copyToClipboardButton.setEnabled(false);
-    //             return;
-    //         }
-    //         String name = entries.get(row).name;
-    //         sendCashButton.setText(LOCAL_MSG_SEND_BTCP + " " + name);
-    //         sendCashButton.setEnabled(true);
-    //         deleteContactButton.setText(LOCAL_MSG_DELETE_CONTACT + " " + name);
-    //         deleteContactButton.setEnabled(true);
-    //         copyToClipboardButton.setEnabled(true);
-    //     }
-
-    // }
-
-    // private class AddressBookTableModel extends AbstractTableModel {
-
-    //     @Override
-    //     public int getRowCount() {
-    //         return entries.size();
-    //     }
-
-    //     @Override
-    //     public int getColumnCount() {
-    //         return 2;
-    //     }
-
-    //     @Override
-    //     public String getColumnName(int columnIndex) {
-    //         switch (columnIndex) {
-    //         case 0:
-    //             return LOCAL_MENU_COLUMN_NAME;
-    //         case 1:
-    //             return LOCAL_MENU_COLUMN_ADDRESS;
-    //         default:
-    //             throw new IllegalArgumentException("Invalid Column: " + columnIndex);
-    //         }
-    //     }
-
-    //     @Override
-    //     public Class<?> getColumnClass(int columnIndex) {
-    //         return String.class;
-    //     }
-
-    //     @Override
-    //     public boolean isCellEditable(int rowIndex, int columnIndex) {
-    //         return false;
-    //     }
-
-    //     @Override
-    //     public Object getValueAt(int rowIndex, int columnIndex) {
-    //         AddressBookEntry entry = entries.get(rowIndex);
-    //         switch (columnIndex) {
-    //         case 0:
-    //             return entry.name;
-    //         case 1:
-    //             return entry.address;
-    //         default:
-    //             throw new IllegalArgumentException("Bad Column: " + columnIndex);
-    //         }
-    //     }
-    // }
-}
+    // return allTransactions;
+    return mnListArrays;
+  }
+} // End class
