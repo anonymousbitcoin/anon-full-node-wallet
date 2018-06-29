@@ -48,7 +48,7 @@ public class MasternodePanel
 
   private JTable transactionsTable = null;
   private JScrollPane transactionsTablePane = null;
-  private String[][] lastTransactionsData = null;
+  private String[][] lastMasternodesData = null;
   private DataGatheringThread<String[][]> transactionGatheringThread = null;
 
   private static final String small_icon_resource = "images/btcp-44.png";
@@ -137,9 +137,9 @@ public class MasternodePanel
     // dashboard.add(balanceStatusPanel, BorderLayout.NORTH);
 
     // Table of transactions
-    lastTransactionsData = getMasternodeListFromRPC();
+    lastMasternodesData = getMasternodeListFromRPC();
     dashboard.add(transactionsTablePane = new JScrollPane(
-            transactionsTable = this.createTransactionsTable(lastTransactionsData)),BorderLayout.CENTER);
+            transactionsTable = this.createMasternodesTable(lastMasternodesData)),BorderLayout.CENTER);
 
     // Lower panel with installation status
     // JPanel installationStatusPanel = new JPanel();
@@ -219,15 +219,15 @@ public class MasternodePanel
         this.errorReporter, 20000);
     this.threads.add(this.transactionGatheringThread);
 
-    // ActionListener alTransactions = e -> {
+    // ActionListener alMasternodes = e -> {
     //   try {
-    //     MasternodePanel.this.updateWalletTransactionsTable();
+    //     MasternodePanel.this.updateWalletMasternodesTable();
     //   } catch (Exception ex) {
     //     Log.error("Unexpected error: ", ex);
     //     MasternodePanel.this.errorReporter.reportError(ex);
     //   }
     // };
-    // t = new Timer(5000, alTransactions);
+    // t = new Timer(5000, alMasternodes);
     // t.start();
     // this.timers.add(t);
 
@@ -423,24 +423,24 @@ public class MasternodePanel
   // }
 
 
-  // private void updateWalletTransactionsTable()
+  // private void updateWalletMasternodesTable()
   //     throws WalletCallException, IOException, InterruptedException {
-  //   String[][] newTransactionsData = this.transactionGatheringThread.getLastData();
+  //   String[][] newMasternodesData = this.transactionGatheringThread.getLastData();
 
   //   // May be null - not even gathered once
-  //   if (newTransactionsData == null) {
+  //   if (newMasternodesData == null) {
   //     return;
   //   }
 
-  //   if (Util.arraysAreDifferent(lastTransactionsData, newTransactionsData)) {
+  //   if (Util.arraysAreDifferent(lastMasternodesData, newMasternodesData)) {
   //     Log.info("Updating table of transactions");
   //     this.remove(transactionsTablePane);
   //     this.add(transactionsTablePane = new JScrollPane(
-  //             transactionsTable = this.createTransactionsTable(newTransactionsData)),
+  //             transactionsTable = this.createMasternodesTable(newMasternodesData)),
   //         BorderLayout.CENTER);
   //   }
 
-  //   lastTransactionsData = newTransactionsData;
+  //   lastMasternodesData = newMasternodesData;
 
   //   this.validate();
   //   this.repaint();
@@ -448,10 +448,10 @@ public class MasternodePanel
 
    
 
-  private JTable createTransactionsTable(String rowData[][])
+  private JTable createMasternodesTable(String rowData[][])
       throws WalletCallException, IOException, InterruptedException {
     String columnNames[] = {LOCAL_MSG_MSTRNDE_ALIAS, LOCAL_MSG_MSTRNDE_STATUS, LOCAL_MSG_MSTRNDE_PROTOCOL, LOCAL_MSG_MSTRNDE_PAYEE, LOCAL_MSG_MSTRNDE_LASTSEEN, LOCAL_MSG_MSTRNDE_ACTIVETIME, LOCAL_MSG_MSTRNDE_LASTPAIDTIME, LOCAL_MSG_MSTRNDE_LASTBLOCK, LOCAL_MSG_MSTRNDE_IP};
-    JTable table = new TransactionTable(
+    JTable table = new MasternodeTable(
         rowData, columnNames, this.parentFrame, this.clientCaller, this.installationObserver);
     table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
     table.getColumnModel().getColumn(0).setPreferredWidth(300);
@@ -471,23 +471,23 @@ public class MasternodePanel
   private String[][] getMasternodeListFromRPC()
       throws WalletCallException, IOException, InterruptedException {
     // Get available public+private transactions and unify them.
-    // String[][] publicTransactions = this.clientCaller.getWalletPublicTransactions();
-    // String[][] zReceivedTransactions = this.clientCaller.getWalletZReceivedTransactions();
+    // String[][] publicMasternodes = this.clientCaller.getWalletPublicMasternodes();
+    // String[][] zReceivedMasternodes = this.clientCaller.getWalletZReceivedMasternodes();
 
-    // String[][] allTransactions = new String[publicTransactions.length + zReceivedTransactions.length][];
+    // String[][] allMasternodes = new String[publicMasternodes.length + zReceivedMasternodes.length][];
 
     // int i = 0;
 
-    // for (String[] t : publicTransactions) {
-    //   allTransactions[i++] = t;
+    // for (String[] t : publicMasternodes) {
+    //   allMasternodes[i++] = t;
     // }
 
-    // for (String[] t : zReceivedTransactions) {
-    //   allTransactions[i++] = t;
+    // for (String[] t : zReceivedMasternodes) {
+    //   allMasternodes[i++] = t;
     // }
 
     // // Sort transactions by date
-    // Arrays.sort(allTransactions, (o1, o2) -> {
+    // Arrays.sort(allMasternodes, (o1, o2) -> {
     //   Date d1 = new Date(0);
     //   if (!o1[4].equals("N/A")) {
     //     d1 = new Date(Long.valueOf(o1[4]).longValue() * 1000L);
@@ -521,7 +521,7 @@ public class MasternodePanel
     // DecimalFormat df = new DecimalFormat("########0.00######");
 
     // // Change the direction and date etc. attributes for presentation purposes
-    // for (String[] trans : allTransactions) {
+    // for (String[] trans : allMasternodes) {
     //   // Direction
     //   if (trans[1].equals(daemon_txn_receive)) {
     //     trans[1] = "\u21E8 " + LOCAL_MSG_IN;
@@ -563,7 +563,7 @@ public class MasternodePanel
     // }
     String[][] mnListArrays = this.clientCaller.getMasternodeList();
 
-    // return allTransactions;
+    // return allMasternodes;
     return mnListArrays;
   }
 } // End class
