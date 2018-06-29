@@ -185,7 +185,7 @@ public class BTCPClientCaller {
 
         String[][] finalArr = new String [objResponse.size()][];
         for(int i = 0 ; i < objResponse.size() ; i ++){
-            finalArr[i] = new String[8];
+            finalArr[i] = new String[9];
             JsonArray trans = objResponse.get(i).asArray();
 
             finalArr[i][0] = trans.get(0).toString();
@@ -196,6 +196,7 @@ public class BTCPClientCaller {
             finalArr[i][5] = trans.get(5).toString();
             finalArr[i][6] = trans.get(6).toString();
             finalArr[i][7] = trans.get(7).toString();
+            finalArr[i][8] = trans.get(8).toString();
             // String[] ar = finalArr[i];
             // for(int j = 0; j < ar.length; j++) {
             //     Log.info("----------------------------------\n");
