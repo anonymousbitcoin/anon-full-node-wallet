@@ -147,7 +147,28 @@ public class MyMasternodePanel
 
     dashboard.add(buttonPanel, BorderLayout.SOUTH);
 
-    
+    startAliasButton.addActionListener(e -> {
+      try{
+        String name = (String) JOptionPane.showInputDialog(MyMasternodePanel.this,
+        "Here",
+        "Another",
+        JOptionPane.PLAIN_MESSAGE,
+        null,
+        null,
+        "");
+
+        if(name == null || "".equals(name)){
+          return;
+        }
+        Log.info("+++++++++++++++++++++++");
+        Log.info(name);
+        String response = this.clientCaller.startMasternodeByAlias(name);
+        Log.info(response.toString());
+      }catch (Exception ex) {
+        Log.error("Error in startAlias:" + ex);
+      }
+    });
+
     ActionListener updateTimer = e -> {
       try
       {
@@ -160,7 +181,7 @@ public class MyMasternodePanel
         }
         
       } catch (Exception ex) {
-        Log.error("ey:" + ex);
+        Log.error("Error in updateTimer:" + ex);
       }
     };
 

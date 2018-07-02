@@ -432,6 +432,11 @@ public class BTCPClientCaller {
         return result.toString(WriterConfig.PRETTY_PRINT);
     }
 
+    public synchronized String startMasternodeByAlias(String aliasName) throws WalletCallException, IOException, InterruptedException {
+        JsonObject result = this.executeCommandAndGetJsonObject("masternode", "start-alias", aliasName);
+        return result.toString(WriterConfig.PRETTY_PRINT);
+    }
+
 
     public synchronized String getRawTransaction(String txID)
             throws WalletCallException, IOException, InterruptedException {
