@@ -164,7 +164,7 @@ public class BTCPWalletUI extends JFrame {
         this.walletOps = new WalletOperations(
             this, tabs, addresses, clientCaller, errorReporter);
 
-        int width = 870;
+        int width = 1000;
 
         OS_TYPE os = OSUtil.getOSType();
 

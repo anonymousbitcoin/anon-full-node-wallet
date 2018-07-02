@@ -11,6 +11,7 @@ import org.btcprivate.wallets.fullnode.util.*;
 import org.btcprivate.wallets.fullnode.util.OSUtil.OS_TYPE;
 
 import javax.swing.*;
+import javax.swing.border.EtchedBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -113,6 +114,61 @@ public class MyMasternodePanel
     dashboard.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
     dashboard.setLayout(new BorderLayout(0, 0));
 
+    JPanel buttonPanel = new JPanel();
+    buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 3, 3));
+    buttonPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+
+    // JButton startAliasButton = new JButton(LOCAL_MENU_NEW_B_ADDRESS);
+    JButton startAliasButton = new JButton("Start Alias");
+    buttonPanel.add(startAliasButton);
+
+    // JButton startAllButton = new JButton(LOCAL_MENU_NEW_Z_ADDRESS);
+    JButton startAllButton = new JButton("Start All");
+    buttonPanel.add(startAllButton);
+
+    // JButton startMissing = new JButton(LOCAL_MENU_REFRESH);
+    JButton startMissing = new JButton("Start Missing");
+    buttonPanel.add(startMissing);
+
+    // JButton refreshButton = new JButton(LOCAL_MENU_REFRESH);
+    JButton refreshButton = new JButton("Refresh Status");
+    buttonPanel.add(refreshButton);
+
+    JLabel updateLabel = new JLabel("Updating status: ");
+    buttonPanel.add(updateLabel);
+
+    dashboard.add(buttonPanel, BorderLayout.SOUTH);
+
+    refreshButton.addActionListener(e -> {
+      try{
+        Log.info("clicked!");
+        String response = this.clientCaller.executeMnsyncReset();
+        JLabel updatingLabel = new JLabel(response);
+        buttonPanel.add(updatingLabel);
+        Log.info(response);
+      } catch (Exception ex)
+      {
+        Log.error("KEV ERROR: " + ex);
+      }
+    });
+
+    startAllButton.addActionListener(e -> {
+      try{
+        String response = this.clientCaller.startAllMasternodes();
+        Log.info(response.toString());
+        // JPanel responsePanel = new JPanel();
+        // responsePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 3, 3));
+        // JLabel responseLabel = new JLabel(response.toString());
+        // responsePanel.add(responseLabel);
+        // dashboard.add(responsePanel, BorderLayout.SOUTH);
+
+      }catch (Exception ex){
+        Log.error("Error in startAllButton: " + ex);
+      }
+    });
+
+
+
     // Upper panel with wallet balance
     // JPanel balanceStatusPanel = new JPanel();
     // // Use border layout to have balances to the left
@@ -159,6 +215,7 @@ public class MyMasternodePanel
     //     this.errorReporter, 2000, true);
     // this.threads.add(this.daemonInfoGatheringThread);
 
+    // TODO USE THIS FOR SOMETHING ELSE LATER
     // ActionListener alDeamonStatus = e -> {
     //   try {
     //     MyMasternodePanel.this.updateStatusLabels();
@@ -210,24 +267,26 @@ public class MyMasternodePanel
           long start = System.currentTimeMillis();
           String[][] data = MyMasternodePanel.this.getMasternodeListFromRPC();
           long end = System.currentTimeMillis();
-          Log.info("Gathering of dashboard wallet transactions table data done in " + (end - start) + "ms.");
+          Log.info("Gathering MY MASTERNODES: " + (end - start) + "ms.");
+
+          Log.info(data[1][5].toString());
 
           return data;
         },
         this.errorReporter, 20000);
     this.threads.add(this.transactionGatheringThread);
 
-    // ActionListener alMasternodes = e -> {
-    //   try {
-    //     MyMasternodePanel.this.updateWalletMasternodesTable();
-    //   } catch (Exception ex) {
-    //     Log.error("Unexpected error: ", ex);
-    //     MyMasternodePanel.this.errorReporter.reportError(ex);
-    //   }
-    // };
-    // t = new Timer(5000, alMasternodes);
-    // t.start();
-    // this.timers.add(t);
+    ActionListener alMasternodes = e -> {
+      try {
+        MyMasternodePanel.this.updateMasternodesTable();
+      } catch (Exception ex) {
+        Log.error("Unexpected error: ", ex);
+        MyMasternodePanel.this.errorReporter.reportError(ex);
+      }
+    };
+    Timer t = new Timer(5000, alMasternodes);
+    t.start();
+    this.timers.add(t);
 
     // Thread and timer to update the network and blockchain details
     // this.netInfoGatheringThread = new DataGatheringThread<>(
@@ -255,113 +314,6 @@ public class MyMasternodePanel
     // netAndBlockchainTimer.start();
     // this.timers.add(netAndBlockchainTimer);
   }
-
-  // private void updateStatusLabels()
-  //     throws IOException, InterruptedException {
-  //   NetworkAndBlockchainInfo info = this.netInfoGatheringThread.getLastData();
-
-  //   // It is possible there has been no gathering initially
-  //   if (info == null) {
-  //     return;
-  //   }
-
-  //   DaemonInfo daemonInfo = this.daemonInfoGatheringThread.getLastData();
-
-  //   // It is possible there has been no gathering initially
-  //   if (daemonInfo == null) {
-  //     return;
-  //   }
-
-  //   // TODO: Get the start date right after ZClassic release - from first block!!!
-  //   final Date startDate = new Date("06 Nov 2016 02:00:00 GMT");
-  //   final Date nowDate = new Date(System.currentTimeMillis());
-
-  //   long fullTime = nowDate.getTime() - startDate.getTime();
-  //   long remainingTime = nowDate.getTime() - info.lastBlockDate.getTime();
-
-  //   String percentage = "100";
-  //   if (remainingTime > 20 * 60 * 1000) // TODO is this wrong? After 20 min we report 100% anyway
-  //   {
-  //     double dPercentage = 100d - (((double) remainingTime / (double) fullTime) * 100d);
-  //     if (dPercentage < 0) {
-  //       dPercentage = 0;
-  //     } else if (dPercentage > 100d) {
-  //       dPercentage = 100d;
-  //     }
-
-  //     //TODO #.00 until 100%
-  //     DecimalFormat df = new DecimalFormat("##0.##");
-  //     percentage = df.format(dPercentage);
-
-  //     // Also set a member that may be queried
-  //     this.blockchainPercentage = new Integer((int) dPercentage);
-  //   } else {
-  //     this.blockchainPercentage = 100;
-  //   }
-
-  //   // Just in case early on the call returns some junk date
-  //   if (info.lastBlockDate.before(startDate)) {
-  //     // TODO: write log that we fix minimum date! - this condition should not occur
-  //     info.lastBlockDate = startDate;
-  //   }
-
-  //   //String connections = " \u26D7";
-  //   String tickSymbol = " \u2705";
-  //   OS_TYPE os = OSUtil.getOSType();
-  //   // Handling special symbols on Mac OS/Windows
-  //   // TODO: isolate OS-specific symbol stuff in separate code
-  //   if ((os == OS_TYPE.MAC_OS) || (os == OS_TYPE.WINDOWS)) {
-  //     //connections = " \u21D4";
-  //     tickSymbol = " \u2606";
-  //   }
-
-  //   String tick = "<span style=\"font-weight:bold;color:green\">" + tickSymbol + "</span>";
-
-  //   String netColor = "black"; //"#808080";
-  //   if (info.numConnections > 2) {
-  //     netColor = "green";
-  //   } else if (info.numConnections > 0) {
-  //     netColor = "black";
-  //   }
-
-  //   String syncPercentageColor;
-  //   if (percentage.toString() == "100") {
-  //     syncPercentageColor = "green";
-  //   } else {
-  //     syncPercentageColor = "black";
-  //   }
-
-
-  //   DateFormat formatter = DateFormat.getDateTimeInstance();
-  //   String lastBlockDate = formatter.format(info.lastBlockDate);
-  //   StringBuilder stringBuilder = new StringBuilder();
-  //   stringBuilder.append("<html>");
-  //   stringBuilder.append("<span style=\"font-weight:bold;color:");
-  //   stringBuilder.append(netColor);
-  //   stringBuilder.append("\"> ");
-  //   if (info.numConnections == 1) {
-  //     stringBuilder.append("1 " + LOCAL_MSG_DAEMON_SINGLE_CONNECTION + "</span>");
-  //   } else if (info.numConnections > 1) {
-  //     stringBuilder.append(info.numConnections);
-  //     stringBuilder.append(" " + LOCAL_MSG_DAEMON_CONNECTIONS + "</span>");
-  //   } else {
-  //     stringBuilder.append(LOCAL_MSG_LOOKING_PEERS + "</span>");
-  //   }
-  //   stringBuilder.append("<br/><span style=\"font-weight:bold\">" + LOCAL_MSG_SYNC + " &nbsp;-&nbsp;</span><span style=\"font-weight:bold;color:");
-  //   stringBuilder.append(syncPercentageColor);
-  //   stringBuilder.append("\">");
-  //   stringBuilder.append(percentage);
-  //   stringBuilder.append("%</span><br/>");
-  //   stringBuilder.append("<span style=\"font-weight:bold\">" + LOCAL_MSG_BLOCK + "&nbsp;-&nbsp;");
-  //   stringBuilder.append(info.lastBlockHeight.trim());
-  //   stringBuilder.append("</span>");
-  //   stringBuilder.append(", " + LOCAL_MSG_MINED + " ");
-  //   stringBuilder.append(lastBlockDate);
-  //   stringBuilder.append("</span>");
-  //   String text =
-  //       stringBuilder.toString();
-  //   this.daemonStatusLabel.setText(text);
-  // }
 
 
   // private void updateWalletStatusLabel()
@@ -421,28 +373,28 @@ public class MyMasternodePanel
   // }
 
 
-  // private void updateWalletMasternodesTable()
-  //     throws WalletCallException, IOException, InterruptedException {
-  //   String[][] newMasternodesData = this.transactionGatheringThread.getLastData();
+  private void updateMasternodesTable()
+      throws WalletCallException, IOException, InterruptedException {
+    String[][] newMasternodesData = this.transactionGatheringThread.getLastData();
 
-  //   // May be null - not even gathered once
-  //   if (newMasternodesData == null) {
-  //     return;
-  //   }
+    // May be null - not even gathered once
+    if (newMasternodesData == null) {
+      return;
+    }
 
-  //   if (Util.arraysAreDifferent(lastMasternodesData, newMasternodesData)) {
-  //     Log.info("Updating table of transactions");
-  //     this.remove(transactionsTablePane);
-  //     this.add(transactionsTablePane = new JScrollPane(
-  //             transactionsTable = this.createMasternodesTable(newMasternodesData)),
-  //         BorderLayout.CENTER);
-  //   }
+    if (Util.arraysAreDifferent(lastMasternodesData, newMasternodesData)) {
+      Log.info("Updating table of transactions");
+      this.remove(transactionsTablePane);
+      this.add(transactionsTablePane = new JScrollPane(
+              transactionsTable = this.createMasternodesTable(newMasternodesData)),
+          BorderLayout.CENTER);
+    }
 
-  //   lastMasternodesData = newMasternodesData;
+    lastMasternodesData = newMasternodesData;
 
-  //   this.validate();
-  //   this.repaint();
-  // }
+    this.validate();
+    this.repaint();
+  }
 
 
   private JTable createMasternodesTable(String rowData[][])

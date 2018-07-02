@@ -422,6 +422,16 @@ public class BTCPClientCaller {
                 "keypoolrefill", String.valueOf(count));
     }
 
+    public synchronized String executeMnsyncReset() throws WalletCallException, IOException, InterruptedException {
+        String result = this.executeCommandAndGetSingleStringResponse("mnsync", "reset");
+        return result;
+    }
+
+    public synchronized String startAllMasternodes() throws WalletCallException, IOException, InterruptedException {
+        JsonObject result = this.executeCommandAndGetJsonObject("masternode", "start-all");
+        return result.toString(WriterConfig.PRETTY_PRINT);
+    }
+
 
     public synchronized String getRawTransaction(String txID)
             throws WalletCallException, IOException, InterruptedException {

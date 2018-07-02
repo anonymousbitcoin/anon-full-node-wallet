@@ -212,24 +212,24 @@ public class MasternodePanel
           long start = System.currentTimeMillis();
           String[][] data = MasternodePanel.this.getMasternodeListFromRPC();
           long end = System.currentTimeMillis();
-          Log.info("Gathering of dashboard wallet transactions table data done in " + (end - start) + "ms.");
+          Log.info("Refreshing Master node list " + (end - start) + "ms.");
 
           return data;
         },
         this.errorReporter, 20000);
     this.threads.add(this.transactionGatheringThread);
 
-    // ActionListener alMasternodes = e -> {
-    //   try {
-    //     MasternodePanel.this.updateWalletMasternodesTable();
-    //   } catch (Exception ex) {
-    //     Log.error("Unexpected error: ", ex);
-    //     MasternodePanel.this.errorReporter.reportError(ex);
-    //   }
-    // };
-    // t = new Timer(5000, alMasternodes);
-    // t.start();
-    // this.timers.add(t);
+    ActionListener alMasternodes = e -> {
+      try {
+        MasternodePanel.this.updateMasternodesTable();
+      } catch (Exception ex) {
+        Log.error("Unexpected error: ", ex);
+        MasternodePanel.this.errorReporter.reportError(ex);
+      }
+    };
+    Timer t = new Timer(5000, alMasternodes);
+    t.start();
+    this.timers.add(t);
 
     // Thread and timer to update the network and blockchain details
     // this.netInfoGatheringThread = new DataGatheringThread<>(
@@ -423,28 +423,28 @@ public class MasternodePanel
   // }
 
 
-  // private void updateWalletMasternodesTable()
-  //     throws WalletCallException, IOException, InterruptedException {
-  //   String[][] newMasternodesData = this.transactionGatheringThread.getLastData();
+  private void updateMasternodesTable()
+      throws WalletCallException, IOException, InterruptedException {
+    String[][] newMasternodesData = this.transactionGatheringThread.getLastData();
 
-  //   // May be null - not even gathered once
-  //   if (newMasternodesData == null) {
-  //     return;
-  //   }
+    // May be null - not even gathered once
+    if (newMasternodesData == null) {
+      return;
+    }
 
-  //   if (Util.arraysAreDifferent(lastMasternodesData, newMasternodesData)) {
-  //     Log.info("Updating table of transactions");
-  //     this.remove(transactionsTablePane);
-  //     this.add(transactionsTablePane = new JScrollPane(
-  //             transactionsTable = this.createMasternodesTable(newMasternodesData)),
-  //         BorderLayout.CENTER);
-  //   }
+    if (Util.arraysAreDifferent(lastMasternodesData, newMasternodesData)) {
+      Log.info("Updating table of transactions");
+      this.remove(transactionsTablePane);
+      this.add(transactionsTablePane = new JScrollPane(
+              transactionsTable = this.createMasternodesTable(newMasternodesData)),
+          BorderLayout.CENTER);
+    }
 
-  //   lastMasternodesData = newMasternodesData;
+    lastMasternodesData = newMasternodesData;
 
-  //   this.validate();
-  //   this.repaint();
-  // }
+    this.validate();
+    this.repaint();
+  }
 
    
 
