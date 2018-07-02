@@ -11,6 +11,7 @@ import org.btcprivate.wallets.fullnode.util.*;
 import org.btcprivate.wallets.fullnode.util.OSUtil.OS_TYPE;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import javax.swing.border.EtchedBorder;
 import java.awt.*;
 import java.awt.event.ActionListener;
@@ -46,7 +47,7 @@ public class MyMasternodePanel
 
   private JLabel walletBalanceLabel = null;
   private DataGatheringThread<WalletBalance> walletBalanceGatheringThread = null;
-
+  private int counter = 15;
   private JTable transactionsTable = null;
   private JScrollPane transactionsTablePane = null;
   private String[][] lastMasternodesData = null;
@@ -126,29 +127,62 @@ public class MyMasternodePanel
     JButton startAllButton = new JButton("Start All");
     buttonPanel.add(startAllButton);
 
-    // JButton startMissing = new JButton(LOCAL_MENU_REFRESH);
-    JButton startMissing = new JButton("Start Missing");
-    buttonPanel.add(startMissing);
+    // JButton startMissingButton = new JButton(LOCAL_MENU_REFRESH);
+    JButton startMissingButton = new JButton("Start Missing");
+    buttonPanel.add(startMissingButton);
 
     // JButton refreshButton = new JButton(LOCAL_MENU_REFRESH);
-    JButton refreshButton = new JButton("Refresh Status");
+    JButton refreshButton = new JButton("Update Table");
     buttonPanel.add(refreshButton);
 
-    JLabel updateLabel = new JLabel("Updating status: ");
-    buttonPanel.add(updateLabel);
+    JLabel updateLabelStart = new JLabel("Updating table in: ");
+    buttonPanel.add(updateLabelStart);
+
+    // int countDown = 0;
+    JLabel updateTime = new JLabel("20");
+    buttonPanel.add(updateTime);
+
+    JLabel updateLabelEnd = new JLabel(" seconds");
+    buttonPanel.add(updateLabelEnd);
 
     dashboard.add(buttonPanel, BorderLayout.SOUTH);
 
+    
+    ActionListener updateTimer = e -> {
+      try
+      {
+        if (counter != -1){
+          updateTime.setText("" + counter--);
+         
+        } else {
+          counter = 15;
+          startAllButton.setText("Start All");
+        }
+        
+      } catch (Exception ex) {
+        Log.error("ey:" + ex);
+      }
+    };
+
+    Timer xy = new Timer(1000, updateTimer);
+    xy.start();
+    this.timers.add(xy);
+
     refreshButton.addActionListener(e -> {
       try{
-        Log.info("clicked!");
-        String response = this.clientCaller.executeMnsyncReset();
-        JLabel updatingLabel = new JLabel(response);
-        buttonPanel.add(updatingLabel);
-        Log.info(response);
+        // Log.info("clicked!");
+        // String response = this.clientCaller.executeMnsyncReset();
+        // JLabel updatingLabel = new JLabel(response);
+        // buttonPanel.add(updatingLabel);
+        // Log.info(response);
+        MyMasternodePanel.this.updateMasternodesTable();
+        Log.info("Updating masternode status");
+        counter = 15;
+        Log.info("----------------------------------------------------");
+        Log.info(xy.toString());
       } catch (Exception ex)
       {
-        Log.error("KEV ERROR: " + ex);
+        Log.error("Eror in refreshButton: " + ex);
       }
     });
 
@@ -156,6 +190,8 @@ public class MyMasternodePanel
       try{
         String response = this.clientCaller.startAllMasternodes();
         Log.info(response.toString());
+        counter = 15;
+        startAllButton.setText("Starting...");
         // JPanel responsePanel = new JPanel();
         // responsePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 3, 3));
         // JLabel responseLabel = new JLabel(response.toString());
