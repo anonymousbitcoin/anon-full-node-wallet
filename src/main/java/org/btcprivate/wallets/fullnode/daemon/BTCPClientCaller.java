@@ -448,6 +448,11 @@ public class BTCPClientCaller {
         return result.toString(WriterConfig.PRETTY_PRINT);
     }
 
+    public synchronized String startMissingMasternodes() throws WalletCallException, IOException, InterruptedException {
+        JsonObject result = this.executeCommandAndGetJsonObject("masternode", "start-missing");
+        return result.toString(WriterConfig.PRETTY_PRINT);
+    }
+
     public synchronized String startMasternodeByAlias(String aliasName) throws WalletCallException, IOException, InterruptedException {
         JsonObject result = this.executeCommandAndGetJsonObject("masternode", "start-alias", aliasName);
         return result.toString(WriterConfig.PRETTY_PRINT);

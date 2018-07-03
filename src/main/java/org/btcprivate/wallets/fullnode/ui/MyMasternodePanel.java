@@ -187,8 +187,8 @@ public class MyMasternodePanel
           updateTime.setText("" + counter--);
          
         } else {
-          counter = 15;
           startAllButton.setText("Start All");
+          startMissingButton.setText("Start Missing");
         }
         
       } catch (Exception ex) {
@@ -224,7 +224,6 @@ public class MyMasternodePanel
       try{
         String response = this.clientCaller.startAllMasternodes();
         Log.info(response.toString());
-        counter = 15;
         startAllButton.setText("Starting...");
         // JPanel responsePanel = new JPanel();
         // responsePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 3, 3));
@@ -234,6 +233,18 @@ public class MyMasternodePanel
 
       }catch (Exception ex){
         Log.error("Error in startAllButton: " + ex);
+      }
+    });
+
+    startMissingButton.addActionListener(e -> {
+      try
+      {
+        String response = this.clientCaller.startMissingMasternodes();
+        Log.info(response.toString());
+        startMissingButton.setText("Starting...");
+      } catch (Exception ex){
+        startMissingButton.setText("Not synced!");
+        Log.error("Error in startMissingButton: " + ex);
       }
     });
 
