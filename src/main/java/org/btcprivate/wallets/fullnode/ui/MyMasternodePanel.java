@@ -156,6 +156,7 @@ public class MyMasternodePanel
     startAliasButton.addActionListener(e -> {
       try{
         String[] aliases = MyMasternodePanel.this.clientCaller.getMyAliases();
+        Log.info(aliases.toString());
         String name = (String) JOptionPane.showInputDialog(MyMasternodePanel.this,
         "Here",
         "Another",
@@ -167,11 +168,12 @@ public class MyMasternodePanel
         if(name == null || "".equals(name)){
           return;
         }
-
-        // // Log.info("+++++++++++++++++++++++");
-        // // Log.info(name);
-        // // String response = this.clientCaller.startMasternodeByAlias(name);
-        // // Log.info(response.toString());
+        Log.info("alias0"+aliases[0].toString());
+        Log.info("alias1"+aliases[1].toString());
+        Log.info("+++++++++++++++++++++++");
+        Log.info("namechosen: " + name);
+        String response = this.clientCaller.startMasternodeByAlias(name);
+        Log.info("response: " + response.toString());
 
         // myAliases.setEditable(true);
 

@@ -244,8 +244,8 @@ public class BTCPClientCaller {
         String[] finalArr = new String [objResponse.size()];
         for(int i = 0 ; i < objResponse.size() ; i ++){
             JsonArray trans = objResponse.get(i).asArray();
-
-            finalArr[i] = trans.get(0).toString();
+            // trans.replace(" ", "")
+            finalArr[i] = trans.get(0).toString().replace("\"", "");
         }
 
         return finalArr;
