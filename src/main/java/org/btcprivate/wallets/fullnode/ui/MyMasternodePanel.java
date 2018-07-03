@@ -245,7 +245,7 @@ public class MyMasternodePanel
 
     lastMasternodesData = getMasternodeListFromRPC();
     dashboard.add(daemonStatusLabel = new JLabel(), BorderLayout.NORTH);
-    buttonPanel.add(resetMnsyncButton);
+    dashboard.add(resetMnsyncButton);
     dashboard.add(transactionsTablePane = new JScrollPane(
             transactionsTable = this.createMasternodesTable(lastMasternodesData)),BorderLayout.CENTER);
 
@@ -290,7 +290,7 @@ public class MyMasternodePanel
 
   private void updateStatusLabels()
       throws IOException, InterruptedException {
-        
+
     String text = "";
     try {
       text = this.clientCaller.getMasternodeSyncStatus(true);
