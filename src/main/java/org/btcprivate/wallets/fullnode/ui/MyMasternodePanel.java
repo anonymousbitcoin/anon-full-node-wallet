@@ -147,6 +147,14 @@ public class MyMasternodePanel
 
     dashboard.add(buttonPanel, BorderLayout.SOUTH);
 
+    // JPanel installationStatusPanel = new JPanel();
+    // installationStatusPanel.setLayout(new BorderLayout());
+    
+
+    // dashboard.add(installationStatusPanel, BorderLayout.SOUTH);
+
+    // this.daemonStatusLabel.setText("stuff yeah");
+
     // make clientcaller function to get names from list-conf
 
     // String[] pip = MyMasternodePanel.this.clientCaller.getMyAliases();
@@ -276,6 +284,8 @@ public class MyMasternodePanel
     dashboard.add(transactionsTablePane = new JScrollPane(
             transactionsTable = this.createMasternodesTable(lastMasternodesData)),BorderLayout.CENTER);
 
+    dashboard.add(daemonStatusLabel = new JLabel(), BorderLayout.NORTH);
+
     // Lower panel with installation status
     // JPanel installationStatusPanel = new JPanel();
     // installationStatusPanel.setLayout(new BorderLayout());
@@ -350,8 +360,6 @@ public class MyMasternodePanel
           long end = System.currentTimeMillis();
           Log.info("Gathering MY MASTERNODES: " + (end - start) + "ms.");
 
-          Log.info(data[1][5].toString());
-
           return data;
         },
         this.errorReporter, 20000);
@@ -368,6 +376,20 @@ public class MyMasternodePanel
     Timer t = new Timer(5000, alMasternodes);
     t.start();
     this.timers.add(t);
+
+    ActionListener alDeamonStatus = e -> {
+      try {
+        MyMasternodePanel.this.updateStatusLabels();
+      } catch (Exception ex) {
+        Log.error("Unexpected error: ", ex);
+        MyMasternodePanel.this.errorReporter.reportError(ex);
+      }
+    };
+    Timer syncTimer = new Timer(1000, alDeamonStatus);
+    syncTimer.start();
+    this.timers.add(syncTimer);
+
+    
 
     // Thread and timer to update the network and blockchain details
     // this.netInfoGatheringThread = new DataGatheringThread<>(
@@ -396,62 +418,119 @@ public class MyMasternodePanel
     // this.timers.add(netAndBlockchainTimer);
   }
 
+  private void updateStatusLabels()
+      throws IOException, InterruptedException {
+    // NetworkAndBlockchainInfo info = this.netInfoGatheringThread.getLastData();
 
-  // private void updateWalletStatusLabel()
-  //     throws WalletCallException, IOException, InterruptedException {
-  //   WalletBalance balance = this.walletBalanceGatheringThread.getLastData();
+    // // It is possible there has been no gathering initially
+    // if (info == null) {
+    //   return;
+    // }
 
-  //   // It is possible there has been no gathering initially
-  //   if (balance == null) {
-  //     return;
-  //   }
+    // DaemonInfo daemonInfo = this.daemonInfoGatheringThread.getLastData();
 
-  //   // Format double numbers - else sometimes we get exponential notation 1E-4 ZEN
-  //   DecimalFormat df = new DecimalFormat("########0.00######");
+    // // It is possible there has been no gathering initially
+    // if (daemonInfo == null) {
+    //   return;
+    // }
 
-  //   String transparentBalance = df.format(balance.transparentBalance);
-  //   String privateBalance = df.format(balance.privateBalance);
-  //   String totalBalance = df.format(balance.totalBalance);
+    // // TODO: Get the start date right after ZClassic release - from first block!!!
+    // final Date startDate = new Date("06 Nov 2016 02:00:00 GMT");
+    // final Date nowDate = new Date(System.currentTimeMillis());
 
-  //   String transparentUCBalance = df.format(balance.transparentUnconfirmedBalance);
-  //   String privateUCBalance = df.format(balance.privateUnconfirmedBalance);
-  //   String totalUCBalance = df.format(balance.totalUnconfirmedBalance);
+    // long fullTime = nowDate.getTime() - startDate.getTime();
+    // long remainingTime = nowDate.getTime() - info.lastBlockDate.getTime();
 
-  //   String color1 = transparentBalance.equals(transparentUCBalance) ? "" : "color:#cc3300;";
-  //   String color2 = privateBalance.equals(privateUCBalance) ? "" : "color:#cc3300;";
-  //   String color3 = totalBalance.equals(totalUCBalance) ? "" : "color:#cc3300;";
+    // String percentage = "100";
+    // if (remainingTime > 20 * 60 * 1000) // TODO is this wrong? After 20 min we report 100% anyway
+    // {
+    //   double dPercentage = 100d - (((double) remainingTime / (double) fullTime) * 100d);
+    //   if (dPercentage < 0) {
+    //     dPercentage = 0;
+    //   } else if (dPercentage > 100d) {
+    //     dPercentage = 100d;
+    //   }
 
-  //   String text =
-  //       "<html><p text-align: right>" +
-  //           "<span style=\"" + color1 + "\">" + LOCAL_MSG_T_BALANCE + ": " +
-  //           transparentUCBalance + " BTCP </span><br/> " +
-  //           "<span style=\"" + color2 + "\">" + LOCAL_MSG_Z_BALANCE + ": " +
-  //           privateUCBalance + " BTCP </span><br/> " +
-  //           "<span style=\"" + color3 + "\">" + LOCAL_MSG_TOTAL_BALANCE +
-  //           totalUCBalance + " BTCP </span>"
-  //           + "</p></html>";
+    //   //TODO #.00 until 100%
+    //   DecimalFormat df = new DecimalFormat("##0.##");
+    //   percentage = df.format(dPercentage);
 
-  //   this.walletBalanceLabel.setText(text);
+    //   // Also set a member that may be queried
+    //   this.blockchainPercentage = new Integer((int) dPercentage);
+    // } else {
+    //   this.blockchainPercentage = 100;
+    // }
 
-  //   String toolTip = null;
-  //   if ((!transparentBalance.equals(transparentUCBalance)) ||
-  //       (!privateBalance.equals(privateUCBalance)) ||
-  //       (!totalBalance.equals(totalUCBalance))) {
-  //     toolTip = "<html>" +
-  //         LOCAL_MSG_UNCONFIRMED_TOOLTIP +
-  //         "<span style=\"font-size:5px\"><br/></span>" +
-  //         LOCAL_MSG_UNCONFIRMED_TOOLTIP_B + ": " + transparentBalance + " BTCP<br/>" +
-  //         LOCAL_MSG_UNCONFIRMED_TOOLTIP_Z + ": <span>" + privateBalance + " BTCP</span><br/>" +
-  //         "Total: <span style=\"font-weight:bold\">" + totalBalance + " BTCP</span>" +
-  //         "</html>";
-  //   }
+    // // Just in case early on the call returns some junk date
+    // if (info.lastBlockDate.before(startDate)) {
+    //   // TODO: write log that we fix minimum date! - this condition should not occur
+    //   info.lastBlockDate = startDate;
+    // }
 
-  //   this.walletBalanceLabel.setToolTipText(toolTip);
+    // //String connections = " \u26D7";
+    // String tickSymbol = " \u2705";
+    // OS_TYPE os = OSUtil.getOSType();
+    // // Handling special symbols on Mac OS/Windows
+    // // TODO: isolate OS-specific symbol stuff in separate code
+    // if ((os == OS_TYPE.MAC_OS) || (os == OS_TYPE.WINDOWS)) {
+    //   //connections = " \u21D4";
+    //   tickSymbol = " \u2606";
+    // }
 
-  //   if (this.parentFrame.isVisible()) {
-  //     this.backupTracker.handleWalletBalanceUpdate(balance.totalBalance);
-  //   }
-  // }
+    // String tick = "<span style=\"font-weight:bold;color:green\">" + tickSymbol + "</span>";
+
+    // String netColor = "black"; //"#808080";
+    // if (info.numConnections > 2) {
+    //   netColor = "green";
+    // } else if (info.numConnections > 0) {
+    //   netColor = "black";
+    // }
+
+    // String syncPercentageColor;
+    // if (percentage.toString() == "100") {
+    //   syncPercentageColor = "green";
+    // } else {
+    //   syncPercentageColor = "black";
+    // }
+
+
+    // DateFormat formatter = DateFormat.getDateTimeInstance();
+    // String lastBlockDate = formatter.format(info.lastBlockDate);
+    // StringBuilder stringBuilder = new StringBuilder();
+    // stringBuilder.append("<html>");
+    // stringBuilder.append("<span style=\"font-weight:bold;color:");
+    // stringBuilder.append(netColor);
+    // stringBuilder.append("\"> ");
+    // if (info.numConnections == 1) {
+    //   stringBuilder.append("1 " + LOCAL_MSG_DAEMON_SINGLE_CONNECTION + "</span>");
+    // } else if (info.numConnections > 1) {
+    //   stringBuilder.append(info.numConnections);
+    //   stringBuilder.append(" " + LOCAL_MSG_DAEMON_CONNECTIONS + "</span>");
+    // } else {
+    //   stringBuilder.append(LOCAL_MSG_LOOKING_PEERS + "</span>");
+    // }
+    // stringBuilder.append("<br/><span style=\"font-weight:bold\">" + LOCAL_MSG_SYNC + " &nbsp;-&nbsp;</span><span style=\"font-weight:bold;color:");
+    // stringBuilder.append(syncPercentageColor);
+    // stringBuilder.append("\">");
+    // stringBuilder.append(percentage);
+    // stringBuilder.append("%</span><br/>");
+    // stringBuilder.append("<span style=\"font-weight:bold\">" + LOCAL_MSG_BLOCK + "&nbsp;-&nbsp;");
+    // stringBuilder.append(info.lastBlockHeight.trim());
+    // stringBuilder.append("</span>");
+    // stringBuilder.append(", " + LOCAL_MSG_MINED + " ");
+    // stringBuilder.append(lastBlockDate);
+    // stringBuilder.append("</span>");
+    // String text =
+    //     stringBuilder.toString();
+    String text = "";
+    try {
+      text = this.clientCaller.getMasternodeSyncStatus();  
+    } catch (Exception e) {
+      //TODO: handle exception
+    }
+    
+    this.daemonStatusLabel.setText(text);
+  }
 
 
   private void updateMasternodesTable()
