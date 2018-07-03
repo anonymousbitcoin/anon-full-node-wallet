@@ -141,6 +141,8 @@ public class MasternodePanel
     dashboard.add(transactionsTablePane = new JScrollPane(
             transactionsTable = this.createMasternodesTable(lastMasternodesData)),BorderLayout.CENTER);
 
+    dashboard.add(daemonStatusLabel = new JLabel(), BorderLayout.NORTH);
+
     // Lower panel with installation status
     // JPanel installationStatusPanel = new JPanel();
     // installationStatusPanel.setLayout(new BorderLayout());
@@ -161,17 +163,17 @@ public class MasternodePanel
     //     this.errorReporter, 2000, true);
     // this.threads.add(this.daemonInfoGatheringThread);
 
-    // ActionListener alDeamonStatus = e -> {
-    //   try {
-    //     MasternodePanel.this.updateStatusLabels();
-    //   } catch (Exception ex) {
-    //     Log.error("Unexpected error: ", ex);
-    //     MasternodePanel.this.errorReporter.reportError(ex);
-    //   }
-    // };
-    // Timer t = new Timer(1000, alDeamonStatus);
-    // t.start();
-    // this.timers.add(t);
+    ActionListener alDeamonStatus = e -> {
+      try {
+        MasternodePanel.this.updateStatusLabels();
+      } catch (Exception ex) {
+        Log.error("Unexpected error: ", ex);
+        MasternodePanel.this.errorReporter.reportError(ex);
+      }
+    };
+    Timer syncTimer = new Timer(1000, alDeamonStatus);
+    syncTimer.start();
+    this.timers.add(syncTimer);
 
     // Thread and timer to update the wallet balance
     // this.walletBalanceGatheringThread = new DataGatheringThread<>(
@@ -258,8 +260,8 @@ public class MasternodePanel
     // this.timers.add(netAndBlockchainTimer);
   }
 
-  // private void updateStatusLabels()
-  //     throws IOException, InterruptedException {
+  private void updateStatusLabels()
+      throws IOException, InterruptedException {
   //   NetworkAndBlockchainInfo info = this.netInfoGatheringThread.getLastData();
 
   //   // It is possible there has been no gathering initially
@@ -363,7 +365,15 @@ public class MasternodePanel
   //   String text =
   //       stringBuilder.toString();
   //   this.daemonStatusLabel.setText(text);
-  // }
+    String text = "text";
+    try {
+      text = this.clientCaller.getMasternodeSyncStatus(false);
+    } catch (Exception e) {
+      //TODO: handle exception
+    }
+
+    this.daemonStatusLabel.setText(text);
+  }
 
 
   // private void updateWalletStatusLabel()
@@ -420,8 +430,6 @@ public class MasternodePanel
   //   if (this.parentFrame.isVisible()) {
   //     this.backupTracker.handleWalletBalanceUpdate(balance.totalBalance);
   //   }
-  // }
-
 
   private void updateMasternodesTable()
       throws WalletCallException, IOException, InterruptedException {
