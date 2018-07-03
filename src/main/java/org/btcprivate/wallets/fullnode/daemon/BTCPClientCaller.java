@@ -217,7 +217,18 @@ public class BTCPClientCaller {
 
         JsonArray objResponse = this.executeCommandAndGetJsonArray("masternode", "mymasternodes");
 
-        // Log.info("objResponse" + objResponse);
+        if (objResponse.size() == 0){
+            String[][] noMNArr = new String[1][];
+            noMNArr[0] = new String[6];
+            noMNArr[0][0] = "No Masternodes set in conf file.";
+            noMNArr[0][1] = "";
+            noMNArr[0][2] = "";
+            noMNArr[0][3] = "";
+            noMNArr[0][4] = "";
+            noMNArr[0][5] = "";
+
+            return noMNArr;
+        };
 
         String[][] finalArr = new String [objResponse.size()][];
         for(int i = 0 ; i < objResponse.size() ; i ++){
