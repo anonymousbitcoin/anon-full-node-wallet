@@ -235,6 +235,22 @@ public class BTCPClientCaller {
         return finalArr;
     }
 
+    public synchronized String[] getMyAliases() throws WalletCallException, IOException, InterruptedException {
+
+        JsonArray objResponse = this.executeCommandAndGetJsonArray("masternode", "mymasternodes");
+
+        // Log.info("objResponse" + objResponse);
+
+        String[] finalArr = new String [objResponse.size()];
+        for(int i = 0 ; i < objResponse.size() ; i ++){
+            JsonArray trans = objResponse.get(i).asArray();
+
+            finalArr[i] = trans.get(0).toString();
+        }
+
+        return finalArr;
+    }
+
     // public synchronized String[][] getMasternodeArray() throws WalletCallException, IOException, InterruptedException {
     //     String[][] mnList = new String[7][];
     //     JsonArray objResponse = this.executeCommandAndGetJsonArray("masternodelist", null);
@@ -437,15 +453,34 @@ public class BTCPClientCaller {
         return result.toString(WriterConfig.PRETTY_PRINT);
     }
 
-    public synchronized String getMyAliases() throws WalletCallException, IOException, InterruptedException {
-        JsonObject result = this.executeCommandAndGetJsonObject("masternode", "list");
-        // JsonObject masternode1 = result.getJsonObject("masternode");
-        // String lol = result.getString("masternode","defaullllt");
-        JsonValue lol = result.get("masternode");
-        // String a = result.
-        // return result.toString(WriterConfig.PRETTY_PRINT);
-        return lol.toString(WriterConfig.PRETTY_PRINT);
-    }
+    // JSONObject obj = new JSONObject(jsonString);
+    // String id = obj.getString("id");
+    // String error = obj.getString("error");
+    // JSONObject result = obj.getJSONObject("result");
+    // int nPeople = result.getInt("nPeople");
+    // JSONArray people = result.getJSONArray("people");
+    // for(int i = 0 ; i < people.length() ; i++){
+    //     JSONObject p = (JSONObject)people.get(i);
+    //     String namePeople = p.getString("namePeople");
+    //     ...
+    // }
+
+    // public synchronized String getMyAliases() throws WalletCallException, IOException, InterruptedException {
+    //     JsonObject result = this.executeCommandAndGetJsonObject("masternode", "list-conf");
+    //     // JsonObject masternode1 = result.getJsonObject("masternode");
+    //     JsonValue lol = result.get("masternode");
+    //     JsonValue alias = result.valueOf("masternode");
+    //     // JS
+        
+
+    //     // JsonValue loll = result.get("masternode");
+    //     // JsonValue lol = loll.get("alias");
+
+    //     // String a = result.
+    //     // return result.toString(WriterConfig.PRETTY_PRINT);
+    //     return alias.toString(WriterConfig.PRETTY_PRINT);
+    //     // return lol.toString(WriterConfig.PRETTY_PRINT);
+    // }
 
 
     public synchronized String getRawTransaction(String txID)

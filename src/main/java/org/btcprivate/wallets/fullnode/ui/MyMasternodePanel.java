@@ -148,24 +148,48 @@ public class MyMasternodePanel
     dashboard.add(buttonPanel, BorderLayout.SOUTH);
 
     // make clientcaller function to get names from list-conf
-    // JComboBox myAliases = new JComboBox();
+
+    // String[] pip = MyMasternodePanel.this.clientCaller.getMyAliases();
+    // JComboBox myAliases = new JComboBox(pip);
+
+
     startAliasButton.addActionListener(e -> {
       try{
+        String[] aliases = MyMasternodePanel.this.clientCaller.getMyAliases();
         String name = (String) JOptionPane.showInputDialog(MyMasternodePanel.this,
         "Here",
         "Another",
         JOptionPane.PLAIN_MESSAGE,
         null,
-        null,
-        "");
+        aliases,
+        aliases[0]);
 
         if(name == null || "".equals(name)){
           return;
         }
-        Log.info("+++++++++++++++++++++++");
-        Log.info(name);
-        String response = this.clientCaller.startMasternodeByAlias(name);
-        Log.info(response.toString());
+
+        // // Log.info("+++++++++++++++++++++++");
+        // // Log.info(name);
+        // // String response = this.clientCaller.startMasternodeByAlias(name);
+        // // Log.info(response.toString());
+
+        // myAliases.setEditable(true);
+
+        // Object[] options = new Object[] {};
+        // JOptionPane jop = new JOptionPane("Please Select",
+        //                                 JOptionPane.QUESTION_MESSAGE,
+        //                                 JOptionPane.DEFAULT_OPTION,
+        //                                 null,options, null);
+
+        // //add combos to JOptionPane
+        // jop.add(myAliases);
+
+        // //create a JDialog and add JOptionPane to it 
+        // JDialog diag = new JDialog();
+        // diag.getContentPane().add(jop);
+        // diag.pack();
+        // diag.setVisible(true);
+
       }catch (Exception ex) {
         Log.error("Error in startAlias:" + ex);
       }
@@ -202,8 +226,8 @@ public class MyMasternodePanel
         Log.info("Updating masternode status");
         counter = 15;
         Log.info("----------------------------------------------------");
-        String test = MyMasternodePanel.this.clientCaller.getMyAliases();
-        Log.info(test);
+        // String[] test = this.clientCaller.getMyAliases();
+        // Log.info(test[0].toString()+ " " + test[1].toString());
 
       } catch (Exception ex)
       {
