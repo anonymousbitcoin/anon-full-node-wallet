@@ -255,7 +255,7 @@ public class BTCPClientCaller {
         String assetID = objResponse.get("AssetID").toString();
         String assetName = objResponse.get("AssetName").toString();
         String attempt = objResponse.get("Attempt").toString();
-        String isBlockChainSynced = objResponse.get("IsBlockchainSynced").toString();
+        String isBlockchainSynced = objResponse.get("IsBlockchainSynced").toString();
         String isMasternodeListSynced = objResponse.get("IsMasternodeListSynced").toString();
         String isWinnersListSynced = objResponse.get("IsWinnersListSynced").toString();
         String isSynced = objResponse.get("IsSynced").toString();
@@ -265,8 +265,8 @@ public class BTCPClientCaller {
 
         if(myMasternodeList) {
             stringBuilder.append("<html>");  
-            stringBuilder.append("<span style=\"font-weight:bold;\">Is Blockchain Synced: </span>");
-            stringBuilder.append("<span>" + isBlockChainSynced + "</span><br/>");  
+            stringBuilder.append("<span style=\"font-weight:bold;\">Is Masternode List Synced: </span>");
+            stringBuilder.append("<span>" + isMasternodeListSynced + "</span><br/>");  
             
             String returnString = stringBuilder.toString().replace("\"","");
 
@@ -281,7 +281,7 @@ public class BTCPClientCaller {
         stringBuilder.append("<span style=\"font-weight:bold;\">Attempt: </span>");
         stringBuilder.append("<span>" + attempt + "</span><br/>");
         stringBuilder.append("<span style=\"font-weight:bold;\">Is BlockChain Synced: </span>");
-        stringBuilder.append("<span>" + isBlockChainSynced + "</span><br/>");
+        stringBuilder.append("<span>" + isBlockchainSynced + "</span><br/>");
         stringBuilder.append("<span style=\"font-weight:bold;\">Is Masternode List Synced: </span>");
         stringBuilder.append("<span>" + isMasternodeListSynced + "</span><br/>");
         stringBuilder.append("<span style=\"font-weight:bold;\">Is Winners List Synced: </span>");
@@ -294,7 +294,7 @@ public class BTCPClientCaller {
         String returnString = stringBuilder.toString().replace("\"","");
         
 
-        Log.info("isBlockChainSynced ===============" + returnString);
+        Log.info("isBlockchainSynced ===============" + returnString);
 
         // String[][] finalArr = new String [objResponse.size()][];
         // for(int i = 0 ; i < objResponse.size() ; i ++){
