@@ -437,6 +437,16 @@ public class BTCPClientCaller {
         return result.toString(WriterConfig.PRETTY_PRINT);
     }
 
+    public synchronized String getMyAliases() throws WalletCallException, IOException, InterruptedException {
+        JsonObject result = this.executeCommandAndGetJsonObject("masternode", "list");
+        // JsonObject masternode1 = result.getJsonObject("masternode");
+        // String lol = result.getString("masternode","defaullllt");
+        JsonValue lol = result.get("masternode");
+        // String a = result.
+        // return result.toString(WriterConfig.PRETTY_PRINT);
+        return lol.toString(WriterConfig.PRETTY_PRINT);
+    }
+
 
     public synchronized String getRawTransaction(String txID)
             throws WalletCallException, IOException, InterruptedException {

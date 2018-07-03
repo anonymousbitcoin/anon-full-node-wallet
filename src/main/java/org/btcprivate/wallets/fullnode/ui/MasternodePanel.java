@@ -467,13 +467,18 @@ public class MasternodePanel
     return table;
   }
 
+  
 
+  
   private String[][] getMasternodeListFromRPC()
-      throws WalletCallException, IOException, InterruptedException {
-    // Get available public+private transactions and unify them.
-    // String[][] publicMasternodes = this.clientCaller.getWalletPublicMasternodes();
-    // String[][] zReceivedMasternodes = this.clientCaller.getWalletZReceivedMasternodes();
+  throws WalletCallException, IOException, InterruptedException {
+    String[][] mnListArrays = this.clientCaller.getMasternodeList();
+    return mnListArrays;
 
+    // Get available public+private transactions and unify them.
+        // String[][] publicMasternodes = this.clientCaller.getWalletPublicMasternodes();
+        // String[][] zReceivedMasternodes = this.clientCaller.getWalletZReceivedMasternodes();
+        
     // String[][] allMasternodes = new String[publicMasternodes.length + zReceivedMasternodes.length][];
 
     // int i = 0;
@@ -561,10 +566,8 @@ public class MasternodePanel
     //         " - " + nfe.getMessage() + "!");
     //   }
     // }
-    String[][] mnListArrays = this.clientCaller.getMasternodeList();
     // String[][] mnListArrays = this.clientCaller.getMyMasternodes();
 
     // return allMasternodes;
-    return mnListArrays;
   }
 } // End class

@@ -147,6 +147,8 @@ public class MyMasternodePanel
 
     dashboard.add(buttonPanel, BorderLayout.SOUTH);
 
+    // make clientcaller function to get names from list-conf
+    // JComboBox myAliases = new JComboBox();
     startAliasButton.addActionListener(e -> {
       try{
         String name = (String) JOptionPane.showInputDialog(MyMasternodePanel.this,
@@ -200,7 +202,9 @@ public class MyMasternodePanel
         Log.info("Updating masternode status");
         counter = 15;
         Log.info("----------------------------------------------------");
-        Log.info(xy.toString());
+        String test = MyMasternodePanel.this.clientCaller.getMyAliases();
+        Log.info(test);
+
       } catch (Exception ex)
       {
         Log.error("Eror in refreshButton: " + ex);
