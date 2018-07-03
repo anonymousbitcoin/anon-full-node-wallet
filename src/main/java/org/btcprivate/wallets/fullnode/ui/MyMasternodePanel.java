@@ -140,6 +140,19 @@ public class MyMasternodePanel
 
     dashboard.add(buttonPanel, BorderLayout.SOUTH);
 
+    // JPanel installationStatusPanel = new JPanel();
+    // installationStatusPanel.setLayout(new BorderLayout());
+
+
+    // dashboard.add(installationStatusPanel, BorderLayout.SOUTH);
+
+    // this.daemonStatusLabel.setText("stuff yeah");
+
+    // make clientcaller function to get names from list-conf
+
+    // String[] pip = MyMasternodePanel.this.clientCaller.getMyAliases();
+    // JComboBox myAliases = new JComboBox(pip);
+
 
     startAliasButton.addActionListener(e -> {
       try{
@@ -159,7 +172,7 @@ public class MyMasternodePanel
         String response = this.clientCaller.startMasternodeByAlias(name);
         Log.info("response: " + response.toString());
         startAliasButton.setText("Starting " + name);
-        
+
 
       }catch (Exception ex) {
         Log.error("Error in startAlias:" + ex);
@@ -191,7 +204,7 @@ public class MyMasternodePanel
       try{
         MyMasternodePanel.this.updateMasternodesTable();
         Log.info("Updating masternode status");
-        
+
         Log.info("----------------------------------------------------");
         updateTableButton.setText("Updating!");
 
@@ -231,13 +244,81 @@ public class MyMasternodePanel
     dashboard.add(transactionsTablePane = new JScrollPane(
             transactionsTable = this.createMasternodesTable(lastMasternodesData)),BorderLayout.CENTER);
 
+    dashboard.add(daemonStatusLabel = new JLabel(), BorderLayout.NORTH);
+
+    // Lower panel with installation status
+    // JPanel installationStatusPanel = new JPanel();
+    // installationStatusPanel.setLayout(new BorderLayout());
+    // installationStatusPanel.add(daemonStatusLabel = new JLabel(), BorderLayout.WEST);
+
+    // dashboard.add(installationStatusPanel, BorderLayout.SOUTH);
+
+    // Thread and timer to update the daemon status
+    // this.daemonInfoGatheringThread = new DataGatheringThread<>(
+    //     () -> {
+    //       long start = System.currentTimeMillis();
+    //       DaemonInfo daemonInfo = MyMasternodePanel.this.installationObserver.getDaemonInfo();
+    //       long end = System.currentTimeMillis();
+    //       Log.info("Gathering of dashboard daemon status data done in " + (end - start) + "ms.");
+
+    //       return daemonInfo;
+    //     },
+    //     this.errorReporter, 2000, true);
+    // this.threads.add(this.daemonInfoGatheringThread);
+
+    // TODO USE THIS FOR SOMETHING ELSE LATER
+    // ActionListener alDeamonStatus = e -> {
+    //   try {
+    //     MyMasternodePanel.this.updateStatusLabels();
+    //   } catch (Exception ex) {
+    //     Log.error("Unexpected error: ", ex);
+    //     MyMasternodePanel.this.errorReporter.reportError(ex);
+    //   }
+    // };
+    // Timer t = new Timer(1000, alDeamonStatus);
+    // t.start();
+    // this.timers.add(t);
+
+    // Thread and timer to update the wallet balance
+    // this.walletBalanceGatheringThread = new DataGatheringThread<>(
+    //     () -> {
+    //       long start = System.currentTimeMillis();
+    //       WalletBalance balance = MyMasternodePanel.this.clientCaller.getWalletInfo();
+    //       long end = System.currentTimeMillis();
+
+    //       // TODO: move this call to a dedicated one-off gathering thread - this is the wrong place
+    //       // it works but a better design is needed.
+    //       if (MyMasternodePanel.this.walletIsEncrypted == null) {
+    //         MyMasternodePanel.this.walletIsEncrypted = MyMasternodePanel.this.clientCaller.isWalletEncrypted();
+    //       }
+
+    //       Log.info("Gathering of dashboard wallet balance data done in " + (end - start) + "ms.");
+
+    //       return balance;
+    //     },
+    //     this.errorReporter, 8000, true);
+    // this.threads.add(this.walletBalanceGatheringThread);
+
+    // ActionListener alWalletBalance = e -> {
+    //   try {
+    //     MyMasternodePanel.this.updateWalletStatusLabel();
+    //   } catch (Exception ex) {
+    //     Log.error("Unexpected error: ", ex);
+    //     MyMasternodePanel.this.errorReporter.reportError(ex);
+    //   }
+    // };
+    // Timer walletBalanceTimer = new Timer(2000, alWalletBalance);
+    // walletBalanceTimer.setInitialDelay(1000);
+    // walletBalanceTimer.start();
+    // this.timers.add(walletBalanceTimer);
+
+    // Thread and timer to update the transactions table
     this.transactionGatheringThread = new DataGatheringThread<>(
         () -> {
           long start = System.currentTimeMillis();
           String[][] data = MyMasternodePanel.this.getMasternodeListFromRPC();
           long end = System.currentTimeMillis();
           Log.info("Gathering MY MASTERNODES: " + (end - start) + "ms.");
-
 
           return data;
         },
@@ -255,8 +336,161 @@ public class MyMasternodePanel
     Timer t = new Timer(5000, alMasternodes);
     t.start();
     this.timers.add(t);
+
+    ActionListener alDeamonStatus = e -> {
+      try {
+        MyMasternodePanel.this.updateStatusLabels();
+      } catch (Exception ex) {
+        Log.error("Unexpected error: ", ex);
+        MyMasternodePanel.this.errorReporter.reportError(ex);
+      }
+    };
+    Timer syncTimer = new Timer(1000, alDeamonStatus);
+    syncTimer.start();
+    this.timers.add(syncTimer);
+
+
+
+    // Thread and timer to update the network and blockchain details
+    // this.netInfoGatheringThread = new DataGatheringThread<>(
+    //     () -> {
+    //       long start = System.currentTimeMillis();
+    //       NetworkAndBlockchainInfo data = MyMasternodePanel.this.clientCaller.getNetworkAndBlockchainInfo();
+    //       long end = System.currentTimeMillis();
+    //       Log.info("Gathering of network and blockchain info data done in " + (end - start) + "ms.");
+
+    //       return data;
+    //     },
+    //     this.errorReporter, 5000, true);
+    // this.threads.add(this.netInfoGatheringThread);
+
+    // ActionListener alNetAndBlockchain = e -> {
+    //   try {
+    //     MyMasternodePanel.this.updateStatusLabels();
+    //   } catch (Exception ex) {
+    //     Log.error("Unexpected error: ", ex);
+    //     MyMasternodePanel.this.errorReporter.reportError(ex);
+    //   }
+    // };
+    // Timer netAndBlockchainTimer = new Timer(5000, alNetAndBlockchain);
+    // netAndBlockchainTimer.setInitialDelay(1000);
+    // netAndBlockchainTimer.start();
+    // this.timers.add(netAndBlockchainTimer);
   }
 
+  private void updateStatusLabels()
+      throws IOException, InterruptedException {
+    // NetworkAndBlockchainInfo info = this.netInfoGatheringThread.getLastData();
+
+    // // It is possible there has been no gathering initially
+    // if (info == null) {
+    //   return;
+    // }
+
+    // DaemonInfo daemonInfo = this.daemonInfoGatheringThread.getLastData();
+
+    // // It is possible there has been no gathering initially
+    // if (daemonInfo == null) {
+    //   return;
+    // }
+
+    // // TODO: Get the start date right after ZClassic release - from first block!!!
+    // final Date startDate = new Date("06 Nov 2016 02:00:00 GMT");
+    // final Date nowDate = new Date(System.currentTimeMillis());
+
+    // long fullTime = nowDate.getTime() - startDate.getTime();
+    // long remainingTime = nowDate.getTime() - info.lastBlockDate.getTime();
+
+    // String percentage = "100";
+    // if (remainingTime > 20 * 60 * 1000) // TODO is this wrong? After 20 min we report 100% anyway
+    // {
+    //   double dPercentage = 100d - (((double) remainingTime / (double) fullTime) * 100d);
+    //   if (dPercentage < 0) {
+    //     dPercentage = 0;
+    //   } else if (dPercentage > 100d) {
+    //     dPercentage = 100d;
+    //   }
+
+    //   //TODO #.00 until 100%
+    //   DecimalFormat df = new DecimalFormat("##0.##");
+    //   percentage = df.format(dPercentage);
+
+    //   // Also set a member that may be queried
+    //   this.blockchainPercentage = new Integer((int) dPercentage);
+    // } else {
+    //   this.blockchainPercentage = 100;
+    // }
+
+    // // Just in case early on the call returns some junk date
+    // if (info.lastBlockDate.before(startDate)) {
+    //   // TODO: write log that we fix minimum date! - this condition should not occur
+    //   info.lastBlockDate = startDate;
+    // }
+
+    // //String connections = " \u26D7";
+    // String tickSymbol = " \u2705";
+    // OS_TYPE os = OSUtil.getOSType();
+    // // Handling special symbols on Mac OS/Windows
+    // // TODO: isolate OS-specific symbol stuff in separate code
+    // if ((os == OS_TYPE.MAC_OS) || (os == OS_TYPE.WINDOWS)) {
+    //   //connections = " \u21D4";
+    //   tickSymbol = " \u2606";
+    // }
+
+    // String tick = "<span style=\"font-weight:bold;color:green\">" + tickSymbol + "</span>";
+
+    // String netColor = "black"; //"#808080";
+    // if (info.numConnections > 2) {
+    //   netColor = "green";
+    // } else if (info.numConnections > 0) {
+    //   netColor = "black";
+    // }
+
+    // String syncPercentageColor;
+    // if (percentage.toString() == "100") {
+    //   syncPercentageColor = "green";
+    // } else {
+    //   syncPercentageColor = "black";
+    // }
+
+
+    // DateFormat formatter = DateFormat.getDateTimeInstance();
+    // String lastBlockDate = formatter.format(info.lastBlockDate);
+    // StringBuilder stringBuilder = new StringBuilder();
+    // stringBuilder.append("<html>");
+    // stringBuilder.append("<span style=\"font-weight:bold;color:");
+    // stringBuilder.append(netColor);
+    // stringBuilder.append("\"> ");
+    // if (info.numConnections == 1) {
+    //   stringBuilder.append("1 " + LOCAL_MSG_DAEMON_SINGLE_CONNECTION + "</span>");
+    // } else if (info.numConnections > 1) {
+    //   stringBuilder.append(info.numConnections);
+    //   stringBuilder.append(" " + LOCAL_MSG_DAEMON_CONNECTIONS + "</span>");
+    // } else {
+    //   stringBuilder.append(LOCAL_MSG_LOOKING_PEERS + "</span>");
+    // }
+    // stringBuilder.append("<br/><span style=\"font-weight:bold\">" + LOCAL_MSG_SYNC + " &nbsp;-&nbsp;</span><span style=\"font-weight:bold;color:");
+    // stringBuilder.append(syncPercentageColor);
+    // stringBuilder.append("\">");
+    // stringBuilder.append(percentage);
+    // stringBuilder.append("%</span><br/>");
+    // stringBuilder.append("<span style=\"font-weight:bold\">" + LOCAL_MSG_BLOCK + "&nbsp;-&nbsp;");
+    // stringBuilder.append(info.lastBlockHeight.trim());
+    // stringBuilder.append("</span>");
+    // stringBuilder.append(", " + LOCAL_MSG_MINED + " ");
+    // stringBuilder.append(lastBlockDate);
+    // stringBuilder.append("</span>");
+    // String text =
+    //     stringBuilder.toString();
+    String text = "";
+    try {
+      text = this.clientCaller.getMasternodeSyncStatus();
+    } catch (Exception e) {
+      //TODO: handle exception
+    }
+
+    this.daemonStatusLabel.setText(text);
+  }
 
 
   private void updateMasternodesTable()
@@ -286,8 +520,8 @@ public class MyMasternodePanel
   private JTable createMasternodesTable(String rowData[][])
       throws WalletCallException, IOException, InterruptedException {
     String columnNames[] = {LOCAL_MSG_MYMSTRNDE_ALIAS, LOCAL_MSG_MYMSTRNDE_ADDRESS, LOCAL_MSG_MYMSTRNDE_PRIVATEKEY, LOCAL_MSG_MYMSTRNDE_TXHASH, LOCAL_MSG_MYMSTRNDE_OUTPUTINDEX, LOCAL_MSG_MYMSTRNDE_STATUS};
-    
-    
+
+
     JTable table = new MasternodeTable(
         rowData, columnNames, this.parentFrame, this.clientCaller, this.installationObserver);
     table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
@@ -303,8 +537,8 @@ public class MyMasternodePanel
 
 
   private String[][] getMasternodeListFromRPC() throws WalletCallException, IOException, InterruptedException {
-    
+
     String[][] myMasternodes = this.clientCaller.getMyMasternodes();
     return myMasternodes;
   }
-} 
+}
