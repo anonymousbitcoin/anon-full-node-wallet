@@ -251,7 +251,6 @@ public class BTCPClientCaller {
 
         JsonObject objResponse = this.executeCommandAndGetJsonObject("mnsync", "status");
 
-        // Log.info("objResponse" + objResponse);
         String assetID = objResponse.get("AssetID").toString();
         String assetName = objResponse.get("AssetName").toString();
         String attempt = objResponse.get("Attempt").toString();
@@ -292,22 +291,6 @@ public class BTCPClientCaller {
         stringBuilder.append("<span>" + isFailed + "</span><br/>");
 
         String returnString = stringBuilder.toString().replace("\"","");
-        
-
-        Log.info("isBlockchainSynced ===============" + returnString);
-
-        // String[][] finalArr = new String [objResponse.size()][];
-        // for(int i = 0 ; i < objResponse.size() ; i ++){
-        //     finalArr[i] = new String[6];
-        //     JsonArray trans = objResponse.get(i).asArray();
-
-        //     finalArr[i][0] = trans.get(0).toString().replace("\"","");
-        //     finalArr[i][1] = trans.get(1).toString().replace("\"","");
-        //     finalArr[i][2] = trans.get(2).toString().replace("\"","");
-        //     finalArr[i][3] = trans.get(3).toString().replace("\"","");
-        //     finalArr[i][4] = trans.get(4).toString().replace("\"","");
-        //     finalArr[i][5] = trans.get(5).toString().replace("\"","");
-        // }
 
         return returnString;
     }

@@ -118,6 +118,9 @@ public class MyMasternodePanel
     JPanel buttonPanel = new JPanel();
     buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 3, 3));
     buttonPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+    
+    JButton resetMnsyncButton = new JButton("Reset Sync");
+    // buttonPanel.add(resetMnsyncButton);
 
     // JButton startAliasButton = new JButton(LOCAL_MENU_NEW_B_ADDRESS);
     JButton startAliasButton = new JButton("Start Alias");
@@ -138,21 +141,9 @@ public class MyMasternodePanel
     JLabel updateLabelStart = new JLabel("Table is updated every 5 seconds");
     buttonPanel.add(updateLabelStart);
 
+    
+
     dashboard.add(buttonPanel, BorderLayout.SOUTH);
-
-    // JPanel installationStatusPanel = new JPanel();
-    // installationStatusPanel.setLayout(new BorderLayout());
-
-
-    // dashboard.add(installationStatusPanel, BorderLayout.SOUTH);
-
-    // this.daemonStatusLabel.setText("stuff yeah");
-
-    // make clientcaller function to get names from list-conf
-
-    // String[] pip = MyMasternodePanel.this.clientCaller.getMyAliases();
-    // JComboBox myAliases = new JComboBox(pip);
-
 
     startAliasButton.addActionListener(e -> {
       try{
@@ -188,6 +179,7 @@ public class MyMasternodePanel
           startAliasButton.setText("Start Alias");
           startMissingButton.setText("Start Missing");
           updateTableButton.setText("Update Table");
+          resetMnsyncButton.setText("Reset Sync");
           // counter = 5;
         }
         counter--;
@@ -240,8 +232,20 @@ public class MyMasternodePanel
       counter = 5;
     });
 
+    resetMnsyncButton.addActionListener(e -> {
+      try{
+        String response = this.clientCaller.executeMnsyncReset();
+        resetMnsyncButton.setText(response);
+
+      }catch (Exception ex){
+        resetMnsyncButton.setText("failed");
+        Log.error("Error in resetMnsyncButton: " + ex);
+      }
+    });
+
     lastMasternodesData = getMasternodeListFromRPC();
     dashboard.add(daemonStatusLabel = new JLabel(), BorderLayout.NORTH);
+    buttonPanel.add(resetMnsyncButton);
     dashboard.add(transactionsTablePane = new JScrollPane(
             transactionsTable = this.createMasternodesTable(lastMasternodesData)),BorderLayout.CENTER);
 
