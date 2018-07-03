@@ -262,26 +262,6 @@ public class BTCPClientCaller {
         return finalArr;
     }
 
-    // public synchronized String[][] getMasternodeArray() throws WalletCallException, IOException, InterruptedException {
-    //     String[][] mnList = new String[7][];
-    //     JsonArray objResponse = this.executeCommandAndGetJsonArray("masternodelist", null);
-
-    //     mnList[0][0] = String.valueOf(objResponse.get(0));
-    //     mnList[1][0] = String.valueOf(objResponse.get(1));
-    //     mnList[2][0] = String.valueOf(objResponse.get(2));
-    //     mnList[3][0] = String.valueOf(objResponse.get(3));
-    //     mnList[4][0] = String.valueOf(objResponse.get(4));
-    //     mnList[5][0] = String.valueOf(objResponse.get(5));
-    //     mnList[6][0] = String.valueOf(objResponse.get(6));
-    //     mnList[7][0] = String.valueOf(objResponse.get(7));
-        
-    //     return mnList;
-
-        
-    // }
-
-
-
     public synchronized String[][] getWalletPublicTransactions()
             throws WalletCallException, IOException, InterruptedException {
         String notListed = "\u26D4";
@@ -468,36 +448,6 @@ public class BTCPClientCaller {
         JsonObject result = this.executeCommandAndGetJsonObject("masternode", "start-alias", aliasName);
         return result.toString(WriterConfig.PRETTY_PRINT);
     }
-
-    // JSONObject obj = new JSONObject(jsonString);
-    // String id = obj.getString("id");
-    // String error = obj.getString("error");
-    // JSONObject result = obj.getJSONObject("result");
-    // int nPeople = result.getInt("nPeople");
-    // JSONArray people = result.getJSONArray("people");
-    // for(int i = 0 ; i < people.length() ; i++){
-    //     JSONObject p = (JSONObject)people.get(i);
-    //     String namePeople = p.getString("namePeople");
-    //     ...
-    // }
-
-    // public synchronized String getMyAliases() throws WalletCallException, IOException, InterruptedException {
-    //     JsonObject result = this.executeCommandAndGetJsonObject("masternode", "list-conf");
-    //     // JsonObject masternode1 = result.getJsonObject("masternode");
-    //     JsonValue lol = result.get("masternode");
-    //     JsonValue alias = result.valueOf("masternode");
-    //     // JS
-        
-
-    //     // JsonValue loll = result.get("masternode");
-    //     // JsonValue lol = loll.get("alias");
-
-    //     // String a = result.
-    //     // return result.toString(WriterConfig.PRETTY_PRINT);
-    //     return alias.toString(WriterConfig.PRETTY_PRINT);
-    //     // return lol.toString(WriterConfig.PRETTY_PRINT);
-    // }
-
 
     public synchronized String getRawTransaction(String txID)
             throws WalletCallException, IOException, InterruptedException {
