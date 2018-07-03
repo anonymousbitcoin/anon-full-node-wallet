@@ -158,8 +158,8 @@ public class MyMasternodePanel
         String[] aliases = MyMasternodePanel.this.clientCaller.getMyAliases();
         Log.info(aliases.toString());
         String name = (String) JOptionPane.showInputDialog(MyMasternodePanel.this,
-        "Here",
-        "Another",
+        "Please select from your list of aliases, \nprovided in the configuration file.",
+        "Start Masternode By Alias",
         JOptionPane.PLAIN_MESSAGE,
         null,
         aliases,
