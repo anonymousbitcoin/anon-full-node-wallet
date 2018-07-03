@@ -236,9 +236,9 @@ public class BTCPClientCaller {
     }
 
 
-    public synchronized String getMasternodeSyncStatus() throws WalletCallException, IOException, InterruptedException {
+    public synchronized String getMasternodeSyncStatus(boolean myMasternodeList) throws WalletCallException, IOException, InterruptedException {
 
-        JsonObject objResponse = this.executeCommandAndGetJsonObject("mnsync", "status");    
+        JsonObject objResponse = this.executeCommandAndGetJsonObject("mnsync", "status");
 
         // Log.info("objResponse" + objResponse);
         String assetID = objResponse.get("AssetID").toString();
@@ -251,6 +251,17 @@ public class BTCPClientCaller {
         String isFailed = objResponse.get("IsFailed").toString();
 
         StringBuilder stringBuilder = new StringBuilder();
+
+        if(myMasternodeList) {
+            stringBuilder.append("<html>");  
+            stringBuilder.append("<span style=\"font-weight:bold;\">Is Blockchain Synced: </span>");
+            stringBuilder.append("<span>" + isBlockChainSynced + "</span><br/>");  
+            
+            String returnString = stringBuilder.toString().replace("\"","");
+
+            return returnString;
+        }
+
         stringBuilder.append("<html>");
         stringBuilder.append("<span style=\"font-weight:bold;\">Asset ID: </span>");
         stringBuilder.append("<span>" + assetID + "</span><br/>");

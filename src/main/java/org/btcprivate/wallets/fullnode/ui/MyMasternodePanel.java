@@ -241,10 +241,10 @@ public class MyMasternodePanel
     });
 
     lastMasternodesData = getMasternodeListFromRPC();
+    dashboard.add(daemonStatusLabel = new JLabel(), BorderLayout.NORTH);
     dashboard.add(transactionsTablePane = new JScrollPane(
             transactionsTable = this.createMasternodesTable(lastMasternodesData)),BorderLayout.CENTER);
 
-    dashboard.add(daemonStatusLabel = new JLabel(), BorderLayout.NORTH);
 
     // Lower panel with installation status
     // JPanel installationStatusPanel = new JPanel();
@@ -484,7 +484,7 @@ public class MyMasternodePanel
     //     stringBuilder.toString();
     String text = "";
     try {
-      text = this.clientCaller.getMasternodeSyncStatus();
+      text = this.clientCaller.getMasternodeSyncStatus(true);
     } catch (Exception e) {
       //TODO: handle exception
     }
