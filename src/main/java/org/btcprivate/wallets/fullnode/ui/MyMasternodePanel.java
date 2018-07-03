@@ -119,8 +119,7 @@ public class MyMasternodePanel
     buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 3, 3));
     buttonPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
     
-    JButton resetMnsyncButton = new JButton("Reset Sync");
-    // buttonPanel.add(resetMnsyncButton);
+    
 
     // JButton startAliasButton = new JButton(LOCAL_MENU_NEW_B_ADDRESS);
     JButton startAliasButton = new JButton("Start Alias");
@@ -141,7 +140,8 @@ public class MyMasternodePanel
     JLabel updateLabelStart = new JLabel("Table is updated every 5 seconds");
     buttonPanel.add(updateLabelStart);
 
-    
+    JButton resetMnsyncButton = new JButton("Reset Sync");
+    buttonPanel.add(resetMnsyncButton);
 
     dashboard.add(buttonPanel, BorderLayout.SOUTH);
 
@@ -245,7 +245,7 @@ public class MyMasternodePanel
 
     lastMasternodesData = getMasternodeListFromRPC();
     dashboard.add(daemonStatusLabel = new JLabel(), BorderLayout.NORTH);
-    dashboard.add(resetMnsyncButton);
+    
     dashboard.add(transactionsTablePane = new JScrollPane(
             transactionsTable = this.createMasternodesTable(lastMasternodesData)),BorderLayout.CENTER);
 
