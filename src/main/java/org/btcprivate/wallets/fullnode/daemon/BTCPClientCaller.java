@@ -188,15 +188,15 @@ public class BTCPClientCaller {
             finalArr[i] = new String[9];
             JsonArray trans = objResponse.get(i).asArray();
 
-            finalArr[i][0] = trans.get(0).toString();
-            finalArr[i][1] = trans.get(1).toString();
-            finalArr[i][2] = trans.get(2).toString();
-            finalArr[i][3] = trans.get(3).toString();
-            finalArr[i][4] = trans.get(4).toString();
-            finalArr[i][5] = trans.get(5).toString();
-            finalArr[i][6] = trans.get(6).toString();
-            finalArr[i][7] = trans.get(7).toString();
-            finalArr[i][8] = trans.get(8).toString();
+            finalArr[i][0] = trans.get(0).toString().replace("\"","");
+            finalArr[i][1] = trans.get(1).toString().replace("\"","");
+            finalArr[i][2] = trans.get(2).toString().replace("\"","");
+            finalArr[i][3] = trans.get(3).toString().replace("\"","");
+            finalArr[i][4] = trans.get(4).toString().replace("\"","");
+            finalArr[i][5] = trans.get(5).toString().replace("\"","");
+            finalArr[i][6] = trans.get(6).toString().replace("\"","");
+            finalArr[i][7] = trans.get(7).toString().replace("\"","");
+            finalArr[i][8] = trans.get(8).toString().replace("\"","");
             // String[] ar = finalArr[i];
             // for(int j = 0; j < ar.length; j++) {
             //     Log.info("----------------------------------\n");
@@ -224,12 +224,12 @@ public class BTCPClientCaller {
             finalArr[i] = new String[6];
             JsonArray trans = objResponse.get(i).asArray();
 
-            finalArr[i][0] = trans.get(0).toString();
-            finalArr[i][1] = trans.get(1).toString();
-            finalArr[i][2] = trans.get(2).toString();
-            finalArr[i][3] = trans.get(3).toString();
-            finalArr[i][4] = trans.get(4).toString();
-            finalArr[i][5] = trans.get(5).toString();
+            finalArr[i][0] = trans.get(0).toString().replace("\"","");
+            finalArr[i][1] = trans.get(1).toString().replace("\"","");
+            finalArr[i][2] = trans.get(2).toString().replace("\"","");
+            finalArr[i][3] = trans.get(3).toString().replace("\"","");
+            finalArr[i][4] = trans.get(4).toString().replace("\"","");
+            finalArr[i][5] = trans.get(5).toString().replace("\"","");
         }
 
         return finalArr;

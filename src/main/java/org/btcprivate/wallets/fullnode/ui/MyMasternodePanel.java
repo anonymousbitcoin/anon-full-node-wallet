@@ -175,23 +175,6 @@ public class MyMasternodePanel
         String response = this.clientCaller.startMasternodeByAlias(name);
         Log.info("response: " + response.toString());
 
-        // myAliases.setEditable(true);
-
-        // Object[] options = new Object[] {};
-        // JOptionPane jop = new JOptionPane("Please Select",
-        //                                 JOptionPane.QUESTION_MESSAGE,
-        //                                 JOptionPane.DEFAULT_OPTION,
-        //                                 null,options, null);
-
-        // //add combos to JOptionPane
-        // jop.add(myAliases);
-
-        // //create a JDialog and add JOptionPane to it 
-        // JDialog diag = new JDialog();
-        // diag.getContentPane().add(jop);
-        // diag.pack();
-        // diag.setVisible(true);
-
       }catch (Exception ex) {
         Log.error("Error in startAlias:" + ex);
       }
