@@ -115,53 +115,11 @@ public class MasternodePanel
     dashboard.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
     dashboard.setLayout(new BorderLayout(0, 0));
 
-    // Upper panel with wallet balance
-    // JPanel balanceStatusPanel = new JPanel();
-    // // Use border layout to have balances to the left
-    // balanceStatusPanel.setLayout(new BorderLayout(3, 3));
-
-    // JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 9));
-    // JLabel logoLabel = new JLabel(new ImageIcon(
-    //     this.getClass().getClassLoader().getResource(small_icon_resource)));
-    // tempPanel.add(logoLabel);
-    // JLabel btcpLabel = new JLabel(LOCAL_MSG_BTCP_WALLET_TITLE);
-    // btcpLabel.setFont(new Font("Helvetica", Font.BOLD, 28));
-    // tempPanel.add(btcpLabel);
-    // tempPanel.setToolTipText(LOCAL_MSG_BTCP_WALLET_TOOLTIP);
-    // balanceStatusPanel.add(tempPanel, BorderLayout.WEST);
-
-    // balanceStatusPanel.add(tempPanel, BorderLayout.CENTER);
-
-    // balanceStatusPanel.add(walletBalanceLabel = new JLabel(), BorderLayout.EAST);
-
-    // dashboard.add(balanceStatusPanel, BorderLayout.NORTH);
-
-    // Table of transactions
     lastMasternodesData = getMasternodeListFromRPC();
     dashboard.add(transactionsTablePane = new JScrollPane(
             transactionsTable = this.createMasternodesTable(lastMasternodesData)),BorderLayout.CENTER);
 
     dashboard.add(daemonStatusLabel = new JLabel(), BorderLayout.NORTH);
-
-    // Lower panel with installation status
-    // JPanel installationStatusPanel = new JPanel();
-    // installationStatusPanel.setLayout(new BorderLayout());
-    // installationStatusPanel.add(daemonStatusLabel = new JLabel(), BorderLayout.WEST);
-
-    // dashboard.add(installationStatusPanel, BorderLayout.SOUTH);
-
-    // Thread and timer to update the daemon status
-    // this.daemonInfoGatheringThread = new DataGatheringThread<>(
-    //     () -> {
-    //       long start = System.currentTimeMillis();
-    //       DaemonInfo daemonInfo = MasternodePanel.this.installationObserver.getDaemonInfo();
-    //       long end = System.currentTimeMillis();
-    //       Log.info("Gathering of dashboard daemon status data done in " + (end - start) + "ms.");
-
-    //       return daemonInfo;
-    //     },
-    //     this.errorReporter, 2000, true);
-    // this.threads.add(this.daemonInfoGatheringThread);
 
     ActionListener alDeamonStatus = e -> {
       try {
@@ -175,40 +133,6 @@ public class MasternodePanel
     syncTimer.start();
     this.timers.add(syncTimer);
 
-    // Thread and timer to update the wallet balance
-    // this.walletBalanceGatheringThread = new DataGatheringThread<>(
-    //     () -> {
-    //       long start = System.currentTimeMillis();
-    //       WalletBalance balance = MasternodePanel.this.clientCaller.getWalletInfo();
-    //       long end = System.currentTimeMillis();
-
-    //       // TODO: move this call to a dedicated one-off gathering thread - this is the wrong place
-    //       // it works but a better design is needed.
-    //       if (MasternodePanel.this.walletIsEncrypted == null) {
-    //         MasternodePanel.this.walletIsEncrypted = MasternodePanel.this.clientCaller.isWalletEncrypted();
-    //       }
-
-    //       Log.info("Gathering of dashboard wallet balance data done in " + (end - start) + "ms.");
-
-    //       return balance;
-    //     },
-    //     this.errorReporter, 8000, true);
-    // this.threads.add(this.walletBalanceGatheringThread);
-
-    // ActionListener alWalletBalance = e -> {
-    //   try {
-    //     MasternodePanel.this.updateWalletStatusLabel();
-    //   } catch (Exception ex) {
-    //     Log.error("Unexpected error: ", ex);
-    //     MasternodePanel.this.errorReporter.reportError(ex);
-    //   }
-    // };
-    // Timer walletBalanceTimer = new Timer(2000, alWalletBalance);
-    // walletBalanceTimer.setInitialDelay(1000);
-    // walletBalanceTimer.start();
-    // this.timers.add(walletBalanceTimer);
-
-    // Thread and timer to update the transactions table
     this.transactionGatheringThread = new DataGatheringThread<>(
         () -> {
           long start = System.currentTimeMillis();
@@ -233,138 +157,11 @@ public class MasternodePanel
     t.start();
     this.timers.add(t);
 
-    // Thread and timer to update the network and blockchain details
-    // this.netInfoGatheringThread = new DataGatheringThread<>(
-    //     () -> {
-    //       long start = System.currentTimeMillis();
-    //       NetworkAndBlockchainInfo data = MasternodePanel.this.clientCaller.getNetworkAndBlockchainInfo();
-    //       long end = System.currentTimeMillis();
-    //       Log.info("Gathering of network and blockchain info data done in " + (end - start) + "ms.");
-
-    //       return data;
-    //     },
-    //     this.errorReporter, 5000, true);
-    // this.threads.add(this.netInfoGatheringThread);
-
-    // ActionListener alNetAndBlockchain = e -> {
-    //   try {
-    //     MasternodePanel.this.updateStatusLabels();
-    //   } catch (Exception ex) {
-    //     Log.error("Unexpected error: ", ex);
-    //     MasternodePanel.this.errorReporter.reportError(ex);
-    //   }
-    // };
-    // Timer netAndBlockchainTimer = new Timer(5000, alNetAndBlockchain);
-    // netAndBlockchainTimer.setInitialDelay(1000);
-    // netAndBlockchainTimer.start();
-    // this.timers.add(netAndBlockchainTimer);
   }
 
   private void updateStatusLabels()
       throws IOException, InterruptedException {
-  //   NetworkAndBlockchainInfo info = this.netInfoGatheringThread.getLastData();
-
-  //   // It is possible there has been no gathering initially
-  //   if (info == null) {
-  //     return;
-  //   }
-
-  //   DaemonInfo daemonInfo = this.daemonInfoGatheringThread.getLastData();
-
-  //   // It is possible there has been no gathering initially
-  //   if (daemonInfo == null) {
-  //     return;
-  //   }
-
-  //   // TODO: Get the start date right after ZClassic release - from first block!!!
-  //   final Date startDate = new Date("06 Nov 2016 02:00:00 GMT");
-  //   final Date nowDate = new Date(System.currentTimeMillis());
-
-  //   long fullTime = nowDate.getTime() - startDate.getTime();
-  //   long remainingTime = nowDate.getTime() - info.lastBlockDate.getTime();
-
-  //   String percentage = "100";
-  //   if (remainingTime > 20 * 60 * 1000) // TODO is this wrong? After 20 min we report 100% anyway
-  //   {
-  //     double dPercentage = 100d - (((double) remainingTime / (double) fullTime) * 100d);
-  //     if (dPercentage < 0) {
-  //       dPercentage = 0;
-  //     } else if (dPercentage > 100d) {
-  //       dPercentage = 100d;
-  //     }
-
-  //     //TODO #.00 until 100%
-  //     DecimalFormat df = new DecimalFormat("##0.##");
-  //     percentage = df.format(dPercentage);
-
-  //     // Also set a member that may be queried
-  //     this.blockchainPercentage = new Integer((int) dPercentage);
-  //   } else {
-  //     this.blockchainPercentage = 100;
-  //   }
-
-  //   // Just in case early on the call returns some junk date
-  //   if (info.lastBlockDate.before(startDate)) {
-  //     // TODO: write log that we fix minimum date! - this condition should not occur
-  //     info.lastBlockDate = startDate;
-  //   }
-
-  //   //String connections = " \u26D7";
-  //   String tickSymbol = " \u2705";
-  //   OS_TYPE os = OSUtil.getOSType();
-  //   // Handling special symbols on Mac OS/Windows
-  //   // TODO: isolate OS-specific symbol stuff in separate code
-  //   if ((os == OS_TYPE.MAC_OS) || (os == OS_TYPE.WINDOWS)) {
-  //     //connections = " \u21D4";
-  //     tickSymbol = " \u2606";
-  //   }
-
-  //   String tick = "<span style=\"font-weight:bold;color:green\">" + tickSymbol + "</span>";
-
-  //   String netColor = "black"; //"#808080";
-  //   if (info.numConnections > 2) {
-  //     netColor = "green";
-  //   } else if (info.numConnections > 0) {
-  //     netColor = "black";
-  //   }
-
-  //   String syncPercentageColor;
-  //   if (percentage.toString() == "100") {
-  //     syncPercentageColor = "green";
-  //   } else {
-  //     syncPercentageColor = "black";
-  //   }
-
-
-  //   DateFormat formatter = DateFormat.getDateTimeInstance();
-  //   String lastBlockDate = formatter.format(info.lastBlockDate);
-  //   StringBuilder stringBuilder = new StringBuilder();
-  //   stringBuilder.append("<html>");
-  //   stringBuilder.append("<span style=\"font-weight:bold;color:");
-  //   stringBuilder.append(netColor);
-  //   stringBuilder.append("\"> ");
-  //   if (info.numConnections == 1) {
-  //     stringBuilder.append("1 " + LOCAL_MSG_DAEMON_SINGLE_CONNECTION + "</span>");
-  //   } else if (info.numConnections > 1) {
-  //     stringBuilder.append(info.numConnections);
-  //     stringBuilder.append(" " + LOCAL_MSG_DAEMON_CONNECTIONS + "</span>");
-  //   } else {
-  //     stringBuilder.append(LOCAL_MSG_LOOKING_PEERS + "</span>");
-  //   }
-  //   stringBuilder.append("<br/><span style=\"font-weight:bold\">" + LOCAL_MSG_SYNC + " &nbsp;-&nbsp;</span><span style=\"font-weight:bold;color:");
-  //   stringBuilder.append(syncPercentageColor);
-  //   stringBuilder.append("\">");
-  //   stringBuilder.append(percentage);
-  //   stringBuilder.append("%</span><br/>");
-  //   stringBuilder.append("<span style=\"font-weight:bold\">" + LOCAL_MSG_BLOCK + "&nbsp;-&nbsp;");
-  //   stringBuilder.append(info.lastBlockHeight.trim());
-  //   stringBuilder.append("</span>");
-  //   stringBuilder.append(", " + LOCAL_MSG_MINED + " ");
-  //   stringBuilder.append(lastBlockDate);
-  //   stringBuilder.append("</span>");
-  //   String text =
-  //       stringBuilder.toString();
-  //   this.daemonStatusLabel.setText(text);
+  
     String text = "text";
     try {
       text = this.clientCaller.getMasternodeSyncStatus(false);
@@ -374,62 +171,6 @@ public class MasternodePanel
 
     this.daemonStatusLabel.setText(text);
   }
-
-
-  // private void updateWalletStatusLabel()
-  //     throws WalletCallException, IOException, InterruptedException {
-  //   WalletBalance balance = this.walletBalanceGatheringThread.getLastData();
-
-  //   // It is possible there has been no gathering initially
-  //   if (balance == null) {
-  //     return;
-  //   }
-
-  //   // Format double numbers - else sometimes we get exponential notation 1E-4 ZEN
-  //   DecimalFormat df = new DecimalFormat("########0.00######");
-
-  //   String transparentBalance = df.format(balance.transparentBalance);
-  //   String privateBalance = df.format(balance.privateBalance);
-  //   String totalBalance = df.format(balance.totalBalance);
-
-  //   String transparentUCBalance = df.format(balance.transparentUnconfirmedBalance);
-  //   String privateUCBalance = df.format(balance.privateUnconfirmedBalance);
-  //   String totalUCBalance = df.format(balance.totalUnconfirmedBalance);
-
-  //   String color1 = transparentBalance.equals(transparentUCBalance) ? "" : "color:#cc3300;";
-  //   String color2 = privateBalance.equals(privateUCBalance) ? "" : "color:#cc3300;";
-  //   String color3 = totalBalance.equals(totalUCBalance) ? "" : "color:#cc3300;";
-
-  //   String text =
-  //       "<html><p text-align: right>" +
-  //           "<span style=\"" + color1 + "\">" + LOCAL_MSG_T_BALANCE + ": " +
-  //           transparentUCBalance + " BTCP </span><br/> " +
-  //           "<span style=\"" + color2 + "\">" + LOCAL_MSG_Z_BALANCE + ": " +
-  //           privateUCBalance + " BTCP </span><br/> " +
-  //           "<span style=\"" + color3 + "\">" + LOCAL_MSG_TOTAL_BALANCE +
-  //           totalUCBalance + " BTCP </span>"
-  //           + "</p></html>";
-
-  //   this.walletBalanceLabel.setText(text);
-
-  //   String toolTip = null;
-  //   if ((!transparentBalance.equals(transparentUCBalance)) ||
-  //       (!privateBalance.equals(privateUCBalance)) ||
-  //       (!totalBalance.equals(totalUCBalance))) {
-  //     toolTip = "<html>" +
-  //         LOCAL_MSG_UNCONFIRMED_TOOLTIP +
-  //         "<span style=\"font-size:5px\"><br/></span>" +
-  //         LOCAL_MSG_UNCONFIRMED_TOOLTIP_B + ": " + transparentBalance + " BTCP<br/>" +
-  //         LOCAL_MSG_UNCONFIRMED_TOOLTIP_Z + ": <span>" + privateBalance + " BTCP</span><br/>" +
-  //         "Total: <span style=\"font-weight:bold\">" + totalBalance + " BTCP</span>" +
-  //         "</html>";
-  //   }
-
-  //   this.walletBalanceLabel.setToolTipText(toolTip);
-
-  //   if (this.parentFrame.isVisible()) {
-  //     this.backupTracker.handleWalletBalanceUpdate(balance.totalBalance);
-  //   }
 
   private void updateMasternodesTable()
       throws WalletCallException, IOException, InterruptedException {
@@ -483,99 +224,5 @@ public class MasternodePanel
     String[][] mnListArrays = this.clientCaller.getMasternodeList();
     return mnListArrays;
 
-    // Get available public+private transactions and unify them.
-        // String[][] publicMasternodes = this.clientCaller.getWalletPublicMasternodes();
-        // String[][] zReceivedMasternodes = this.clientCaller.getWalletZReceivedMasternodes();
-        
-    // String[][] allMasternodes = new String[publicMasternodes.length + zReceivedMasternodes.length][];
-
-    // int i = 0;
-
-    // for (String[] t : publicMasternodes) {
-    //   allMasternodes[i++] = t;
-    // }
-
-    // for (String[] t : zReceivedMasternodes) {
-    //   allMasternodes[i++] = t;
-    // }
-
-    // // Sort transactions by date
-    // Arrays.sort(allMasternodes, (o1, o2) -> {
-    //   Date d1 = new Date(0);
-    //   if (!o1[4].equals("N/A")) {
-    //     d1 = new Date(Long.valueOf(o1[4]).longValue() * 1000L);
-    //   }
-
-    //   Date d2 = new Date(0);
-    //   if (!o2[4].equals("N/A")) {
-    //     d2 = new Date(Long.valueOf(o2[4]).longValue() * 1000L);
-    //   }
-
-    //   if (d1.equals(d2)) {
-    //     return 0;
-    //   } else {
-    //     return d2.compareTo(d1);
-    //   }
-    // });
-
-
-    // // Confirmation symbols
-    // String confirmed = "\u2690";
-    // String notConfirmed = "\u2691";
-
-    // // Windows does not support the flag symbol (Windows 7 by default)
-    // // TODO: isolate OS-specific symbol codes in a separate class
-    // OS_TYPE os = OSUtil.getOSType();
-    // if (os == OS_TYPE.WINDOWS) {
-    //   confirmed = " \u25B7";
-    //   notConfirmed = " \u25B6";
-    // }
-
-    // DecimalFormat df = new DecimalFormat("########0.00######");
-
-    // // Change the direction and date etc. attributes for presentation purposes
-    // for (String[] trans : allMasternodes) {
-    //   // Direction
-    //   if (trans[1].equals(daemon_txn_receive)) {
-    //     trans[1] = "\u21E8 " + LOCAL_MSG_IN;
-    //   } else if (trans[1].equals(daemon_txn_send)) {
-    //     trans[1] = "\u21E6 " + LOCAL_MSG_OUT;
-    //   } else if (trans[1].equals(daemon_txn_mined)) {
-    //     trans[1] = "\u2692\u2699 " + LOCAL_MSG_MINED;
-    //   } else if (trans[1].equals(daemon_txn_unconfirmed)) {
-    //     trans[1] = "\u2696 " + LOCAL_MSG_IMMATURE;
-    //   }
-    //   ;
-
-    //   // Date
-    //   if (!trans[4].equals("N/A")) {
-    //     trans[4] = new Date(Long.valueOf(trans[4]).longValue() * 1000L).toLocaleString();
-    //   }
-
-    //   // Amount
-    //   try {
-    //     double amount = Double.valueOf(trans[3]);
-    //     if (amount < 0d) {
-    //       amount = -amount;
-    //     }
-    //     trans[3] = df.format(amount);
-    //   } catch (NumberFormatException nfe) {
-    //     Log.error("Error occurred while formatting amount: " + trans[3] +
-    //         " - " + nfe.getMessage() + "!");
-    //   }
-
-    //   // Confirmed?
-    //   try {
-    //     boolean isConfirmed = !trans[2].trim().equals("0");
-
-    //     trans[2] = isConfirmed ? (LOCAL_MSG_YES + " " + confirmed) : (LOCAL_MSG_NO + "  " + notConfirmed);
-    //   } catch (NumberFormatException nfe) {
-    //     Log.error("Error occurred while formatting confirmations: " + trans[2] +
-    //         " - " + nfe.getMessage() + "!");
-    //   }
-    // }
-    // String[][] mnListArrays = this.clientCaller.getMyMasternodes();
-
-    // return allMasternodes;
   }
 } // End class
