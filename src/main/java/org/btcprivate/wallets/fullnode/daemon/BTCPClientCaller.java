@@ -265,7 +265,12 @@ public class BTCPClientCaller {
         if(myMasternodeList) {
             stringBuilder.append("<html>");  
             stringBuilder.append("<span style=\"font-weight:bold;\">Is Masternode List Synced: </span>");
-            stringBuilder.append("<span>" + isMasternodeListSynced + "</span><br/>");  
+            if(isMasternodeListSynced == "false"){
+                stringBuilder.append("<span style='color:red'>" + isMasternodeListSynced + "</span><br/>");
+            } else {
+                stringBuilder.append("<span style='color:green'>" + isMasternodeListSynced + "</span><br/>");
+            }
+              
             
             String returnString = stringBuilder.toString().replace("\"","");
 
