@@ -287,12 +287,10 @@ public class MyMasternodePanel
     this.timers.add(syncTimer);
   }
 
-  private void updateStatusLabels()
-      throws IOException, InterruptedException {
-
+  private void updateStatusLabels() throws IOException, InterruptedException {
     String text = "";
     try {
-      text = this.clientCaller.getMasternodeSyncStatus(true);
+      text = this.clientCaller.getMasternodeSyncStatus();
     } catch (Exception e) {
       //TODO: handle exception
     }

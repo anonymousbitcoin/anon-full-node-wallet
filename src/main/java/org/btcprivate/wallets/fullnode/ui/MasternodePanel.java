@@ -164,7 +164,7 @@ public class MasternodePanel
   
     String text = "text";
     try {
-      text = this.clientCaller.getMasternodeSyncStatus(false);
+      text = this.clientCaller.getMasternodeSyncStatus();
     } catch (Exception e) {
       //TODO: handle exception
     }

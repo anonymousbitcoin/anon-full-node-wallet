@@ -350,7 +350,14 @@ public class DashboardPanel
     stringBuilder.append("</span>");
     stringBuilder.append(", " + LOCAL_MSG_MINED + " ");
     stringBuilder.append(lastBlockDate);
-    stringBuilder.append("</span>");
+    stringBuilder.append("</span><br/>");
+    String masternodeSyncText = "";
+    try {
+      masternodeSyncText = this.clientCaller.getMasternodeSyncStatus();
+    } catch (Exception e) {
+      //TODO: handle exception
+    }
+    stringBuilder.append(masternodeSyncText);
     String text =
         stringBuilder.toString();
     this.daemonStatusLabel.setText(text);

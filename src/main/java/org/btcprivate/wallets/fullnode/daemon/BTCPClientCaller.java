@@ -247,7 +247,7 @@ public class BTCPClientCaller {
     }
 
 
-    public synchronized String getMasternodeSyncStatus(boolean myMasternodeList) throws WalletCallException, IOException, InterruptedException {
+    public synchronized String getMasternodeSyncStatus() throws WalletCallException, IOException, InterruptedException {
 
         JsonObject objResponse = this.executeCommandAndGetJsonObject("mnsync", "status");
 
@@ -261,43 +261,49 @@ public class BTCPClientCaller {
         String isFailed = objResponse.get("IsFailed").toString();
 
         StringBuilder stringBuilder = new StringBuilder();
-
-        if(myMasternodeList) {
+        String color, mnStatus;
+        Log.info("ASSETNAME IS LOCATED HERE" + assetName);
+        if (assetName.equals("MASTERNODE_SYNC_FINISHED")) {
+            mnStatus = "Finished";
+        } else if (assetName.equals("MASTERNODE_SYNC_FAILED")) {
+            mnStatus = "Failed";
+        } else {
+            mnStatus = "Syncing";
+        }
+        color = assetName.equals( "MASTERNODE_SYNC_FAILED") ?  "red" : "green";
+        // if(myMasternodeList) {
             stringBuilder.append("<html>");  
-            stringBuilder.append("<span style=\"font-weight:bold;\">Is Masternode List Synced: </span>");
-            if(isMasternodeListSynced == "false"){
-                stringBuilder.append("<span style='color:red'>" + isMasternodeListSynced + "</span><br/>");
-            } else {
-                stringBuilder.append("<span style='color:green'>" + isMasternodeListSynced + "</span><br/>");
-            }
-              
+            stringBuilder.append("<span style=\"font-weight:bold;\">Masternode List Sync: </span>");
+            stringBuilder.append("<span style='color:" + color + "'>" + mnStatus + "</span><br/>");
+            stringBuilder.append("<html/>");
             
             String returnString = stringBuilder.toString().replace("\"","");
 
             return returnString;
-        }
+        // }
 
-        stringBuilder.append("<html>");
-        stringBuilder.append("<span style=\"font-weight:bold;\">Asset ID: </span>");
-        stringBuilder.append("<span>" + assetID + "</span><br/>");
-        stringBuilder.append("<span style=\"font-weight:bold;\">Asset Name: </span>");
-        stringBuilder.append("<span>" + assetName + "</span><br/>");
-        stringBuilder.append("<span style=\"font-weight:bold;\">Attempt: </span>");
-        stringBuilder.append("<span>" + attempt + "</span><br/>");
-        stringBuilder.append("<span style=\"font-weight:bold;\">Is BlockChain Synced: </span>");
-        stringBuilder.append("<span>" + isBlockchainSynced + "</span><br/>");
-        stringBuilder.append("<span style=\"font-weight:bold;\">Is Masternode List Synced: </span>");
-        stringBuilder.append("<span>" + isMasternodeListSynced + "</span><br/>");
-        stringBuilder.append("<span style=\"font-weight:bold;\">Is Winners List Synced: </span>");
-        stringBuilder.append("<span>" + isWinnersListSynced + "</span><br/>");
-        stringBuilder.append("<span style=\"font-weight:bold;\">Is Synced: </span>");
-        stringBuilder.append("<span>" + isSynced + "</span><br/>");
-        stringBuilder.append("<span style=\"font-weight:bold;\">Is Failed: </span>");
-        stringBuilder.append("<span>" + isFailed + "</span><br/>");
+        // stringBuilder.append("<html>");
+        // stringBuilder.append("<span style=\"font-weight:bold;\">Asset ID: </span>");
+        // stringBuilder.append("<span>" + assetID + "</span><br/>");
+        // stringBuilder.append("<span style=\"font-weight:bold;\">Asset Name: </span>");
+        // stringBuilder.append("<span>" + assetName + "</span><br/>");
+        // stringBuilder.append("<span style=\"font-weight:bold;\">Attempt: </span>");
+        // stringBuilder.append("<span>" + attempt + "</span><br/>");
+        // stringBuilder.append("<span style=\"font-weight:bold;\">Is BlockChain Synced: </span>");
+        // stringBuilder.append("<span>" + isBlockchainSynced + "</span><br/>");
+        // stringBuilder.append("<span style=\"font-weight:bold;\">Is Masternode List Synced: </span>");
+        // stringBuilder.append("<span>" + isMasternodeListSynced + "</span><br/>");
+        // stringBuilder.append("<span style=\"font-weight:bold;\">Is Winners List Synced: </span>");
+        // stringBuilder.append("<span>" + isWinnersListSynced + "</span><br/>");
+        // stringBuilder.append("<span style=\"font-weight:bold;\">Is Synced: </span>");
+        // stringBuilder.append("<span>" + isSynced + "</span><br/>");
+        // stringBuilder.append("<span style=\"font-weight:bold;\">Is Failed: </span>");
+        // stringBuilder.append("<span>" + isFailed + "</span><br/>");
+        // stringBuilder.append("<html/>");
 
-        String returnString = stringBuilder.toString().replace("\"","");
+        // String returnString = stringBuilder.toString().replace("\"","");
 
-        return returnString;
+        // return returnString;
     }
 
     public synchronized String[] getMyAliases() throws WalletCallException, IOException, InterruptedException {
