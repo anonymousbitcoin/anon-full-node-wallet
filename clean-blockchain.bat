@@ -20,8 +20,8 @@ ECHO "! Only use this in case of a corrupted chainstate."
 SET /P AREYOUSURE=Are you sure (Y/[N])?
 IF /I "%AREYOUSURE%" NEQ "Y" GOTO END
 
- @RD /S /Q "C:\Users\%USERNAME%\AppData\Roaming\BitcoinPrivate\blocks"
- @RD /S /Q "C:\Users\%USERNAME%\AppData\Roaming\BitcoinPrivate\chainstate"
+ @RD /S /Q "C:\Users\%USERNAME%\AppData\Roaming\Anon\blocks"
+ @RD /S /Q "C:\Users\%USERNAME%\AppData\Roaming\Anon\chainstate"
 
 :END
 endlocal

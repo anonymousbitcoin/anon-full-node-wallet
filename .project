@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>BitcoinPrivateDesktopWallet</name>
-	<comment>Project BitcoinPrivateDesktopWallet created by Buildship.</comment>
+	<name>AnonymousDesktopWallet</name>
+	<comment>Project AnonymousDesktopWallet created by Buildship.</comment>
 	<projects>
 	</projects>
 	<buildSpec>

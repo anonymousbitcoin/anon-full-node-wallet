@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=0.0.1
+Name=Anonymous Wallet
+Comment=Anonymous Desktop GUI Wallet (full node)
+GenericName=Anonymous Wallet
+Keywords=Anonymous;cryptocurrency;ANON;
+Exec=anonymous-desktop-gui-wallet
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Icon=/usr/lib/anonymous-gui-wallet/anon-icon.png
+Categories=GNOME;Application;
+StartupNotify=true

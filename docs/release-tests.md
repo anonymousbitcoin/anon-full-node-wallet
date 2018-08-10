@@ -1,11 +1,11 @@
-## BTCP Full Node Wallet
+## ANON Full Node Wallet
 
 **Tests to perform before each release**
 
 ### 1. Connection
 	1. User can connect for the first time.
-		1. User can connect without having a BTCPrivate directory
-		2. User can connect having an existing, matching, BTCPrivate directory
+		1. User can connect without having a Anon directory
+		2. User can connect having an existing, matching, Anon directory
 	2. User can connect consecutively. This includes being able to resume from previous sync
 
 ### 2. User can import T private key

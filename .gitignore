@@ -5,12 +5,12 @@
 *.class
 
 
-#btcp
-btcp-cli
-btcpd
+#anon
+anon-cli
+anond
 
 #build
-BitcoinPrivateDesktopWallet.app
+AnonymousDesktopWallet.app
 # Package Files #
 *.jar
 
