@@ -3,7 +3,7 @@
 ### Supports B and Z addresses. Read [here](https://github.com[RepoName]bitcoin-private-full-node-wallet/blob/master/claim-anon.md) on how to claim your ANON from Zclassic and/or Bitcoin.
 
 ### Download the latest release:
-https://github.com[RepoName]bitcoin-private-full-node-wallet/releases
+https://github.com[RepoName]bitcoin-anonymo-full-node-wallet/releases
 
 
 **Platforms:** Windows, Mac, Linux
@@ -11,7 +11,7 @@ https://github.com[RepoName]bitcoin-private-full-node-wallet/releases
 [Java](https://java.com/en/download/) must be installed.
 
 
-![Anonymous Desktop Wallet](https://github.com[RepoName]bitcoin-private-full-node-wallet/raw/master/docs/WalletPreviewWin.png "Anonymous Desktop Wallet")
+![Anonymous Desktop Wallet](https://github.com[RepoName]bitcoin-anonymous-full-node-wallet/raw/master/docs/WalletPreviewWin.png "Anonymous Desktop Wallet")
 
 
 #### WARNING: Be careful when using this software! It is highly experimental.
@@ -46,7 +46,7 @@ https://github.com[RepoName]bitcoin-private-full-node-wallet/releases
 
    First, clone this Git repository:
    ```
-   git clone https://github.com[RepoName]bitcoin-private-full-node-wallet
+   git clone https://github.com[RepoName]bitcoin-anonymous-full-node-wallet
    ```
    Enter:
    ```
@@ -117,13 +117,13 @@ Windows you need to right-click on `AnonymousDesktopWallet.exe` and choose optio
 Properties >> Compatibility >> Override high DPI scaling behavior >> Scaling performed by: (Application)
 ```
 
-![DPI Scaling](https://github.com[RepoName]bitcoin-private-full-node-wallet/raw/master/docs/EXEScalingSettings.png "DPI Scaling")
+![DPI Scaling](https://github.com[RepoName]bitcoin-anonymous-full-node-wallet/raw/master/docs/EXEScalingSettings.png "DPI Scaling")
 
 
 ### License
 Originally forked from the [ZENCash Swing Wallet](https://github.com/ZencashOfficial/zencash-swing-wallet-ui).
 
-This program is distributed under an [MIT License](https://github.com[RepoName]bitcoin-private-full-node-wallet/raw/master/LICENSE).
+This program is distributed under an [MIT License](https://github.com[RepoName]bitcoin-anonymous-full-node-wallet/raw/master/LICENSE).
 
 ### Disclaimer
 
