@@ -6,8 +6,8 @@
 ############################################
 
 # set up your app name, version number, and background image file name
-APP_NAME="BitcoinPrivateDesktopWallet"
-APP_DISPLAY_NAME="Bitcoin Private Desktop Wallet"
+APP_NAME="AnonymousDesktopWallet"
+APP_DISPLAY_NAME="Anonymous Desktop Wallet"
 VERSION="1.1.1"
 APP_EXE="${APP_DISPLAY_NAME}.app/Contents/MacOS/JavaAppLauncher"
 VOL_NAME="${APP_NAME}_${VERSION}"
@@ -53,18 +53,18 @@ else
   rm -rf macdylibbundler
 fi
 
-if [ ! -e ./btcpd ]
+if [ ! -e ./anond ]
 then
-	echo "please provide btcpd in the root directory"
+	echo "please provide anond in the root directory"
 else
-	echo "found btcpd - OK"
+	echo "found anond - OK"
 fi
 
-if [ ! -e ./btcp-cli ]
+if [ ! -e ./anon-cli ]
 then
-	echo "please provide btcp-cli in the root directory"
+	echo "please provide anon-cli in the root directory"
 else
-	echo "found btcp-cli - OK"
+	echo "found anon-cli - OK"
 fi
 echo ""
 echo "******************"
@@ -81,19 +81,19 @@ echo "|| Packaging App ||"
 echo "*******************"
 echo ""
 #package jar to app
-jar2app build/libs/"${APP_NAME}"-*.jar  -i ./src/main/resources/images/btcp.icns -b org.btcprivate.wallets.fullnode -v "${VERSION}" -s "${VERSION}"
+jar2app build/libs/"${APP_NAME}"-*.jar  -i ./src/main/resources/images/anon.icns -b org.anonymous.wallets.fullnode -v "${VERSION}" -s "${VERSION}"
 mv "${APP_NAME}-${VERSION}.app" "${APP_DISPLAY_NAME}.app"
 
 #support automatic graphics switching
 plutil -replace NSSupportsAutomaticGraphicsSwitching -bool true "${APP_DISPLAY_NAME}.app"/Contents/Info.plist
 
 #create copies for link modification
-cp ./btcpd ./btcpd-dylib
-cp ./btcp-cli ./btcp-cli-dylib
+cp ./anond ./anond-dylib
+cp ./anon-cli ./anon-cli-dylib
 
 #ensure permissions allow for execution
-chmod +x "./btcpd-dylib"
-chmod +x "./btcp-cli-dylib"
+chmod +x "./anond-dylib"
+chmod +x "./anon-cli-dylib"
 
 echo ""
 echo "**********************************"
@@ -102,19 +102,19 @@ echo "**********************************"
 echo ""
 
 #statically build required libraries
-dylibbundler -od -b -x "./btcpd-dylib" \
-                    -x "./btcp-cli-dylib" \
+dylibbundler -od -b -x "./anond-dylib" \
+                    -x "./anon-cli-dylib" \
                     -d "./libs" \
                     -p @executable_path/libs
 
-#add btcpd, btcp-cli, and libs into the required Contents folder of the App
-cp ./btcpd-dylib "./${APP_DISPLAY_NAME}.app/Contents/btcpd"
-cp ./btcp-cli-dylib "./${APP_DISPLAY_NAME}.app/Contents/btcp-cli"
+#add anond, anon-cli, and libs into the required Contents folder of the App
+cp ./anond-dylib "./${APP_DISPLAY_NAME}.app/Contents/anond"
+cp ./anon-cli-dylib "./${APP_DISPLAY_NAME}.app/Contents/anon-cli"
 cp -R ./libs "./${APP_DISPLAY_NAME}.app/Contents/libs"
 
 #remove modified copies
-rm ./btcpd-dylib
-rm ./btcp-cli-dylib
+rm ./anond-dylib
+rm ./anon-cli-dylib
 
 rm -rf "${STAGING_DIR}" "${DMG_TMP}" "${DMG_FINAL}"
 mkdir -p "${STAGING_DIR}"

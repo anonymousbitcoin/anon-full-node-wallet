@@ -17,7 +17,7 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 
-mainClassName = "org.btcprivate.wallets.fullnode.ui.BTCPWalletUI"
+mainClassName = "org.anonymous.wallets.fullnode.ui.ANONWalletUI"
 
 
 repositories {
@@ -26,7 +26,7 @@ repositories {
 
 task fatJar(type: Jar) {
     manifest {
-        attributes 'Main-Class':'org.btcprivate.wallets.fullnode.ui.BTCPWalletUI'
+        attributes 'Main-Class':'org.anonymous.wallets.fullnode.ui.ANONWalletUI'
     }
     //baseName = project.name + '-all'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
@@ -36,7 +36,7 @@ task fatJar(type: Jar) {
 }
 
 tasks.fatJar.doFirst{
-    File file = file('src/main/java/org/btcprivate/wallets/fullnode/ui/BTCPWalletUI.java')
+    File file = file('src/main/java/org/anonymous/wallets/fullnode/ui/ANONWalletUI.java')
     file.readLines().each{
         if(it.contains("private static final String VERSION")){
             def versionString =it.split("=")[1]
