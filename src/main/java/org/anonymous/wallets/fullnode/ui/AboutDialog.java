@@ -33,16 +33,18 @@ public class AboutDialog
         licensePanel.setLayout(new BorderLayout(3, 3));
         JTextArea licenseLabel = new JTextArea();
         licenseLabel.setText(
-                "" + "Copyright (c) 2018 - TheAnonymousTeam\n\n"
+                    ""  + "Copyright (c) 2018 - Anonymous Team\n\n"
+                        + "Forked from the Bitcoin Private Full Node wallet\n" 
+                        + "Copyright (c) 2018 - Bitcoin Private Team\n\n"
                         + "Jon Layton <me@jonl.io>"
                         + "\n"
-                        + "Donate ANON T: b1DaAu8Un1qmjxQtGnDMcFjmYW6tP55ebvi"
-                        + "\nDonate ANON Z: zkT7ciUjQavpH4W7g7FvjortXn8aaKdCxBpU9Fx5Qydy6C9yC9taiTRjCyTTVCXFiLcXjrxNGwpcK5D1f6VTeChA2JyVFai"
+                        + "Donate BTCP T: b1DaAu8Un1qmjxQtGnDMcFjmYW6tP55ebvi"
+                        + "\nDonate BTCP Z: zkT7ciUjQavpH4W7g7FvjortXn8aaKdCxBpU9Fx5Qydy6C9yC9taiTRjCyTTVCXFiLcXjrxNGwpcK5D1f6VTeChA2JyVFai"
                         +"\n\n"
                         + "Niels Buekers <niels.buekers@gmail.com>"
                         + "\n"
-                        + "Donate ANON T: b1QuabCryqBRfwbCGN1Dv7aEgEnmaMiqg7k"
-                        + "\nDonate ANON Z: zkN1kCVEy7yNA8BrY8yZNYyLJKcMFs1nDALoXD9eTD3uSGn4jixv1pyYYoroEaKUyyhnkfC8gAm4wLMH2kx3WXgKduLo7eD"
+                        + "Donate BTCP T: b1QuabCryqBRfwbCGN1Dv7aEgEnmaMiqg7k"
+                        + "\nDonate BTCP Z: zkN1kCVEy7yNA8BrY8yZNYyLJKcMFs1nDALoXD9eTD3uSGn4jixv1pyYYoroEaKUyyhnkfC8gAm4wLMH2kx3WXgKduLo7eD"
                         +"\n\n\n\n"
                         +"Forked from the ZENCash wallet\n"
                         + "Copyright (c) 2016-2017 Ivan Vaklinov <ivan@vaklinov.com> \n" +

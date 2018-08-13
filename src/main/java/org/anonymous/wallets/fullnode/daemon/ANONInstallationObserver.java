@@ -47,14 +47,14 @@ public class ANONInstallationObserver {
             zcashcli = OSUtil.findZCashCommand(OSUtil.getZCashCli());
         }
 
-        Log.info("UsingAnonymousdaemon  and rpc tools: " +
+        Log.info("Using Anonymous daemon  and rpc tools: " +
                 "anond: " + ((zcashd != null) ? zcashd.getCanonicalPath() : "<MISSING>") + ", " +
                 "anon-cli: " + ((zcashcli != null) ? zcashcli.getCanonicalPath() : "<MIdfSSING>"));
         Log.info("bhadjkfbgabdfjgah" + zcashd);
 
         if ((zcashd == null) || (zcashcli == null) || (!zcashd.exists()) || (!zcashcli.exists())) {
             throw new InstallationDetectionException(
-                    "TheAnonymousFull-Node Desktop Wallet installation directory " + installDir + " needs\nto contain " +
+                    "The Anonymous Full-Node Desktop Wallet installation directory " + installDir + " needs\nto contain " +
                             "the command line utilities anond and anon-cli. At least one of them is missing! \n" +
                             "Please place files AnonymousDesktopWallet.jar, " + OSUtil.getZCashCli() + ", " +
                             OSUtil.getZCashd() + " in the same directory.");

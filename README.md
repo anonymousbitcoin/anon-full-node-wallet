@@ -1,9 +1,9 @@
 # [Anonymous](https://anonymousbitcoin.io/) Full-Node Desktop Wallet
 
-### Supports B and Z addresses. Read [here](https://github.com[RepoName]bitcoin-private-full-node-wallet/blob/master/claim-anon.md) on how to claim your ANON from Zclassic and/or Bitcoin.
+### Supports B and Z addresses. Read [here](https://github.com/anonymousbitcoin/anonymous-full-node-wallet/blob/master/claim-anon.md) on how to claim your ANON from Zclassic and/or Bitcoin.
 
 ### Download the latest release:
-https://github.com[RepoName]bitcoin-anonymo-full-node-wallet/releases
+https://github.com/anonymousbitcoin/anonymous-full-node-wallet/releases
 
 
 **Platforms:** Windows, Mac, Linux
@@ -11,7 +11,7 @@ https://github.com[RepoName]bitcoin-anonymo-full-node-wallet/releases
 [Java](https://java.com/en/download/) must be installed.
 
 
-![Anonymous Desktop Wallet](https://github.com[RepoName]bitcoin-anonymous-full-node-wallet/raw/master/docs/WalletPreviewWin.png "Anonymous Desktop Wallet")
+![Anonymous Desktop Wallet](https://github.com/anonymousbitcoin/anonymous-full-node-wallet/raw/master/docs/WalletPreviewWin.png "Anonymous Desktop Wallet")
 
 
 #### WARNING: Be careful when using this software! It is highly experimental.
@@ -19,7 +19,7 @@ https://github.com[RepoName]bitcoin-anonymo-full-node-wallet/releases
 
 ---
 
-#### For best security, it is recommended to build the entireAnonymouswallet by yourself, directly from GitHub.
+#### For best security, it is recommended to build the entire Anonymous wallet by yourself, directly from GitHub.
 
 ##### 1 - Operating System and Tools
 
@@ -46,11 +46,11 @@ https://github.com[RepoName]bitcoin-anonymo-full-node-wallet/releases
 
    First, clone this Git repository:
    ```
-   git clone https://github.com[RepoName]bitcoin-anonymous-full-node-wallet
+   git clone https://github.com/anonymousbitcoin/anonymous-full-node-wallet
    ```
    Enter:
    ```
-   cd bitcoin-private-full-node-wallet
+   cd anonymous-full-node-wallet
    ```
    Build:
    ```
@@ -62,7 +62,7 @@ https://github.com[RepoName]bitcoin-anonymo-full-node-wallet/releases
    ```
    chmod u+x build/libs/AnonymousDesktopWallet-VERSION.jar
    ```
-   Copy the daemon and cli from the [Anonymous CLI Wallet](https://github.com[RepoName]Anonymous) beside the .jar:
+   Copy the daemon and cli from the [Anonymous CLI Wallet](https://github.com/anonymousbitcoin/Anonymous) beside the .jar:
    ```
    cp ~/Anon/src/anond build/libs/anond
    cp ~/Anon/src/anon-cli build/libs/anon-cli
@@ -73,7 +73,8 @@ https://github.com[RepoName]bitcoin-anonymo-full-node-wallet/releases
    You can now run the Desktop GUI Wallet:
 
    ```
-   java -jar build/libs/AnonymousDesktopWallet-VERSION.jar
+   cd build/libs
+   java -jar AnonymousDesktopWallet-VERSION.jar
    ```
 
    Or just double-click it!
@@ -89,13 +90,14 @@ Running the .jar will automatically set up `~/.anon/anon.conf` for you. In some 
 rpcuser=ENTER-RANDOM-ALPHANUMERICAL-PASSWORD
 rpcpassword=ENTER-RANDOM-ALPHANUMERICAL-PASSWORD
 rpcport=7932
+testnet=1
 #addnode=...
 
 ```
 
 ### Notes from ZENCash - Known Issues and Limitations
 
-1. **Issue:** TheAnonymousDesktop GUI Wallet is not compatible with applications that modify the ANON `wallet.dat` file. The wallet should not be used
+1. **Issue:** The Anonymous Desktop GUI Wallet is not compatible with applications that modify the ANON `wallet.dat` file. The wallet should not be used
 with such applications on the same PC. For instance some distributed exchange applications are known to create watch-only addresses in the
 `wallet.dat` file that cause the GUI wallet to display a wrong balance and/or display addresses that do not belong to the wallet.
 1. **Limitation:** if two users exchange text messages via the messaging UI TAB and one of them has a system clock, substantially running slow or fast by more than 1 minute, it is possible that this user will see text messages appearing out of order.
@@ -117,13 +119,12 @@ Windows you need to right-click on `AnonymousDesktopWallet.exe` and choose optio
 Properties >> Compatibility >> Override high DPI scaling behavior >> Scaling performed by: (Application)
 ```
 
-![DPI Scaling](https://github.com[RepoName]bitcoin-anonymous-full-node-wallet/raw/master/docs/EXEScalingSettings.png "DPI Scaling")
 
 
 ### License
-Originally forked from the [ZENCash Swing Wallet](https://github.com/ZencashOfficial/zencash-swing-wallet-ui).
+Originally forked from the [BTCP Swing Wallet](https://github.com/BTCPrivate/bitcoin-private-full-node-wallet).
 
-This program is distributed under an [MIT License](https://github.com[RepoName]bitcoin-anonymous-full-node-wallet/raw/master/LICENSE).
+This program is distributed under an MIT License
 
 ### Disclaimer
 

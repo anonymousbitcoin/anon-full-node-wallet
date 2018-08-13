@@ -350,7 +350,7 @@ public class SendCashPanel
     final String fee = this.transactionFeeField.getText();
 
     // Verify general correctness.
-    // https://github.com[RepoName]trezor-common/blob/08fe85ad07bbbdc25cc83ffae8be7aff89245594/coins.json#L575
+    // https://github.com/anonymousbitcoin/trezor-common/blob/08fe85ad07bbbdc25cc83ffae8be7aff89245594/coins.json#L575
     // B Addresses are 35 chars (b1, bx)
     // Z Addresses are 95 chars (zk)
     // base58check encoded
