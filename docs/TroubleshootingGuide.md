@@ -10,7 +10,7 @@ When wallet problems occur, the information about the errors that caused the iss
 ```
 Linux:    ~/.AnonymousDesktopWallet/AnonymousGUIWallet_xxxx_xx_debug.log
 Windows:  %LOCALAPPDATA%/AnonymousDesktopWallet/AnonymousGUIWallet_xxxx_xx_debug.log
-Mac OS:   ~/Library/Application Support/AnonymousDesktopWallet/AnonymousGUIWallet_xxxx_xx_debug.log
+Mac OS:   ~/Library/Application Support/AnonDesktopWallet/AnonymousGUIWallet_xxxx_xx_debug.log
 ```
 `anond` that is automatically started by the wallet, stores its logs at locations:
 ```

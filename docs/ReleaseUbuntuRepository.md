@@ -21,7 +21,7 @@ gpg --export 219F55740BBF7A1CE368BA45FB7053CE4991B669 | sudo apt-key add -
 # TODO this needs to be configured for ANON
 
 sudo apt-get update
-sudo apt-get install anon bitcoin-private-desktop-gui-wallet
+sudo apt-get install anonymous-desktop-gui-wallet
 ```
 Then you need to set up the `anon.conf` configuration file:
 ```
@@ -40,9 +40,9 @@ anon-fetch-params
 To launch theAnonymousDesktop GUI Wallet you can just search and click on it in the Ubuntu unity menu:
 ![UnityLauncher](ZENUnityLauncher.png "Anonymous Wallet launcher")
 
-...or alternatively, run the command `bitcoin-private-desktop-gui-wallet` from a terminal:
+...or alternatively, run the command `anonymous-desktop-gui-wallet` from a terminal:
 ```
-bitcoin-private-desktop-gui-wallet
+anonymous-desktop-gui-wallet
 ```
 
 ### Disclaimer
