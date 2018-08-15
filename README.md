@@ -1,9 +1,9 @@
 # Anonymous Full-Node Desktop Wallet
 
-### Supports B and Z addresses. Read [here](https://github.com/anonymousbitcoin/anonymous-full-node-wallet/blob/master/claim-anon.md) on how to claim your ANON from Zclassic and/or Bitcoin.
+### Supports B and Z addresses. Read [here](https://github.com/anonymousbitcoin/anon-full-node-wallet/blob/master/claim-anon.md) on how to claim your ANON from Zclassic and/or Bitcoin.
 
 ### Download the latest release:
-https://github.com/anonymousbitcoin/anonymous-full-node-wallet/releases
+https://github.com/anonymousbitcoin/anon-full-node-wallet/releases
 
 
 **Platforms:** Windows, Mac, Linux
@@ -11,7 +11,7 @@ https://github.com/anonymousbitcoin/anonymous-full-node-wallet/releases
 [Java](https://java.com/en/download/) must be installed.
 
 
-![Anonymous Desktop Wallet](https://github.com/anonymousbitcoin/anonymous-full-node-wallet/raw/master/docs/WalletPreview.png "Anonymous Desktop Wallet")
+![Anonymous Desktop Wallet](https://github.com/anonymousbitcoin/anon-full-node-wallet/raw/master/docs/WalletPreview.png "Anonymous Desktop Wallet")
 
 
 #### WARNING: Be careful when using this software! It is highly experimental.
@@ -46,11 +46,11 @@ https://github.com/anonymousbitcoin/anonymous-full-node-wallet/releases
 
    First, clone this Git repository:
    ```
-   git clone https://github.com/anonymousbitcoin/anonymous-full-node-wallet
+   git clone https://github.com/anonymousbitcoin/anon-full-node-wallet
    ```
    Enter:
    ```
-   cd anonymous-full-node-wallet
+   cd anon-full-node-wallet
    ```
    Build:
    ```
@@ -62,7 +62,7 @@ https://github.com/anonymousbitcoin/anonymous-full-node-wallet/releases
    ```
    chmod u+x build/libs/AnonymousDesktopWallet-VERSION.jar
    ```
-   Copy the daemon and cli from the [Anonymous CLI Wallet](https://github.com/anonymousbitcoin/Anonymous) beside the .jar:
+   Copy the daemon and cli from the [Anonymous CLI Wallet](https://github.com/anonymousbitcoin/anon) beside the .jar:
    ```
    cp ~/Anon/src/anond build/libs/anond
    cp ~/Anon/src/anon-cli build/libs/anon-cli
@@ -102,9 +102,9 @@ with such applications on the same PC. For instance some distributed exchange ap
 `wallet.dat` file that cause the GUI wallet to display a wrong balance and/or display addresses that do not belong to the wallet.
 1. **Limitation:** if two users exchange text messages via the messaging UI TAB and one of them has a system clock, substantially running slow or fast by more than 1 minute, it is possible that this user will see text messages appearing out of order.
 1. **Limitation:** if a messaging identity has been created (happens on first click on the messaging UI tab), then replacing the `wallet.dat` or changing the node configuration between mainnet and testnet will make the identity invalid. This will result in a wallet update error. To remove the error the directory `~/.AnonymousDesktopWallet/messaging` may be manually renamed or deleted (when the wallet is stopped). **CAUTION: all messaging history will be lost in this case!**
-1. **Limitation:** Wallet encryption has been temporarily disabled inAnonymousdue to stability problems. A corresponding issue
+1. **Limitation:** Wallet encryption has been temporarily disabled in Anonymous due to stability problems. A corresponding issue
 [#1552](https://github.com/zcash/zcash/issues/1552) has been opened by the Zcash developers. Correspondingly,
-wallet encryption has been temporarily disabled in theAnonymousDesktop GUI Wallet.
+wallet encryption has been temporarily disabled in the Anonymous Desktop GUI Wallet.
 The latter needs to be disabled.
 1. **Limitation:** The list of transactions does not show all outgoing ones (specifically outgoing Z address
 transactions). A corresponding issue [#1438](https://github.com/zcash/zcash/issues/1438) has been opened
