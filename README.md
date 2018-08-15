@@ -1,4 +1,4 @@
-# [Anonymous](https://anonymousbitcoin.io/) Full-Node Desktop Wallet
+# Anonymous Full-Node Desktop Wallet
 
 ### Supports B and Z addresses. Read [here](https://github.com/anonymousbitcoin/anonymous-full-node-wallet/blob/master/claim-anon.md) on how to claim your ANON from Zclassic and/or Bitcoin.
 
@@ -84,7 +84,8 @@ https://github.com/anonymousbitcoin/anonymous-full-node-wallet/releases
    right-click `AnonymousDesktopWallet-VERSION.jar` file and choose "Open with OpenJDK 8 Runtime".
 
 
-### `anon.conf`
+### Setting up your configuration file: (`anon.conf`)
+
 Running the .jar will automatically set up `~/.anon/anon.conf` for you. In some cases, you may need to edit it manually. It should contain:
 ```
 rpcuser=ENTER-RANDOM-ALPHANUMERICAL-PASSWORD
@@ -92,7 +93,6 @@ rpcpassword=ENTER-RANDOM-ALPHANUMERICAL-PASSWORD
 rpcport=7932
 testnet=1
 #addnode=...
-
 ```
 
 ### Notes from ZENCash - Known Issues and Limitations
