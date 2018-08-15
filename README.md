@@ -11,7 +11,7 @@ https://github.com/anonymousbitcoin/anonymous-full-node-wallet/releases
 [Java](https://java.com/en/download/) must be installed.
 
 
-![Anonymous Desktop Wallet](https://github.com/anonymousbitcoin/anonymous-full-node-wallet/raw/master/docs/WalletPreviewWin.png "Anonymous Desktop Wallet")
+![Anonymous Desktop Wallet](https://github.com/anonymousbitcoin/anonymous-full-node-wallet/raw/master/docs/WalletPreview.png "Anonymous Desktop Wallet")
 
 
 #### WARNING: Be careful when using this software! It is highly experimental.
