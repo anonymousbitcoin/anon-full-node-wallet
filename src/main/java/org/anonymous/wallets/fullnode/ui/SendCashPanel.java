@@ -351,15 +351,16 @@ public class SendCashPanel
 
     // Verify general correctness.
     // https://github.com/anonymousbitcoin/trezor-common/blob/08fe85ad07bbbdc25cc83ffae8be7aff89245594/coins.json#L575
-    // B Addresses are 35 chars (b1, bx)
+    // A Addresses are 35 chars (An, tA)
     // Z Addresses are 95 chars (zk)
     // base58check encoded
 
     // Prevent accidental sending to non-ANON addresses (as seems to be supported by daemon)
     if (!installationObserver.isOnTestNet()) {
-      if (!(destinationAddress.startsWith("zz") ||
-          destinationAddress.startsWith("b1") ||
-          destinationAddress.startsWith("bx"))) {
+      if (!(destinationAddress.startsWith("tA") ||
+          destinationAddress.startsWith("An") ||
+          destinationAddress.startsWith("zk") ||
+          destinationAddress.startsWith("zt"))) {
         Object[] options = {"OK"};
 
         JOptionPane.showOptionDialog(
@@ -382,8 +383,8 @@ public class SendCashPanel
 
     final int B_ADDRESS_PROPER_LENGTH = 35;
     final int Z_ADDRESS_PROPER_LENGTH = 95;
-    int sourceAddressProperLength = (sourceAddress.startsWith("zz")) ? Z_ADDRESS_PROPER_LENGTH : B_ADDRESS_PROPER_LENGTH;
-    int destinationAddressProperLength = (destinationAddress.startsWith("zz")) ? Z_ADDRESS_PROPER_LENGTH : B_ADDRESS_PROPER_LENGTH;
+    int sourceAddressProperLength = (sourceAddress.startsWith("zk") || sourceAddress.startsWith("zt")) ? Z_ADDRESS_PROPER_LENGTH : B_ADDRESS_PROPER_LENGTH;
+    int destinationAddressProperLength = (destinationAddress.startsWith("zk") || destinationAddress.startsWith("zt")) ? Z_ADDRESS_PROPER_LENGTH : B_ADDRESS_PROPER_LENGTH;
 
     if ((sourceAddress == null) || (sourceAddress.trim().length() < sourceAddressProperLength)) {
       errorMessage = "'From' address is invalid; it is too short or missing.";
