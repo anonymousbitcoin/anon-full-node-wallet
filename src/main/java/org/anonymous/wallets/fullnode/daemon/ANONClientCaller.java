@@ -130,6 +130,7 @@ public class ANONClientCaller {
         CommandExecutor infoGetter = new CommandExecutor(
                 new String[]{zcashcli.getCanonicalPath(), "getinfo"});
         String info = infoGetter.execute();
+        Log.info(info.trim().toLowerCase(Locale.ROOT));
 
         if (info.trim().toLowerCase(Locale.ROOT).startsWith("error: couldn't connect to server")) {
             throw new IOException(info.trim());

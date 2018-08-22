@@ -30,7 +30,6 @@ public class ANONInstallationObserver {
     public ANONInstallationObserver(String installDir)
             throws IOException {
         // Detect daemon and client tools installation
-        Log.info("dfghkdnag" + installDir);
         File dir = new File(installDir);
 
         if (!dir.exists() || dir.isFile()) {
@@ -50,7 +49,6 @@ public class ANONInstallationObserver {
         Log.info("Using Anonymous daemon  and rpc tools: " +
                 "anond: " + ((zcashd != null) ? zcashd.getCanonicalPath() : "<MISSING>") + ", " +
                 "anon-cli: " + ((zcashcli != null) ? zcashcli.getCanonicalPath() : "<MIdfSSING>"));
-        Log.info("bhadjkfbgabdfjgah" + zcashd);
 
         if ((zcashd == null) || (zcashcli == null) || (!zcashd.exists()) || (!zcashcli.exists())) {
             throw new InstallationDetectionException(
