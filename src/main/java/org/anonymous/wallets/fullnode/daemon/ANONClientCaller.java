@@ -263,7 +263,7 @@ public class ANONClientCaller {
 
         StringBuilder stringBuilder = new StringBuilder();
         String color, mnStatus;
-        if (assetName.equals("MASTERNODE_SYNC_FINISHED")) {
+        if (assetName.replace("\"", "").equals("MASTERNODE_SYNC_FINISHED")) {
             mnStatus = "Finished";
         } else if (assetName.equals("MASTERNODE_SYNC_FAILED")) {
             mnStatus = "Failed";
