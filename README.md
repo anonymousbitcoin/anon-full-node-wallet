@@ -88,10 +88,10 @@ https://github.com/anonymousbitcoin/anon-full-node-wallet/releases
 
 Running the .jar will automatically set up `~/.anon/anon.conf` for you. In some cases, you may need to edit it manually. It should contain:
 ```
+txindex=1
 rpcuser=ENTER-RANDOM-ALPHANUMERICAL-PASSWORD
 rpcpassword=ENTER-RANDOM-ALPHANUMERICAL-PASSWORD
 rpcport=7932
-testnet=1
 #addnode=...
 ```
 
