@@ -27,7 +27,7 @@ https://github.com/anonymousbitcoin/anon-full-node-wallet/releases
 
    **MacOS -**
 
-   Download & Install [JDK 9](http://www.oracle.com/technetwork/java/javase/downloads/jdk9-downloads-3848520.html)
+   Download & Install [JDK 10](https://docs.oracle.com/javase/10/install/overview-jdk-10-and-jre-10-installation.htm)
 
    **Ubuntu Linux -**
    ```
@@ -62,12 +62,11 @@ https://github.com/anonymousbitcoin/anon-full-node-wallet/releases
    ```
    chmod u+x build/libs/AnonymousDesktopWallet-VERSION.jar
    ```
-   Copy the daemon and cli from the [Anonymous CLI Wallet](https://github.com/anonymousbitcoin/anon) beside the .jar:
+   Copy the AnonymousDesktopWallet-VERSION.jar from the build/libs folder and place it beside the `anond` and `anon-cli` within the `~/anon/src` folder:
    ```
-   cp ~/Anon/src/anond build/libs/anond
-   cp ~/Anon/src/anon-cli build/libs/anon-cli
+   cp build/libs/AnonymousDesktopWallet-VERSION.jar ~/anon/src/
    ```
-   At this point the build process is finished! The final product is the GUI Wallet Java JAR: `build/libs/AnonymousDesktopWallet-VERSION.jar`
+   At this point the build process is finished! The final product is the GUI Wallet Java JAR:  `~/anon/src/AnonymousDesktopWallet-VERSION.jar`
 
 
    You can now run the Desktop GUI Wallet:
@@ -88,10 +87,10 @@ https://github.com/anonymousbitcoin/anon-full-node-wallet/releases
 
 Running the .jar will automatically set up `~/.anon/anon.conf` for you. In some cases, you may need to edit it manually. It should contain:
 ```
+txindex=1
 rpcuser=ENTER-RANDOM-ALPHANUMERICAL-PASSWORD
 rpcpassword=ENTER-RANDOM-ALPHANUMERICAL-PASSWORD
 rpcport=7932
-testnet=1
 #addnode=...
 ```
 
