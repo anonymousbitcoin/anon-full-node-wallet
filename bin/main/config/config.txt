@@ -1,7 +1,7 @@
 ##
 ## anon.conf configuration file. Lines beginning with # are comments.
 ##
-
+txindex=1
 # Network-related settings:
 
 # Run on the test network instead of the realAnonymousnetwork.
