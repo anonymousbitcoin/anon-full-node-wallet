@@ -90,7 +90,7 @@ Running the .jar will automatically set up `~/.anon/anon.conf` for you. In some 
 txindex=1
 rpcuser=ENTER-RANDOM-ALPHANUMERICAL-PASSWORD
 rpcpassword=ENTER-RANDOM-ALPHANUMERICAL-PASSWORD
-rpcport=7932
+rpcport=3130
 #addnode=...
 ```
 
