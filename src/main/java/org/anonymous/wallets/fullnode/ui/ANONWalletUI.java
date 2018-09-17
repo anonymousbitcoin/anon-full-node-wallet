@@ -389,7 +389,7 @@ public class ANONWalletUI extends JFrame {
             OS_TYPE os = OSUtil.getOSType();
 
             if ((os == OS_TYPE.WINDOWS) || (os == OS_TYPE.MAC_OS)) {
-                possiblyCreateZENConfigFile();
+                possiblyCreateANONConfig();
             }
 
             Log.info("Anonymous Full-Node Desktop Wallet (GUI, made in Java & Swing)");
@@ -518,7 +518,7 @@ public class ANONWalletUI extends JFrame {
     }
 
 
-    public static void possiblyCreateZENConfigFile()
+    public static void possiblyCreateANONConfig()
         throws IOException {
         String blockchainDir = OSUtil.getBlockchainDirectory();
         File dir = new File(blockchainDir);
@@ -530,14 +530,14 @@ public class ANONWalletUI extends JFrame {
             }
         }
 
-        File zenConfigFile = new File(dir, "anon.conf");
+        File anonConfig = new File(dir, "anon.conf");
 
-        if (!zenConfigFile.exists()) {
+        if (!anonConfig.exists()) {
 
-            Log.info("anon.conf (" + zenConfigFile.getCanonicalPath() +
+            Log.info("anon.conf (" + anonConfig.getCanonicalPath() +
                 ") does not exist. It will be created with default settings.");
 
-            PrintStream configOut = new PrintStream(new FileOutputStream(zenConfigFile));
+            PrintStream configOut = new PrintStream(new FileOutputStream(anonConfig));
             Random r = new Random(System.currentTimeMillis());
             configOut.println("# Generated RPC credentials");
             configOut.println("rpcallowip=127.0.0.1");
