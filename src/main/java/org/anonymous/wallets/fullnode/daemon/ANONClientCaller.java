@@ -170,14 +170,14 @@ public class ANONClientCaller {
         balance.transparentBalance = Double.valueOf(objResponse.getString("transparent", "-1"));
         balance.privateBalance = Double.valueOf(objResponse.getString("private", "-1"));
         balance.totalBalance = Double.valueOf(objResponse.getString("total", "-1"));
-        balance.masternodeCollateral = Double.valueOf(objResponse.getString("masternode collaterals", "-1"));
+        // balance.masternodeCollateral = Double.valueOf(objResponse.getString("masternode collaterals", "-1"));
 
         objResponse = this.executeCommandAndGetJsonObject("z_gettotalbalance", "0");
 
         balance.transparentUnconfirmedBalance = Double.valueOf(objResponse.getString("transparent", "-1"));
         balance.privateUnconfirmedBalance = Double.valueOf(objResponse.getString("private", "-1"));
         balance.totalUnconfirmedBalance = Double.valueOf(objResponse.getString("total", "-1"));
-        balance.unconfirmedMasternodeCollateral = Double.valueOf(objResponse.getString("masternode collaterals", "-1"));
+        // balance.unconfirmedMasternodeCollateral = Double.valueOf(objResponse.getString("masternode collaterals", "-1"));
 
         return balance;
     }
