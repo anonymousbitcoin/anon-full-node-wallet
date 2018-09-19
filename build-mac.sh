@@ -6,9 +6,9 @@
 ############################################
 
 # set up your app name, version number, and background image file name
-APP_NAME="AnonymousDesktopWallet"
-APP_DISPLAY_NAME="Anonymous Desktop Wallet"
-VERSION="0.1.1"
+APP_NAME="AnonDesktopWallet"
+APP_DISPLAY_NAME="Anon Desktop Wallet"
+VERSION="1.0.0"
 APP_EXE="${APP_DISPLAY_NAME}.app/Contents/MacOS/JavaAppLauncher"
 VOL_NAME="${APP_NAME}_${VERSION}"
 DMG_TMP="${VOL_NAME}-temp.dmg"
@@ -88,8 +88,8 @@ mv "${APP_NAME}-${VERSION}.app" "${APP_DISPLAY_NAME}.app"
 plutil -replace NSSupportsAutomaticGraphicsSwitching -bool true "${APP_DISPLAY_NAME}.app"/Contents/Info.plist
 
 #create copies for link modification
-cp ./anond ./anond-dylib
-cp ./anon-cli ./anon-cli-dylib
+cp ~/anon/src/anond ./anond-dylib
+cp ~/anon/src/anon-cli ./anon-cli-dylib
 
 #ensure permissions allow for execution
 chmod +x "./anond-dylib"
@@ -123,7 +123,7 @@ cp -rpf "${APP_DISPLAY_NAME}.app" "${STAGING_DIR}"
 # figure out how big our DMG needs to be
 #  assumes our contents are at least 5M!
 SIZE=`du -sh "${STAGING_DIR}" | sed 's/\([0-9]*\)M\(.*\)/\1/'`
-SIZE=`echo "${SIZE} + 5.0" | bc | awk '{print int($1+0.5)}'`
+SIZE=`echo "${SIZE} + 15.0" | bc | awk '{print int($1+0.5)}'`
  
 if [ $? -ne 0 ]; then
    echo "Error: Cannot compute size of staging dir"

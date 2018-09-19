@@ -60,6 +60,7 @@ public class DashboardPanel
   private static final String LOCAL_MSG_LOOKING_PEERS = Util.local("LOCAL_MSG_LOOKING_PEERS");
   private static final String LOCAL_MSG_T_BALANCE = Util.local("LOCAL_MSG_T_BALANCE");
   private static final String LOCAL_MSG_Z_BALANCE = Util.local("LOCAL_MSG_Z_BALANCE");
+  private static final String LOCAL_MSG_MASTERNODE_COLLATERAL_BALANCE = Util.local("LOCAL_MSG_MASTERNODE_COLLATERAL_BALANCE");
   private static final String LOCAL_MSG_TOTAL_BALANCE = Util.local("LOCAL_MSG_TOTAL_BALANCE");
   private static final String LOCAL_MSG_YES = Util.local("LOCAL_MSG_YES");
   private static final String LOCAL_MSG_NO = Util.local("LOCAL_MSG_NO");
@@ -109,7 +110,7 @@ public class DashboardPanel
     // Upper panel with wallet balance
     JPanel balanceStatusPanel = new JPanel();
     // Use border layout to have balances to the left
-    balanceStatusPanel.setLayout(new BorderLayout(3, 3));
+    balanceStatusPanel.setLayout(new BorderLayout(4, 4));
 
     JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 9));
     JLabel logoLabel = new JLabel(new ImageIcon(
@@ -367,7 +368,7 @@ public class DashboardPanel
   private void updateWalletStatusLabel()
       throws WalletCallException, IOException, InterruptedException {
     WalletBalance balance = this.walletBalanceGatheringThread.getLastData();
-
+   
     // It is possible there has been no gathering initially
     if (balance == null) {
       return;
@@ -378,15 +379,18 @@ public class DashboardPanel
 
     String transparentBalance = df.format(balance.transparentBalance);
     String privateBalance = df.format(balance.privateBalance);
-    String totalBalance = df.format(balance.totalBalance);
+    String totalBalance = df.format(balance.totalBalance); 
+    // String masternodeCollateral = df.format(balance.masternodeCollateral);
 
     String transparentUCBalance = df.format(balance.transparentUnconfirmedBalance);
     String privateUCBalance = df.format(balance.privateUnconfirmedBalance);
     String totalUCBalance = df.format(balance.totalUnconfirmedBalance);
+    // String masternodeUCCollaterral = df.format(balance.totalUnconfirmedBalance);
 
     String color1 = transparentBalance.equals(transparentUCBalance) ? "" : "color:#cc3300;";
     String color2 = privateBalance.equals(privateUCBalance) ? "" : "color:#cc3300;";
     String color3 = totalBalance.equals(totalUCBalance) ? "" : "color:#cc3300;";
+    // String color4 = masternodeCollateral.equals(masternodeUCCollaterral) ? "" : "color:#cc3300;";
 
     String text =
         "<html><p text-align: right>" +
@@ -395,7 +399,7 @@ public class DashboardPanel
             "<span style=\"" + color2 + "\">" + LOCAL_MSG_Z_BALANCE + ": " +
             privateUCBalance + " ANON </span><br/> " +
             "<span style=\"" + color3 + "\">" + LOCAL_MSG_TOTAL_BALANCE +
-            totalUCBalance + " ANON </span>"
+            totalUCBalance + " ANON </span>" 
             + "</p></html>";
 
     this.walletBalanceLabel.setText(text);
