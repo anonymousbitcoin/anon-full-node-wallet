@@ -8,7 +8,7 @@
 # set up your app name, version number, and background image file name
 APP_NAME="AnonymousDesktopWallet"
 APP_DISPLAY_NAME="Anon Desktop Wallet"
-VERSION="1.0.0"
+VERSION="1.1.0"
 APP_EXE="${APP_DISPLAY_NAME}.app/Contents/MacOS/JavaAppLauncher"
 VOL_NAME="${APP_NAME}_${VERSION}"
 DMG_TMP="${VOL_NAME}-temp.dmg"
@@ -132,7 +132,7 @@ fi
  
 # create the temp DMG file
 hdiutil create -srcfolder "${STAGING_DIR}" -volname "${VOL_NAME}" -fs HFS+ \
-      -fsargs "-c c=64,a=16,e=16" -format UDRW -size ${SIZE}M "${DMG_TMP}"
+      -fsargs "-c c=64,a=16,e=16" -format UDRW -size ${SIZE}0M "${DMG_TMP}"
  
 echo "Created DMG: ${DMG_TMP}"
  

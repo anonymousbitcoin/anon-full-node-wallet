@@ -219,32 +219,49 @@ public class ANONClientCaller {
     public synchronized String[][] getMyMasternodes() throws WalletCallException, IOException, InterruptedException {
 
         JsonArray objResponse = this.executeCommandAndGetJsonArray("masternode", "mymasternodes");
-
+        
+        if(objResponse.size() != 0) {
+            Log.info("dfhgklsdjkgkjj,dgh");
+            Log.info(objResponse.get(0).toString());
+        }
+        
         if (objResponse.size() == 0){
             String[][] noMNArr = new String[1][];
-            noMNArr[0] = new String[6];
+            noMNArr[0] = new String[7];
             noMNArr[0][0] = "No Masternodes set in conf file.";
             noMNArr[0][1] = "";
             noMNArr[0][2] = "";
             noMNArr[0][3] = "";
             noMNArr[0][4] = "";
             noMNArr[0][5] = "";
+            noMNArr[0][6] = "";
 
             return noMNArr;
         };
 
         String[][] finalArr = new String [objResponse.size()][];
         for(int i = 0 ; i < objResponse.size() ; i ++){
-            finalArr[i] = new String[6];
+            finalArr[i] = new String[7];
             JsonArray trans = objResponse.get(i).asArray();
 
-            finalArr[i][0] = trans.get(0).toString().replace("\"","");
+            // finalArr[i][0] = trans.get(0).toString().replace("\"","");
+            // Log.info("finalArr[i][0]");
+            // Log.info(finalArr[i][0]);
+            // String addr = Json.parse(Json.parse(Json.parse(trans.get(0).toString()).asObject().get("details").toString()).asArray().get(0).toString()).asObject().get("address").toString();
+            Log.info("it's oh so quiet");
+            Log.info(trans.get(0).toString());
+            finalArr[i][0] = "addr";
             finalArr[i][1] = trans.get(1).toString().replace("\"","");
             finalArr[i][2] = trans.get(2).toString().replace("\"","");
             finalArr[i][3] = trans.get(3).toString().replace("\"","");
             finalArr[i][4] = trans.get(4).toString().replace("\"","");
             finalArr[i][5] = trans.get(5).toString().replace("\"","");
+            finalArr[i][6] = trans.get(6).toString().replace("\"","");
         }
+
+        Log.info("fg ajsdfjgknsdfjkngjasd");
+
+        String[][] arr = new String[0][];
 
         return finalArr;
     }
@@ -407,6 +424,23 @@ public class ANONClientCaller {
         for (int i = 0; i < jsonTransactions.size(); i++) {
             JsonObject trans = jsonTransactions.get(i).asObject();
             transactions.add(trans);
+        }
+
+        return transactions.toArray(new JsonObject[0]);
+    }
+
+    public synchronized JsonObject[] getMasternodeOutputs(String ZAddress)
+            throws WalletCallException, IOException, InterruptedException {
+        JsonArray jsonTransactions = executeCommandAndGetJsonArray(
+                "masternode", "outputsArr");
+        List<JsonObject> transactions = new ArrayList<JsonObject>();
+        for (int i = 0; i < jsonTransactions.size(); i++) {
+            JsonObject trans = jsonTransactions.get(i).asObject();
+            transactions.add(trans);
+        }
+
+        for(JsonObject collateral : transactions) {
+
         }
 
         return transactions.toArray(new JsonObject[0]);
@@ -1110,6 +1144,8 @@ public class ANONClientCaller {
         try {
             response = Json.parse(strResponse);
         } catch (ParseException pe) {
+            Log.info("fsgamdsfgandfjgnajlkdfnga");
+            Log.info(strResponse);
             throw new WalletCallException(strResponse + "\n" + pe.getMessage() + "\n", pe);
         }
 

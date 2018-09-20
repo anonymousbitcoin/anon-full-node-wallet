@@ -13,6 +13,9 @@ import org.anonymous.wallets.fullnode.util.OSUtil.OS_TYPE;
 import javax.swing.*;
 import javax.swing.Timer;
 import javax.swing.border.EtchedBorder;
+
+import com.google.common.reflect.TypeResolver;
+
 import java.awt.*;
 import java.awt.Color;
 import java.awt.event.ActionListener;
@@ -325,20 +328,47 @@ public class MyMasternodePanel
 
   private JTable createMasternodesTable(String rowData[][])
       throws WalletCallException, IOException, InterruptedException {
-    String columnNames[] = {LOCAL_MSG_MYMSTRNDE_ALIAS, LOCAL_MSG_MYMSTRNDE_ADDRESS, LOCAL_MSG_MYMSTRNDE_PRIVATEKEY, LOCAL_MSG_MYMSTRNDE_TXHASH, LOCAL_MSG_MYMSTRNDE_OUTPUTINDEX, LOCAL_MSG_MYMSTRNDE_STATUS};
-
-
+    String columnNames[] = {"Collateral", LOCAL_MSG_MYMSTRNDE_ALIAS, LOCAL_MSG_MYMSTRNDE_ADDRESS, LOCAL_MSG_MYMSTRNDE_PRIVATEKEY, LOCAL_MSG_MYMSTRNDE_TXHASH, LOCAL_MSG_MYMSTRNDE_OUTPUTINDEX, LOCAL_MSG_MYMSTRNDE_STATUS};
+    
+    try {
+      if(rowData[6][0] != null) {
+        JTable collateralTable = new MasternodeTable(
+            rowData, columnNames, this.parentFrame, this.clientCaller, this.installationObserver);
+        collateralTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+        collateralTable.getColumnModel().getColumn(0).setPreferredWidth(100);
+        collateralTable.getColumnModel().getColumn(1).setPreferredWidth(300);
+        collateralTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+        collateralTable.getColumnModel().getColumn(3).setPreferredWidth(300);
+        collateralTable.getColumnModel().getColumn(4).setPreferredWidth(180);
+        collateralTable.getColumnModel().getColumn(5).setPreferredWidth(100);
+        collateralTable.getColumnModel().getColumn(6).setPreferredWidth(100);
+        return collateralTable;
+      }
+    } catch (Exception e) {
+      //TODO: handle exception
+      Log.info(e.toString());
+      JTable table = new MasternodeTable(
+          rowData, columnNames, this.parentFrame, this.clientCaller, this.installationObserver);
+      table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+      table.getColumnModel().getColumn(0).setPreferredWidth(300);
+      table.getColumnModel().getColumn(1).setPreferredWidth(110);
+      table.getColumnModel().getColumn(2).setPreferredWidth(100);
+      table.getColumnModel().getColumn(3).setPreferredWidth(300);
+      table.getColumnModel().getColumn(4).setPreferredWidth(180);
+      table.getColumnModel().getColumn(5).setPreferredWidth(100);
+      return table;
+    }
     JTable table = new MasternodeTable(
-        rowData, columnNames, this.parentFrame, this.clientCaller, this.installationObserver);
-    table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-    table.getColumnModel().getColumn(0).setPreferredWidth(300);
-    table.getColumnModel().getColumn(1).setPreferredWidth(110);
-    table.getColumnModel().getColumn(2).setPreferredWidth(100);
-    table.getColumnModel().getColumn(3).setPreferredWidth(300);
-    table.getColumnModel().getColumn(4).setPreferredWidth(180);
-    table.getColumnModel().getColumn(5).setPreferredWidth(100);
-
-    return table;
+          rowData, columnNames, this.parentFrame, this.clientCaller, this.installationObserver);
+      table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+      table.getColumnModel().getColumn(0).setPreferredWidth(300);
+      table.getColumnModel().getColumn(1).setPreferredWidth(110);
+      table.getColumnModel().getColumn(2).setPreferredWidth(100);
+      table.getColumnModel().getColumn(3).setPreferredWidth(300);
+      table.getColumnModel().getColumn(4).setPreferredWidth(180);
+      table.getColumnModel().getColumn(5).setPreferredWidth(100);
+      return table;
+    
   }
 
 
