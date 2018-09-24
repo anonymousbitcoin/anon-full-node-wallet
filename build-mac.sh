@@ -6,7 +6,7 @@
 ############################################
 
 # set up your app name, version number, and background image file name
-APP_NAME="AnonDesktopWallet"
+APP_NAME="AnonymousDesktopWallet"
 APP_DISPLAY_NAME="Anon Desktop Wallet"
 VERSION="1.0.0"
 APP_EXE="${APP_DISPLAY_NAME}.app/Contents/MacOS/JavaAppLauncher"
