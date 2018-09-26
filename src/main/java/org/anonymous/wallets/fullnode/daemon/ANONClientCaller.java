@@ -482,6 +482,11 @@ public class ANONClientCaller {
         return null;
     }
 
+    public synchronized String generateAccountAddress() throws WalletCallException, IOException, InterruptedException {
+        String result = this.executeCommandAndGetSingleStringResponse("getaccountaddress", "0");
+        return result;
+    }
+
 
     public synchronized void keypoolRefill(int count)
             throws WalletCallException, IOException, InterruptedException {

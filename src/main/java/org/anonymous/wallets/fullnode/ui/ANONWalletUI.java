@@ -47,6 +47,7 @@ public class ANONWalletUI extends JFrame {
     private MessagingPanel messagingPanel;
     private MasternodePanel masternodePanel;
     private MyMasternodePanel myMasternodePanel;
+    private MasternodeCreationPanel masternodeCreationPanel;
 
 
     private JMenuItem langEnglish;
@@ -158,6 +159,9 @@ public class ANONWalletUI extends JFrame {
         tabs.addTab(LOCAL_MSG_TAB_MYMSTRNDE,
             new ImageIcon(cl.getResource(IMG_TAB_SEND)),
             myMasternodePanel = new MyMasternodePanel(this, installationObserver, clientCaller, errorReporter, backupTracker));
+        tabs.addTab("Masternode Creation",
+            new ImageIcon(cl.getResource(IMG_TAB_SEND)),
+            masternodeCreationPanel = new MasternodeCreationPanel(clientCaller, errorReporter, installationObserver, backupTracker));
 
         contentPane.add(tabs);
 
