@@ -179,7 +179,7 @@ public class MasternodeCreationPanel
     JPanel sendCashPanel = new JPanel();
     this.add(sendCashPanel, BorderLayout.NORTH);
     sendCashPanel.setLayout(new BoxLayout(sendCashPanel, BoxLayout.Y_AXIS));
-    sendCashPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+    // sendCashPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 
     JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
     tempPanel.add(new JLabel(LOCAL_MSG_SEND_ANON_FROM + ":       "));
@@ -190,7 +190,7 @@ public class MasternodeCreationPanel
     // sendCashPanel.add(tempPanel);
 
     balanceAddressCombo = new JComboBox<>(new String[]{""});
-    comboBoxParentPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+    comboBoxParentPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     comboBoxParentPanel.add(balanceAddressCombo);
     // sendCashPanel.add(comboBoxParentPanel);
 
@@ -198,12 +198,12 @@ public class MasternodeCreationPanel
     dividerLabel.setFont(new Font("Helvetica", Font.PLAIN, 3));
     // sendCashPanel.add(dividerLabel);
 
-    tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+    tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     tempPanel.add(new JLabel(LOCAL_MSG_TXN_DESTINATION + ":"));
     // sendCashPanel.add(tempPanel);
 
     destinationAddressField = new WalletTextField(73);
-    tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+    tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     tempPanel.add(destinationAddressField);
     // sendCashPanel.add(tempPanel);
 
@@ -211,7 +211,7 @@ public class MasternodeCreationPanel
     dividerLabel.setFont(new Font("Helvetica", Font.PLAIN, 3));
     // sendCashPanel.add(dividerLabel);
 
-    tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+    tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     tempPanel.add(new JLabel(LOCAL_MSG_MEMO_OPT + "     "));
     tempPanel.add(new JLabel(
         "<html><span style=\"font-size:0.8em;\">" +
@@ -220,7 +220,7 @@ public class MasternodeCreationPanel
     // sendCashPanel.add(tempPanel);
 
     destinationMemoField = new WalletTextField(73);
-    tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+    tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     tempPanel.add(destinationMemoField);
     // sendCashPanel.add(tempPanel);
 
@@ -229,10 +229,10 @@ public class MasternodeCreationPanel
     // sendCashPanel.add(dividerLabel);
 
     // Construct a more complex panel for the amount and transaction fee
-    JPanel amountAndFeePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+    JPanel amountAndFeePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     JPanel amountPanel = new JPanel(new BorderLayout());
     // amountPanel.add(new JLabel(LOCAL_MSG_AMOUNT_TO_SEND + ":"), BorderLayout.NORTH);
-    tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+    tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     // tempPanel.add(destinationAmountField = new WalletTextField(13));
     // destinationAmountField.setHorizontalAlignment(SwingConstants.RIGHT);
     tempPanel.add(new JLabel(" Paste Masternode Info    "));
@@ -240,10 +240,10 @@ public class MasternodeCreationPanel
 
     JPanel feePanel = new JPanel(new BorderLayout());
     // feePanel.add(new JLabel(LOCAL_MSG_TXN_FEE + ":"), BorderLayout.NORTH);
-    tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-    tempPanel.add(masternodeInfoField = new WalletTextField(13));
+    tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+    tempPanel.add(masternodeInfoField = new WalletTextField(21));
     masternodeInfoField.setText(""); // Default value
-    masternodeInfoField.setHorizontalAlignment(SwingConstants.RIGHT);
+    masternodeInfoField.setHorizontalAlignment(SwingConstants.CENTER);
     // tempPanel.add(new JLabel(" ANON"));
     tempPanel.add(saveInfoButton = new JButton("Save Info" + "   \u27A4\u27A4\u27A4"));
     feePanel.add(tempPanel, BorderLayout.SOUTH);
@@ -261,7 +261,7 @@ public class MasternodeCreationPanel
     dividerLabel.setFont(new Font("Helvetica", Font.PLAIN, 3));
     sendCashPanel.add(dividerLabel);
 
-    tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+    tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     tempPanel.add(sendButton = new JButton("Send 500" + "   \u27A4\u27A4\u27A4"));
     sendCashPanel.add(tempPanel);
 
@@ -287,7 +287,7 @@ public class MasternodeCreationPanel
     sendCashPanel.add(operationStatusPanel);
     operationStatusPanel.setLayout(new BoxLayout(operationStatusPanel, BoxLayout.Y_AXIS));
 
-    tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+    tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     tempPanel.add(new JLabel(LOCAL_MSG_LAST_OPERATION_STATUS + ": "));
     tempPanel.add(operationStatusLabel = new JLabel("N/A"));
     operationStatusPanel.add(tempPanel);
@@ -296,7 +296,7 @@ public class MasternodeCreationPanel
     dividerLabel.setFont(new Font("Helvetica", Font.PLAIN, 6));
     operationStatusPanel.add(dividerLabel);
 
-    tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+    tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     tempPanel.add(new JLabel(LOCAL_MSG_PROGRESS + ": "));
     tempPanel.add(operationStatusProhgressBar = new JProgressBar(0, 200));
     operationStatusProhgressBar.setPreferredSize(new Dimension(250, 17));

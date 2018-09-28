@@ -97,36 +97,36 @@ public class ANONInstallationObserver {
                 } else {
                     break;
                 }
-                if (i == 2) {
-                    try {
-                        info.cpuPercentage = Double.valueOf(token);
-                    } catch (NumberFormatException nfe) {
-                        Log.error("cant parse CPU precentage " + token);
-                    }
-                    ;
-                } else if (i == 4) {
-                    try {
-                        info.virtualSizeMB = Double.valueOf(token) / 1000;
-                    } catch (NumberFormatException nfe) {
-                        Log.error("cant parse virtual MB size" + token);
-                    }
-                    ;
-                } else if (i == 5) {
-                    try {
-                        info.residentSizeMB = Double.valueOf(token) / 1000;
-                    } catch (NumberFormatException nfe) {
-                        Log.error("cant parse resident MB size " + token);
-                    }
-                    ;
-                } else if (i == 10) {
-                	// account for the case where Application names in Mac OS X commonly have spaces in them
-                	String fullToken = line.substring(line.indexOf(token), line.length());
-                    if ((fullToken.equals(daemonName)) || (fullToken.contains("/" + daemonName + " ")) || (fullToken.endsWith("/" + daemonName))) {
-                        info.status = DAEMON_STATUS.RUNNING;
-                        foundZCash = true;
-                        break;
-                    }
-                }
+                // if (i == 2) {
+                //     try {
+                //         info.cpuPercentage = Double.valueOf(token);
+                //     } catch (NumberFormatException nfe) {
+                //         Log.error("cant parse CPU precentage " + token);
+                //     }
+                //     ;
+                // } else if (i == 4) {
+                //     try {
+                //         info.virtualSizeMB = Double.valueOf(token) / 1000;
+                //     } catch (NumberFormatException nfe) {
+                //         Log.error("cant parse virtual MB size" + token);
+                //     }
+                //     ;
+                // } else if (i == 5) {
+                //     try {
+                //         info.residentSizeMB = Double.valueOf(token) / 1000;
+                //     } catch (NumberFormatException nfe) {
+                //         Log.error("cant parse resident MB size " + token);
+                //     }
+                //     ;
+                // } else if (i == 10) {
+                // 	// account for the case where Application names in Mac OS X commonly have spaces in them
+                // 	String fullToken = line.substring(line.indexOf(token), line.length());
+                //     if ((fullToken.equals(daemonName)) || (fullToken.contains("/" + daemonName + " ")) || (fullToken.endsWith("/" + daemonName))) {
+                //         info.status = DAEMON_STATUS.RUNNING;
+                //         foundZCash = true;
+                //         break;
+                //     }
+                // }
             }
 
             if (foundZCash) {
