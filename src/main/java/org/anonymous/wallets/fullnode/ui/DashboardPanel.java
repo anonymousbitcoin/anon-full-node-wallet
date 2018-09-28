@@ -368,9 +368,6 @@ public class DashboardPanel
   private void updateWalletStatusLabel()
       throws WalletCallException, IOException, InterruptedException {
     WalletBalance balance = this.walletBalanceGatheringThread.getLastData();
-
-    Log.info(balance.toString());
-    Log.info("<<<<<<<<<<<<+++++++++++++++++++++++++++BALANCE");
    
     // It is possible there has been no gathering initially
     if (balance == null) {
