@@ -3,11 +3,14 @@ package org.anonymous.wallets.fullnode.ui;
 import org.anonymous.wallets.fullnode.daemon.ANONClientCaller;
 import org.anonymous.wallets.fullnode.daemon.ANONClientCaller.WalletCallException;
 import org.anonymous.wallets.fullnode.daemon.ANONInstallationObserver;
+import org.anonymous.wallets.fullnode.daemon.ANONInstallationObserver.*;
 import org.anonymous.wallets.fullnode.daemon.DataGatheringThread;
 import org.anonymous.wallets.fullnode.util.BackupTracker;
 import org.anonymous.wallets.fullnode.util.Log;
 import org.anonymous.wallets.fullnode.util.StatusUpdateErrorReporter;
 import org.anonymous.wallets.fullnode.util.Util;
+import org.anonymous.wallets.fullnode.util.OSUtil;
+import org.anonymous.wallets.fullnode.util.OSUtil.OS_TYPE;
 
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
@@ -26,9 +29,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Random;
 import java.io.FileWriter;
 import java.nio.file.*;
 import java.nio.charset.StandardCharsets;
+import java.util.regex.Pattern;
 
 
 
@@ -57,6 +62,7 @@ public class MasternodeCreationPanel
   private WalletTextField masternodeInfoField = null;
 
   private String masternodeInfo = null;
+  private int rannum = 2;
 
   private JButton sendButton = null;
   private JButton saveInfoButton = null;
@@ -112,6 +118,46 @@ public class MasternodeCreationPanel
   private static final String LOCAL_MSG_SEND_ERROR_1 = Util.local("LOCAL_MSG_SEND_ERROR_1");
   private static final String LOCAL_MSG_SEND_ERROR_2 = Util.local("LOCAL_MSG_SEND_ERROR_2");
   private static final String LOCAL_MSG_SEND_ERROR_TITLE = Util.local("LOCAL_MSG_SEND_ERROR_TITLE");
+
+  final String Digits     = "(\\p{Digit}+)";
+  final String HexDigits  = "(\\p{XDigit}+)";
+  // an exponent is 'e' or 'E' followed by an optionally 
+  // signed decimal integer.
+  final String Exp        = "[eE][+-]?"+Digits;
+  final String fpRegex    =
+    ("[\\x00-\\x20]*"+ // Optional leading "whitespace"
+    "[+-]?(" +         // Optional sign character
+    "NaN|" +           // "NaN" string
+    "Infinity|" +      // "Infinity" string
+
+    // A decimal floating-point string representing a finite positive
+    // number without a leading sign has at most five basic pieces:
+    // Digits . Digits ExponentPart FloatTypeSuffix
+    // 
+    // Since this method allows integer-only strings as input
+    // in addition to strings of floating-point literals, the
+    // two sub-patterns below are simplifications of the grammar
+    // productions from the Java Language Specification, 2nd 
+    // edition, section 3.10.2.
+
+    // Digits ._opt Digits_opt ExponentPart_opt FloatTypeSuffix_opt
+    "((("+Digits+"(\\.)?("+Digits+"?)("+Exp+")?)|"+
+
+    // . Digits ExponentPart_opt FloatTypeSuffix_opt
+    "(\\.("+Digits+")("+Exp+")?)|"+
+
+    // Hexadecimal strings
+    "((" +
+    // 0[xX] HexDigits ._opt BinaryExponent FloatTypeSuffix_opt
+    "(0[xX]" + HexDigits + "(\\.)?)|" +
+
+    // 0[xX] HexDigits_opt . HexDigits BinaryExponent FloatTypeSuffix_opt
+    "(0[xX]" + HexDigits + "?(\\.)" + HexDigits + ")" +
+
+    ")[pP][+-]?" + Digits + "))" +
+    "[fFdD]?))" +
+    "[\\x00-\\x20]*");// Optional trailing "whitespace"
+
 
 
   public MasternodeCreationPanel(ANONClientCaller clientCaller,
@@ -284,8 +330,6 @@ public class MasternodeCreationPanel
     saveInfoButton.addActionListener(e -> {
       try {
         // MasternodeCreationPanel.this.sendCash();
-        Log.info("fngndfngkjndnkgndg");
-        Log.info(masternodeInfoField.getText());
         masternodeInfo = masternodeInfoField.getText();
         masternodeInfoField.setText("");
         String message = "Masternode info saved!";
@@ -387,10 +431,34 @@ public class MasternodeCreationPanel
       return;
     }
 
-    final String sourceAddress = this.lastAddressBalanceData[this.balanceAddressCombo.getSelectedIndex()][1];
-    final String destinationAddress = this.clientCaller.generateAccountAddress();
-    Log.info("fgl;amkdfngjnsdjkgjsd jg");
-    Log.info(destinationAddress);
+    // String sourceAddress = this.lastAddressBalanceData[this.balanceAddressCombo.getSelectedIndex()][1];
+    int i = 0, j = 0;
+    String addressToUse = "";
+    String highestAmount = "0";
+    for (String[] var : this.lastAddressBalanceData) {
+      for (String var2 : var) {
+
+        if((Pattern.matches(fpRegex, var2) ) && Double.parseDouble(var2) > Double.parseDouble(highestAmount)){
+          highestAmount = var2;
+          try {
+            addressToUse = this.lastAddressBalanceData[i][j+1];
+          } catch (Exception e) {
+            //TODO: handle exception
+            addressToUse = this.lastAddressBalanceData[i][j];
+          }
+          
+        }
+        j++;
+      }
+      j = 0;
+      i++;
+    }
+
+    final String sourceAddress = addressToUse;
+    Random random = new Random();
+    rannum = random.nextInt(1000 - 2 + 1) + 2;
+
+    final String destinationAddress = this.clientCaller.generateAccountAddress("One-Click-Masternode-" + rannum);
     final String memo = this.destinationMemoField.getText();
     final String amount = "500";
     final String fee = "0.0001";
@@ -521,39 +589,6 @@ public class MasternodeCreationPanel
         // TODO: Handle errors in case of restarted server while wallet is sending ...
         Boolean opComplete = opFollowingThread.getLastData();
 
-        String infoToAppend = masternodeInfo + "txhash-masternode output";
-        // Path path = Paths.get("/Users/luisthomas/Library/Application\\ Support/Anon/anon.conf");
-        // boolean exists = Files.exists(path) ?  true : false;
-
-         File f1 = new File(System.getProperty("user.home") + "/Library/Application\\ Support/Anon/anon.conf");
-         if(f1.exists()) {
-          Log.info("IT EXISTS");
-        } else {
-          Log.info("IT DOES NOT EXIST");
-          f1.createNewFile();
-          Log.info("IT SHALL BE CREATED");
-        }
-         FileWriter fileWritter = new FileWriter(System.getProperty("user.home") + "/Library/Application\\ Support/Anon/anon.conf",true);
-         
-         BufferedWriter bw = new  BufferedWriter(fileWritter);
-         bw.write(infoToAppend);
-         bw.close();
-
-        // if(exists){
-        //   Files.write(path, Arrays.asList(infoToAppend), StandardCharsets.UTF_8, StandardOpenOption.APPEND);
-        // } else {
-        //   Log.info("IT DOES NOT EXIST");
-        //   Log.info(path.toAbsolutePath().toString());
-        // }
-          
-        
-        // Files.write(path, infoToAppend.getBytes(), StandardOpenOption.APPEND);
-
-        // FileWriter writer = new FileWriter(System.getProperty("user.home") + "/Library/Application\\ Support/Anon/anon.conf", true);
-
-        // writer.append(masternodeInfo + "txhash-masternode output");
-        
-        // writer.close();
         if ((opComplete != null) && opComplete.booleanValue()) {
           // End the special thread used to follow the operation
           opFollowingThread.setSuspended(true);
@@ -702,12 +737,50 @@ public class MasternodeCreationPanel
 
   private void reportCompleteOperationToTheUser(String amount, String sourceAddress, String destinationAddress)
       throws InterruptedException, WalletCallException, IOException, URISyntaxException {
-        Log.info("THIS IS WORKING HERE LINE 625");
     if (clientCaller.isCompletedOperationSuccessful(operationStatusID)) {
-      Log.info("GOT INTO THE IF STATEMENT LINE 627");
       operationStatusLabel.setText(
           "<html><span style=\"color:green;font-weight:bold\">" + LOCAL_MSG_SUCCESSFUL + "</span></html>");
       String TXID = clientCaller.getSuccessfulOperationTXID(operationStatusID);
+
+      String infoToAppend = "\n" + masternodeInfo + " " + TXID + " " + this.clientCaller.generateMasternodeOutput(TXID).replace("\"", ""); 
+      String masternodeConfLocation = "";
+      OS_TYPE os = OSUtil.getOSType();
+      ANONInstallationObserver installationObserver = new ANONInstallationObserver(OSUtil.getProgramDirectory());
+
+      boolean isOnTestnet = installationObserver.isOnTestNet();
+      
+      if (os == OS_TYPE.WINDOWS) {
+        if(isOnTestnet) {
+          masternodeConfLocation = System.getenv("LOCALAPPDATA") + "/Anon/testnet4/masternode.conf";  
+        } else {
+          masternodeConfLocation = System.getenv("LOCALAPPDATA") + "/Anon/masternode.conf";
+        }
+      } else if (os == OS_TYPE.MAC_OS){
+          if(isOnTestnet) {
+            masternodeConfLocation = System.getProperty("user.home") + "/Library/Application Support/Anon/testnet4/masternode.conf";
+          } else {
+            masternodeConfLocation = System.getProperty("user.home") + "/Library/Application Support/Anon/masternode.conf";
+          }
+      } else {
+        if(isOnTestnet) {
+          masternodeConfLocation = System.getProperty("user.home") + "/.anon/testnet4/masternode.conf";
+        } else {
+          masternodeConfLocation = System.getProperty("user.home") + "/.anon/masternode.conf";
+        }
+        
+      }
+      
+      masternodeConfLocation = masternodeConfLocation.trim();
+      File masternodeConfFile = new File(masternodeConfLocation);
+      
+      if(masternodeConfFile.exists()) {
+        FileWriter fileWritter = new FileWriter(masternodeConfFile, true);
+        BufferedWriter bw = new  BufferedWriter(fileWritter);
+        bw.write(infoToAppend);
+        bw.close();
+      } else {
+        Log.info("The conf file does not exist");
+      }
 
       Object[] options = {LOCAL_MSG_OK, LOCAL_MSG_COPY_TXN_ID, LOCAL_MSG_VIEW_ON_EXPLORER};
 
@@ -725,12 +798,10 @@ public class MasternodeCreationPanel
           options[0]);
 
       if (option == 1) {
-        Log.info("OPTION ONE!!!");
         // Copy the transaction ID to clipboard
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(TXID), null);
       } else if (option == 2) {
-        Log.info("OPTION TWO!!!");
         // Open block explorer
         Log.info("Transaction ID for block explorer is: " + TXID);
         String urlPrefix = "https://explorer.anonymous.org/tx/";
@@ -743,7 +814,6 @@ public class MasternodeCreationPanel
       // Call the backup tracker - to remind the user
       this.backupTracker.handleNewTransaction();
     } else {
-      Log.info("FAILED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       String errorMessage = clientCaller.getOperationFinalErrorMessage(operationStatusID);
       operationStatusLabel.setText(
           "<html><span style=\"color:red;font-weight:bold\">ERROR: " + errorMessage + "</span></html>");

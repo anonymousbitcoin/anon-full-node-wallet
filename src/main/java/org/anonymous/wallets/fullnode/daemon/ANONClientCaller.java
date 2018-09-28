@@ -482,11 +482,17 @@ public class ANONClientCaller {
         return null;
     }
 
-    public synchronized String generateAccountAddress() throws WalletCallException, IOException, InterruptedException {
-        String result = this.executeCommandAndGetSingleStringResponse("getaccountaddress", "0");
+    public synchronized String generateAccountAddress(String accountNum) throws WalletCallException, IOException, InterruptedException {
+        String result = this.executeCommandAndGetSingleStringResponse("getaccountaddress", accountNum);
         return result;
     }
 
+    public synchronized String generateMasternodeOutput(String txId) throws WalletCallException, IOException, InterruptedException {
+        JsonObject result = this.executeCommandAndGetJsonObject("masternode",  "outputs");
+        String output = result.get(txId).toString();
+        output = output != null ? output : "0";
+        return output;
+    }
 
     public synchronized void keypoolRefill(int count)
             throws WalletCallException, IOException, InterruptedException {
