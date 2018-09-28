@@ -368,6 +368,9 @@ public class DashboardPanel
   private void updateWalletStatusLabel()
       throws WalletCallException, IOException, InterruptedException {
     WalletBalance balance = this.walletBalanceGatheringThread.getLastData();
+
+    Log.info(balance.toString());
+    Log.info("<<<<<<<<<<<<+++++++++++++++++++++++++++BALANCE");
    
     // It is possible there has been no gathering initially
     if (balance == null) {
@@ -385,7 +388,7 @@ public class DashboardPanel
     String transparentUCBalance = df.format(balance.transparentUnconfirmedBalance);
     String privateUCBalance = df.format(balance.privateUnconfirmedBalance);
     String totalUCBalance = df.format(balance.totalUnconfirmedBalance);
-    String masternodeUCCollaterral = df.format(balance.totalUnconfirmedBalance);
+    String masternodeUCCollaterral = df.format(balance.unconfirmedMasternodeCollateral);
 
     String color1 = transparentBalance.equals(transparentUCBalance) ? "" : "color:#cc3300;";
     String color2 = privateBalance.equals(privateUCBalance) ? "" : "color:#cc3300;";
