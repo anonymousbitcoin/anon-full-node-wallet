@@ -54,7 +54,7 @@ public class MasternodeTable extends DataTable {
         // showDetails.addActionListener(e -> {
         //     if ((lastRow >= 0) && (lastColumn >= 0)) {
         //         try {
-        //             String txID = MasternodeTable.this.getModel().getValueAt(lastRow, 6).toString();
+        //             String txID = MasternodeTable.this.getModel().getValueAt(lastRow, 7).toString();
         //             txID = txID.replaceAll("\"", ""); // In case it has quotes
 
         //             Log.info("Transaction ID for detail dialog is: " + txID);
@@ -77,7 +77,7 @@ public class MasternodeTable extends DataTable {
         // showInExplorer.addActionListener(e -> {
         //     if ((lastRow >= 0) && (lastColumn >= 0)) {
         //         try {
-        //             String txID = MasternodeTable.this.getModel().getValueAt(lastRow, 6).toString();
+        //             String txID = MasternodeTable.this.getModel().getValueAt(lastRow, 7).toString();
         //             txID = txID.replaceAll("\"", ""); // In case it has quotes
 
         //             Log.info("Transaction ID for block explorer is: " + txID);
@@ -101,7 +101,7 @@ public class MasternodeTable extends DataTable {
         //     if ((lastRow >= 0) && (lastColumn >= 0)) {
         //         Cursor oldCursor = parent.getCursor();
         //         try {
-        //             String txID = MasternodeTable.this.getModel().getValueAt(lastRow, 6).toString();
+        //             String txID = MasternodeTable.this.getModel().getValueAt(lastRow, 7).toString();
         //             txID = txID.replaceAll("\"", ""); // In case it has quotes
 
         //             String acc = MasternodeTable.this.getModel().getValueAt(lastRow, 5).toString();
@@ -148,8 +148,10 @@ public class MasternodeTable extends DataTable {
 
     private static class DetailsDialog extends JDialog {
         public DetailsDialog(JFrame parent, Map<String, String> details) throws UnsupportedEncodingException {
+            
+            Log.info("I CAN MAKE IT HERE");
             this.setTitle(LOCAL_MSG_TXN_DETAILS);
-            this.setSize(600, 310);
+            this.setSize(700, 310);
             this.setLocation(100, 100);
             this.setLocationRelativeTo(parent);
             this.setModal(true);
@@ -170,8 +172,8 @@ public class MasternodeTable extends DataTable {
             int i = 0;
             int maxPreferredWidth = 400;
             for (Entry<String, String> ent : details.entrySet()) {
-                if (maxPreferredWidth < (ent.getValue().length() * 6)) {
-                    maxPreferredWidth = ent.getValue().length() * 6;
+                if (maxPreferredWidth < (ent.getValue().length() * 7)) {
+                    maxPreferredWidth = ent.getValue().length() * 7;
                 }
 
                 data[i][0] = ent.getKey();
