@@ -434,7 +434,7 @@ public class ANONClientCaller {
     public synchronized String[][] getGobjectList() throws WalletCallException, IOException, InterruptedException {
 
         JsonArray objResponse = this.executeCommandAndGetJsonArray("masternode", "mymasternodes");
-        JsonArray gobjResponse = this.executeCommandAndGetJsonArray("gobject", "listArr");
+        JsonArray gobjResponse = this.executeCommandAndGetJsonArray("gobject", "listArray");
 
         String[][] lastArr = new String[gobjResponse.size()][7];
         for (int i = 0 ; i < gobjResponse.size() ; i ++) {
