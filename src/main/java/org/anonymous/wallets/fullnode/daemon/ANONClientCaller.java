@@ -132,7 +132,6 @@ public class ANONClientCaller {
         CommandExecutor infoGetter = new CommandExecutor(
                 new String[]{zcashcli.getCanonicalPath(), "getinfo"});
         String info = infoGetter.execute();
-        Log.info(info.trim().toLowerCase(Locale.ROOT));
 
         if (info.trim().toLowerCase(Locale.ROOT).startsWith("error: couldn't connect to server")) {
             throw new IOException(info.trim());
@@ -247,9 +246,8 @@ public class ANONClientCaller {
 
         JsonArray objResponse = this.executeCommandAndGetJsonArray("masternode", "mymasternodes");
         
-        
         if (objResponse.size() == 0){
-            String[] noMNArr = new String[0];
+            String[] noMNArr = new String[1];
             noMNArr[0] = "No Masternodes set in conf file.";
 
             return noMNArr;
@@ -304,7 +302,7 @@ public class ANONClientCaller {
 
     }
 
-    public synchronized String[] getGobjectVoteAll(String voteSignal, String voteOutcome, String hash) throws WalletCallException, IOException, InterruptedException {
+    public synchronized String[] gobjectVoteAll(String voteSignal, String voteOutcome, String hash) throws WalletCallException, IOException, InterruptedException {
 
         JsonObject objResponse = this.executeCommandAndGetJsonObject("gobject", "vote-many", wrapStringParameter(hash.toLowerCase()), wrapStringParameter(voteSignal.toLowerCase()), wrapStringParameter(voteOutcome.toLowerCase()));
 
@@ -315,7 +313,7 @@ public class ANONClientCaller {
         return completeResult;
     }
 
-    public synchronized String[] getGobjectVoteAliases(String voteSignal, String voteOutcome, String hash, String alias) throws WalletCallException, IOException, InterruptedException {
+    public synchronized String[] gobjectVoteAliases(String voteSignal, String voteOutcome, String hash, String alias) throws WalletCallException, IOException, InterruptedException {
 
         JsonObject objResponse = this.executeCommandAndGetJsonObject("gobject", "vote-alias", wrapStringParameter(hash.toLowerCase()), wrapStringParameter(voteSignal.toLowerCase()), wrapStringParameter(voteOutcome.toLowerCase()), wrapStringParameter(alias));
 
@@ -434,33 +432,34 @@ public class ANONClientCaller {
     public synchronized String[][] getGobjectList() throws WalletCallException, IOException, InterruptedException {
 
         JsonArray objResponse = this.executeCommandAndGetJsonArray("masternode", "mymasternodes");
-        JsonArray gobjResponse = this.executeCommandAndGetJsonArray("gobject", "listArray");
+        JsonObject gobjResponse = this.executeCommandAndGetJsonObject("gobject", "list");
 
         String[][] lastArr = new String[gobjResponse.size()][7];
-        for (int i = 0 ; i < gobjResponse.size() ; i ++) {
-            JsonValue arr = gobjResponse.get(i);
 
-            if(arr.asArray().get(1).toString().contains("watchdog"))
-                continue;
-            String dataStringObject = arr.asArray().get(1).toString().substring(2, arr.asArray().get(1).toString().length() - 2).replace("\\", "");
-            String hash = arr.asArray().get(2).toString().replace("\"", "");
+        int i = 0;
+        for (String memberName : gobjResponse.names()) {
 
-            String[] last = dataStringObject.substring(dataStringObject.lastIndexOf("{") + 1).replace("]", "").replace("\"end_epoch\":", " ").replace(",\"name\":", " ").replace(",\"payment_address\":", " ").replace(",\"payment_amount\":", " ").replace(",\"start_epoch\":", " ").replace(",\"type\":", " ").replace(",\"url\":", " ").replace("}", "").replace("\"created_at\":", " ").replace("\"type\":", " ").split(" ");
+                if(gobjResponse.get(memberName).asObject().get("DataString").toString().contains("watchdog"))
+                    continue;
+                String dataStringObject = gobjResponse.get(memberName).asObject().get("DataString").toString().substring(2, gobjResponse.get(memberName).asObject().get("DataString").toString().length() - 2).replace("\\", "");
 
-            List<String> lastAr = new ArrayList<String>(Arrays.asList(last));
-            lastAr.removeAll(Arrays.asList("", null, " "));
-
-            lastArr[i][0] = hash;
-            lastArr[i][1] = lastAr.get(0) != null ? lastAr.get(0).replace("\"", "") : "null";
-            lastArr[i][2] = lastAr.get(1) != null ? lastAr.get(1).replace("\"", "") : "null";
-            lastArr[i][3] = lastAr.get(2) != null ? lastAr.get(2).replace("\"", "") : "null";
-            lastArr[i][4] = lastAr.get(3) != null ? lastAr.get(3).replace("\"", "") : "null";
-            lastArr[i][5] = lastAr.get(4) != null ? lastAr.get(4).replace("\"", "") : "null";
-            lastArr[i][6] = lastAr.get(5) != null ? lastAr.get(5).replace("\"", "") : "null";
-            
+                String hash = gobjResponse.get(memberName).asObject().get("Hash").toString().replace("\"", "");
+    
+                String[] last = dataStringObject.substring(dataStringObject.lastIndexOf("{") + 1).replace("]", "").replace("\"end_epoch\":", " ").replace(",\"name\":", " ").replace(",\"payment_address\":", " ").replace(",\"payment_amount\":", " ").replace(",\"start_epoch\":", " ").replace(",\"type\":", " ").replace(",\"url\":", " ").replace("}", "").replace("\"created_at\":", " ").replace("\"type\":", " ").split(" ");
+    
+                List<String> lastAr = new ArrayList<String>(Arrays.asList(last));
+                lastAr.removeAll(Arrays.asList("", null, " "));
+    
+                lastArr[i][0] = hash;
+                lastArr[i][1] = lastAr.get(0) != null ? lastAr.get(0).replace("\"", "") : "null";
+                lastArr[i][2] = lastAr.get(1) != null ? lastAr.get(1).replace("\"", "") : "null";
+                lastArr[i][3] = lastAr.get(2) != null ? lastAr.get(2).replace("\"", "") : "null";
+                lastArr[i][4] = lastAr.get(3) != null ? lastAr.get(3).replace("\"", "") : "null";
+                lastArr[i][5] = lastAr.get(4) != null ? lastAr.get(4).replace("\"", "") : "null";
+                lastArr[i][6] = lastAr.get(5) != null ? lastAr.get(5).replace("\"", "") : "null";
+                i++;
         }
-        
-        
+
         if (gobjResponse.size() == 0){
             String[][] noMNArr = new String[1][];
             noMNArr[0] = new String[7];
@@ -476,17 +475,17 @@ public class ANONClientCaller {
         };
 
         String[][] finalArr = new String [objResponse.size()][];
-        for(int i = 0 ; i < objResponse.size() ; i ++){
-            finalArr[i] = new String[7];
-            JsonArray trans = objResponse.get(i).asArray();
+        for(int j = 0 ; j < objResponse.size() ; j ++){
+            finalArr[j] = new String[7];
+            JsonArray trans = objResponse.get(j).asArray();
 
-            finalArr[i][0] = trans.get(0).toString().replace("\"","");
+            finalArr[j][0] = trans.get(0).toString().replace("\"", "");
 
-            finalArr[i][1] = trans.get(1).toString().replace("\"","");
-            finalArr[i][2] = trans.get(2).toString().replace("\"","");
-            finalArr[i][3] = trans.get(3).toString().replace("\"","");
-            finalArr[i][4] = trans.get(4).toString().replace("\"","");
-            finalArr[i][5] = trans.get(5).toString().replace("\"","");
+            finalArr[j][1] = trans.get(1).toString().replace("\"", "");
+            finalArr[j][2] = trans.get(2).toString().replace("\"", "");
+            finalArr[j][3] = trans.get(3).toString().replace("\"", "");
+            finalArr[j][4] = trans.get(4).toString().replace("\"", "");
+            finalArr[j][5] = trans.get(5).toString().replace("\"", "");
         }
 
         return lastArr;

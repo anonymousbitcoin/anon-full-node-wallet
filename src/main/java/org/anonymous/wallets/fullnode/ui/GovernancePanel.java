@@ -94,12 +94,17 @@ public class GovernancePanel
   private static final String LOCAL_MSG_UNCONFIRMED_TOOLTIP_B = Util.local("LOCAL_MSG_UNCONFIRMED_TOOLTIP_B");
   private static final String LOCAL_MSG_UNCONFIRMED_TOOLTIP_Z = Util.local("LOCAL_MSG_UNCONFIRMED_TOOLTIP_Z");
 
-  private static final String LOCAL_MSG_MYMSTRNDE_ALIAS = Util.local("LOCAL_MSG_MYMSTRNDE_ALIAS");
-  private static final String LOCAL_MSG_MYMSTRNDE_ADDRESS = Util.local("LOCAL_MSG_MYMSTRNDE_ADDRESS");
-  private static final String LOCAL_MSG_MYMSTRNDE_PRIVATEKEY = Util.local("LOCAL_MSG_MYMSTRNDE_PRIVATEKEY");
-  private static final String LOCAL_MSG_MYMSTRNDE_TXHASH = Util.local("LOCAL_MSG_MYMSTRNDE_TXHASH");
-  private static final String LOCAL_MSG_MYMSTRNDE_OUTPUTINDEX = Util.local("LOCAL_MSG_MYMSTRNDE_OUTPUTINDEX");
-  private static final String LOCAL_MSG_MYMSTRNDE_STATUS = Util.local("LOCAL_MSG_MYMSTRNDE_STATUS");
+  private static final String LOCAL_MSG_GOVERNANCE_STARTEPOCH = Util.local("LOCAL_MSG_GOVERNANCE_STARTEPOCH");
+  private static final String LOCAL_MSG_GOVERNANCE_NAME = Util.local("LOCAL_MSG_GOVERNANCE_NAME");
+  private static final String LOCAL_MSG_GOVERNANCE_HASH = Util.local("LOCAL_MSG_GOVERNANCE_HASH");
+  private static final String LOCAL_MSG_GOVERNANCE_PAYMENTADDRESS = Util.local("LOCAL_MSG_GOVERNANCE_PAYMENTADDRESS");
+  private static final String LOCAL_MSG_GOVERNANCE_PAYMENTAMOUNT = Util.local("LOCAL_MSG_GOVERNANCE_PAYMENTAMOUNT");
+  private static final String LOCAL_MSG_GOVERNANCE_ENDEPOCH = Util.local
+  ("LOCAL_MSG_GOVERNANCE_ENDEPOCH");
+  private static final String LOCAL_MSG_GOVERNANCE_TYPE = Util.local
+  ("LOCAL_MSG_GOVERNANCE_TYPE");
+  
+  
 
   private static final String LOCAL_MSG_SYNC = Util.local("LOCAL_MSG_SYNC");
   private static final String LOCAL_MSG_BLOCK = Util.local("LOCAL_MSG_BLOCK");
@@ -141,7 +146,8 @@ public class GovernancePanel
     
     voteOutcome = new JComboBox<>(new String[]{"Valid","Delete","Endorsed"});
     voteSignal = new JComboBox<>(new String[]{"Yes", "No", "Abstain"});
-    myMasternodeAliasList = new JComboBox<>(this.clientCaller.getMyMasternodesAliases());
+    String[] myMasternodeAliases = this.clientCaller.getMyMasternodesAliases().length != 0 ? this.clientCaller.getMyMasternodesAliases() : new String[]{"No Masternodes Available"};
+    myMasternodeAliasList = new JComboBox<>(myMasternodeAliases);
     comboBoxParentPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
     comboBoxParentPanel.add(new JLabel("Govbject TX Hash"));
     comboBoxParentPanel.add(gobjectTxHash);
@@ -218,19 +224,6 @@ public class GovernancePanel
       }
       counter = 5;
     });
-
-    // startMissingButton.addActionListener(e -> {
-    //   try
-    //   {
-    //     String response = this.clientCaller.startMissingMasternodes();
-    //     Log.info(response.toString());
-    //     startMissingButton.setText("Starting...");
-    //   } catch (Exception ex){
-    //     startMissingButton.setText("Not synced!");
-    //     Log.error("Error in startMissingButton: " + ex);
-    //   }
-    //   counter = 5;
-    // });
 
     resetMnsyncButton.addActionListener(e -> {
       try{
@@ -341,7 +334,7 @@ public class GovernancePanel
     String voteOutcome = this.voteOutcome.getItemAt(this.voteOutcome.getSelectedIndex()).toString();
     String voteSignal = this.voteSignal.getItemAt(this.voteSignal.getSelectedIndex()).toString();
     String gobjectTxHash = this.gobjectTxHash.getText();
-    String[] overallResult = this.clientCaller.getGobjectVoteAll(voteOutcome, voteSignal, gobjectTxHash);
+    String[] overallResult = this.clientCaller.gobjectVoteAll(voteOutcome, voteSignal, gobjectTxHash);
 
     Object[] options = {"Ok"};
 
@@ -362,7 +355,7 @@ public class GovernancePanel
       String voteSignal = this.voteSignal.getItemAt(this.voteSignal.getSelectedIndex()).toString();
       String gobjectTxHash = this.gobjectTxHash.getText();
       String masternodeAlias = this.myMasternodeAliasList.getItemAt(this.myMasternodeAliasList.getSelectedIndex()).toString();
-      String[] overallResult = this.clientCaller.getGobjectVoteAliases(voteOutcome, voteSignal, gobjectTxHash, masternodeAlias);
+      String[] overallResult = this.clientCaller.gobjectVoteAliases(voteOutcome, voteSignal, gobjectTxHash, masternodeAlias);
 
       Object[] options = {"Ok"};
 
@@ -404,38 +397,7 @@ public class GovernancePanel
 
   private JTable createGovernancesTable(String rowData[][])
       throws WalletCallException, IOException, InterruptedException {
-    String columnNames[] = {"Hash", "Start Epoch", "Name", "Payment Address", "Payment Amount", "End Epoch", "Type"};
-    
-    // try {
-    //   if(rowData[6][0] != null) {
-    //     JTable collateralTable = new MasternodeTable(
-    //         rowData, columnNames, this.parentFrame, this.clientCaller, this.installationObserver);
-    //     collateralTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-    //     collateralTable.getColumnModel().getColumn(0).setPreferredWidth(100);
-    //     collateralTable.getColumnModel().getColumn(1).setPreferredWidth(300);
-    //     collateralTable.getColumnModel().getColumn(2).setPreferredWidth(100);
-    //     collateralTable.getColumnModel().getColumn(3).setPreferredWidth(300);
-    //     collateralTable.getColumnModel().getColumn(4).setPreferredWidth(180);
-    //     collateralTable.getColumnModel().getColumn(5).setPreferredWidth(100);
-    //     collateralTable.getColumnModel().getColumn(6).setPreferredWidth(100);
-    //     return collateralTable;
-    //   }
-    // } catch (Exception e) {
-    //   //TODO: handle exception
-    //   Log.info(e.toString());
-    //   JTable table = new MasternodeTable(
-    //       rowData, columnNames, this.parentFrame, this.clientCaller, this.installationObserver);
-    //   table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-    //   table.getColumnModel().getColumn(0).setPreferredWidth(300);
-    //   table.getColumnModel().getColumn(1).setPreferredWidth(110);
-    //   table.getColumnModel().getColumn(2).setPreferredWidth(100);
-    //   table.getColumnModel().getColumn(3).setPreferredWidth(300);
-    //   table.getColumnModel().getColumn(4).setPreferredWidth(180);
-    //   table.getColumnModel().getColumn(5).setPreferredWidth(100);
-    //   return table;
-    // }
-    Log.info("gashgjsfghsjdfgafhgkaf\n");
-    Log.info(rowData[0][6].toString());
+    String columnNames[] = {LOCAL_MSG_GOVERNANCE_HASH, LOCAL_MSG_GOVERNANCE_STARTEPOCH, LOCAL_MSG_GOVERNANCE_NAME, LOCAL_MSG_GOVERNANCE_PAYMENTADDRESS, LOCAL_MSG_GOVERNANCE_PAYMENTAMOUNT, LOCAL_MSG_GOVERNANCE_ENDEPOCH, LOCAL_MSG_GOVERNANCE_TYPE};
 
     JTable table = new MasternodeTable(
           rowData, columnNames, this.parentFrame, this.clientCaller, this.installationObserver);
@@ -446,8 +408,7 @@ public class GovernancePanel
       table.getColumnModel().getColumn(3).setPreferredWidth(200);
       table.getColumnModel().getColumn(4).setPreferredWidth(180);
       table.getColumnModel().getColumn(5).setPreferredWidth(100);
-      // table.getColumnModel().getColumn(6).setPreferredWidth(100);
-      Log.info(table.getColumnModel().getColumnCount() + "");
+
       return table;
     
   }
