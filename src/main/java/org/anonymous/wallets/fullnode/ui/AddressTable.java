@@ -46,12 +46,77 @@ public class AddressTable
     int accelaratorKeyMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
     popupMenu.add(instantiateObtainPrivateKeyMenuItem());
+    // popupMenu.add(instantiateLockMenuItem());
+    popupMenu.add(instantiateUnlockMenuItem());
     zAddressPopupMenu.add(instantiateObtainPrivateKeyMenuItem());
 
     zAddressPopupMenu.add(instantiateShieldAllCoinbaseMenuItem());
 
 
   } // End constructor
+
+  protected JMenuItem instantiateLockMenuItem() {
+		JMenuItem menuItem = new JMenuItem("Lock");
+        //copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, accelaratorKeyMask));
+        menuItem.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                if ((lastRow >= 0) && (lastColumn >= 0))
+                {
+                    String text = AddressTable.this.getValueAt(lastRow, lastColumn).toString();
+
+                    try {
+                      String message = caller.lockAddress(text);
+
+                      JOptionPane.showMessageDialog(
+                        AddressTable.this.getRootPane().getParent(), message,
+                        "", JOptionPane.INFORMATION_MESSAGE);
+                  } catch (Exception exception) {
+                      //TODO: handle exception
+                      Log.info("EXCEPTION: ");
+                      Log.info(exception.toString());
+                  }
+                } else
+                {
+                    // Log perhaps
+                }
+            }
+        });
+        return menuItem;
+  }
+  protected JMenuItem instantiateUnlockMenuItem() {
+		JMenuItem menuItem = new JMenuItem("Unlock");
+        //copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, accelaratorKeyMask));
+        menuItem.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                if ((lastRow >= 0) && (lastColumn >= 0))
+                {
+                    String text = AddressTable.this.getValueAt(lastRow, lastColumn).toString();
+
+                    try {
+                      String message = caller.unlockAddress(text);
+
+                      JOptionPane.showMessageDialog(
+                        AddressTable.this.getRootPane().getParent(), message,
+                        "", JOptionPane.INFORMATION_MESSAGE);
+                  } catch (Exception exception) {
+                      //TODO: handle exception
+                      Log.info("EXCEPTION: ");
+                      Log.info(exception.toString());
+                  }
+                } else
+                {
+                    // Log perhaps
+                }
+            }
+        });
+        return menuItem;
+	}
 
   protected JMenuItem instantiateObtainPrivateKeyMenuItem() {
     JMenuItem menuItem = new JMenuItem(LOCAL_MENU_GET_PK);

@@ -7,7 +7,7 @@ import org.anonymous.wallets.fullnode.util.OSUtil;
 import org.anonymous.wallets.fullnode.util.OSUtil.OS_TYPE;
 import org.anonymous.wallets.fullnode.util.Util;
 
-import java.io.File;
+import java.io.*;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -182,6 +182,82 @@ public class ANONClientCaller {
         return balance;
     }
 
+    public String unlockAddress(String address)
+            throws WalletCallException, IOException, InterruptedException {
+        String message = "";
+        JsonArray objResponse;
+        try {
+            objResponse = this.executeCommandAndGetJsonArray("getaddresstxids", wrapStringParameter(address));
+        } catch (Exception e) {
+            message = e.toString();
+            return message;
+        }
+        JsonArray txobjResponse = this.executeCommandAndGetJsonArray("listlockunspent");
+
+        String[] finalArr = new String [txobjResponse.size()];
+        String vout = null;
+        for(int i = 0 ; i < txobjResponse.size() ; i ++){
+            JsonObject trans = txobjResponse.get(i).asObject();
+            if (trans.get("txid").toString().replace("\"", "").trim().equals(objResponse.get(0).toString().replace("\"", "").trim())) {
+                vout = trans.get("vout").toString().replace("\"", "");
+                break;
+            }
+            
+        }
+        JsonValue lockingResponse;
+        try {
+            lockingResponse = this.executeCommandAndGetJsonValue("lockunspent", "true", "[{\"txid\":\"" + objResponse.get(0).toString().replace("\"", "") +"\",\"vout\":" + vout + "}]");
+        } catch (Exception e) {
+            //TODO: handle exception
+            message = "This Address is not locked";
+            return message;
+        }
+
+        if (lockingResponse.asBoolean()) {
+            message = "It has been unlocked. Please wait 30 seconds to view the changes. If you close and reopen the wallet without spending the funds, the address will remain locked";
+        } else {
+            message = "It cannot be unlocked. Make sure you're choosing a valid";
+        }
+        return message;
+    }
+
+    public String lockAddress(String address)
+            throws WalletCallException, IOException, InterruptedException {
+        String message = "";
+        JsonArray objResponse;
+        try {
+            objResponse = this.executeCommandAndGetJsonArray("getaddresstxids", wrapStringParameter(address));
+        } catch (Exception e) {
+            message = e.toString();
+            return message;
+        }
+        JsonArray txobjResponse = this.executeCommandAndGetJsonArray("listlockunspent");
+
+        String[] finalArr = new String [txobjResponse.size()];
+        String vout = "0";
+        for(int i = 0 ; i < txobjResponse.size() ; i ++){
+            JsonObject trans = txobjResponse.get(i).asObject();
+            if (trans.get("txid").toString().replace("\"", "").trim().equals(objResponse.get(0).toString().replace("\"", "").trim())) {
+                vout = trans.get("vout").toString().replace("\"", "");
+                break;
+            }
+            
+        }
+
+        Log.info("gaFDGASDFGADSFGAs");
+        JsonValue lockingResponse = this.executeCommandAndGetJsonValue("lockunspent", "false", "[{\"txid\":\"" + objResponse.get(0).toString().replace("\"", "") +"\",\"vout\":" + vout + "}]");
+
+        
+        Log.info(lockingResponse.toString());
+
+        if (lockingResponse.asBoolean()) {
+            message = "It has been unlocked";
+        } else {
+            message = "It cannot be unlocked. Make sure you're choosing a valid";
+        }
+        return message;
+    }
+
     public synchronized String[][] getMasternodeList() throws WalletCallException, IOException, InterruptedException {
 
         JsonArray objResponse = this.executeCommandAndGetJsonArray("masternodelist", "walletarray");
@@ -317,6 +393,33 @@ public class ANONClientCaller {
             JsonArray trans = objResponse.get(i).asArray();
             // trans.replace(" ", "")
             finalArr[i] = trans.get(0).toString().replace("\"", "");
+        }
+
+        return finalArr;
+    }
+
+    public synchronized String[] getMasternodeCollateralAddress() throws WalletCallException, IOException, InterruptedException {
+
+
+
+        JsonArray objResponse = this.executeCommandAndGetJsonArray("listlockunspent");
+
+        String[] finalArr = new String [objResponse.size()];
+
+        for(int i = 0 ; i < objResponse.size() ; i ++){
+            JsonObject trans = objResponse.get(i).asObject();
+
+            try {
+                
+                JsonObject transactionResponse = this.executeCommandAndGetJsonObject("gettransaction", wrapStringParameter(trans.get("txid").toString().replace("\"", "")));
+
+                finalArr[i] = transactionResponse.get("details").asArray().get(0).asObject().get("address").toString().replace("\"", "");
+
+            } catch (Exception e) {
+                //TODO: handle exception
+                Log.info("EXCEPTION:");
+                Log.info(e.toString());
+            }
         }
 
         return finalArr;
@@ -1077,6 +1180,11 @@ public class ANONClientCaller {
 
     }
 
+
+    private JsonArray executeCommandAndGetJsonArray(String command1)
+            throws WalletCallException, IOException, InterruptedException {
+        return this.executeCommandAndGetJsonArray(command1, null);
+    }
 
     private JsonArray executeCommandAndGetJsonArray(String command1, String command2)
             throws WalletCallException, IOException, InterruptedException {

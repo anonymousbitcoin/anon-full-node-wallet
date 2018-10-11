@@ -73,6 +73,7 @@ public class AddressesPanel
 
         this.lastInteractiveRefresh = System.currentTimeMillis();
 
+
         // Build content
         JPanel addressesPanel = this;
         addressesPanel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
@@ -104,9 +105,9 @@ public class AddressesPanel
         warningPanel.setLayout(new BorderLayout(3, 3));
         warningPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
         JLabel warningL = new JLabel(
-                "<html><span style=\"font-size:0.8em;\">" +
+                "<html><span style=\"font-size:1em;\">" +
                         "* " +
-                        LOCAL_MSG_WARN_BLOCK_TIME +
+                        LOCAL_MSG_WARN_BLOCK_TIME + "\n Anon earned by a Masternode will display in their address without the collateral amount"+
                         "</span>");
         warningPanel.add(warningL, BorderLayout.NORTH);
         addressesPanel.add(warningPanel, BorderLayout.NORTH);
@@ -143,6 +144,8 @@ public class AddressesPanel
             Cursor oldCursor = null;
             try
             {
+
+                this.clientCaller.getMasternodeCollateralAddress();
                 // TODO: dummy progress bar ... maybe
                 oldCursor = AddressesPanel.this.getCursor();
                 AddressesPanel.this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -278,12 +281,13 @@ public class AddressesPanel
     private JTable createAddressBalanceTable(String rowData[][])
             throws WalletCallException, IOException, InterruptedException
     {
-        String columnNames[] = {LOCAL_MENU_BALANCE,LOCAL_MENU_IS_CONFIRMED, LOCAL_MENU_ADDRESS};
+        String columnNames[] = {LOCAL_MENU_BALANCE,LOCAL_MENU_IS_CONFIRMED, LOCAL_MENU_ADDRESS, "Masternode Collateral Address"};
         JTable table = new AddressTable(rowData, columnNames, this.clientCaller);
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-        table.getColumnModel().getColumn(0).setPreferredWidth(160);
-        table.getColumnModel().getColumn(1).setPreferredWidth(140);
-        table.getColumnModel().getColumn(2).setPreferredWidth(1000);
+        // table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+        // table.getColumnModel().getColumn(0).setPreferredWidth(160);
+        // table.getColumnModel().getColumn(1).setPreferredWidth(140);
+        // table.getColumnModel().getColumn(2).setPreferredWidth(860);
+        // table.getColumnModel().getColumn(3).setPreferredWidth(140);
 
         return table;
     }
@@ -318,6 +322,9 @@ public class AddressesPanel
 
         String[][] addressBalances = new String[zAddresses.length + tAddressesCombined.size()][];
 
+        Log.info("zAddresses.length + tAddressesCombined.size()");
+        Log.info(zAddresses.length + tAddressesCombined.size() + "");
+
         // Format double numbers - else sometimes we get exponential notation 1E-4 ZEN
         DecimalFormat df = new DecimalFormat("########0.00######");
 
@@ -334,6 +341,7 @@ public class AddressesPanel
         }
 
         int i = 0;
+        String[] masternodeCollateralAddresses = this.clientCaller.getMasternodeCollateralAddress();
 
         for (String address : tAddressesCombined)
         {
@@ -369,13 +377,28 @@ public class AddressesPanel
             boolean isConfirmed =  (confirmedBalance.equals(unconfirmedBalance));
             String balanceToShow = df.format(Double.valueOf(
                     isConfirmed ? confirmedBalance : unconfirmedBalance));
+            
+            addressBalances[i] = new String[]{  
+                    balanceToShow,
+                    isConfirmed ? (LOCAL_MSG_YES + " " + confirmed) : (LOCAL_MSG_NO + " " + notConfirmed),
+                    addressToDisplay,
+                    ""
+            };  
 
-            addressBalances[i++] = new String[]
-                    {
-                            balanceToShow,
-                            isConfirmed ? (LOCAL_MSG_YES + " " + confirmed) : (LOCAL_MSG_NO + " " + notConfirmed),
-                            addressToDisplay
-                    };
+            for(int j = 0; j < masternodeCollateralAddresses.length; j++){
+                // Log.info("ADRGADFGADFGADFGHADFH\n");
+                // if(masternodeCollateralAddresses[i] != null)
+                //     Log.info(masternodeCollateralAddresses[i]);
+                if(masternodeCollateralAddresses[j].trim().equals(addressToDisplay.trim())) {
+                    addressBalances[i][3] = "True (Locked)";    
+                    break;
+                } else {
+                    addressBalances[i][3] = "False";
+                }
+            }
+            i++;
+            
+            
         }
 
         for (String address : zAddresses)
@@ -385,12 +408,12 @@ public class AddressesPanel
             boolean isConfirmed =  (confirmedBalance.equals(unconfirmedBalance));
             String balanceToShow = df.format(Double.valueOf(
                     isConfirmed ? confirmedBalance : unconfirmedBalance));
-
-            addressBalances[i++] = new String[]
-                    {
+            
+            addressBalances[i++] = new String[]{
                             balanceToShow,
                             isConfirmed ? (LOCAL_MSG_YES + " " + confirmed) : (LOCAL_MSG_YES + " " + notConfirmed),
-                            address
+                            address,
+                            "False"
                     };
         }
 
