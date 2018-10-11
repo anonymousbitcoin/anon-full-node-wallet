@@ -94,6 +94,8 @@ public class ANONWalletUI extends JFrame {
     private static final String IMG_TAB_TRANSACTIONS = "images/overview.png";
     private static final String IMG_TAB_ADDRESSES = "images/own-addresses.png";
     private static final String IMG_TAB_SEND = "images/send.png";
+    private static final String IMG_TAB_MASTERNODES = "images/masternodes.png";
+    private static final String IMG_TAB_MYMASTERNODES = "images/my_masternodes.png";
     private static final String IMG_TAB_ADDRESS_BOOK = "images/address-book.png";
     private static final String IMG_TAB_MSG = "images/messaging.png";
     private static final String IMG_ANON_ICON = "images/anon-200.png";
@@ -153,10 +155,10 @@ public class ANONWalletUI extends JFrame {
         //     new ImageIcon(cl.getResource(IMG_TAB_MSG)),
         //     messagingPanel = new MessagingPanel(this, sendPanel, tabs, clientCaller, errorReporter));
         tabs.addTab(LOCAL_MSG_TAB_MSTRNDE,
-            new ImageIcon(cl.getResource(IMG_TAB_SEND)),
+            new ImageIcon(cl.getResource(IMG_TAB_MASTERNODES)),
             masternodePanel = new MasternodePanel(this, installationObserver, clientCaller, errorReporter, backupTracker)); 
         tabs.addTab(LOCAL_MSG_TAB_MYMSTRNDE,
-            new ImageIcon(cl.getResource(IMG_TAB_SEND)),
+            new ImageIcon(cl.getResource(IMG_TAB_MYMASTERNODES)),
             myMasternodePanel = new MyMasternodePanel(this, installationObserver, clientCaller, errorReporter, backupTracker));
 
         contentPane.add(tabs);
@@ -353,14 +355,14 @@ public class ANONWalletUI extends JFrame {
         }
 
         // Notify the messaging TAB that it is being selected - every time
-        tabs.addChangeListener(
-            e -> {
-                JTabbedPane tabs = (JTabbedPane) e.getSource();
-                if (tabs.getSelectedIndex() == 4) {
-                    ANONWalletUI.this.messagingPanel.tabSelected();
-                }
-            }
-        );
+        // tabs.addChangeListener(
+        //     e -> {
+        //         JTabbedPane tabs = (JTabbedPane) e.getSource();
+        //         if (tabs.getSelectedIndex() == 4) {
+        //             ANONWalletUI.this.messagingPanel.tabSelected();
+        //         }
+        //     }
+        // );
 
     }
 

@@ -321,10 +321,6 @@ public class AddressesPanel
         tAddressesCombined.addAll(tAddressSetWithUnspentOuts);
 
         String[][] addressBalances = new String[zAddresses.length + tAddressesCombined.size()][];
-
-        Log.info("zAddresses.length + tAddressesCombined.size()");
-        Log.info(zAddresses.length + tAddressesCombined.size() + "");
-
         // Format double numbers - else sometimes we get exponential notation 1E-4 ZEN
         DecimalFormat df = new DecimalFormat("########0.00######");
 
