@@ -159,7 +159,7 @@ public class ANONWalletUI extends JFrame {
         tabs.addTab(LOCAL_MSG_TAB_MYMSTRNDE,
             new ImageIcon(cl.getResource(IMG_TAB_SEND)),
             myMasternodePanel = new MyMasternodePanel(this, installationObserver, clientCaller, errorReporter, backupTracker));
-        tabs.addTab("Governance Objects",
+        tabs.addTab("Governance",
             new ImageIcon(cl.getResource(IMG_TAB_SEND)),
             governancePanel = new GovernancePanel(this, installationObserver, clientCaller, errorReporter, backupTracker));
 

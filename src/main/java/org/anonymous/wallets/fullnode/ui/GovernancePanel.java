@@ -149,7 +149,7 @@ public class GovernancePanel
     String[] myMasternodeAliases = this.clientCaller.getMyMasternodesAliases().length != 0 ? this.clientCaller.getMyMasternodesAliases() : new String[]{"No Masternodes Available"};
     myMasternodeAliasList = new JComboBox<>(myMasternodeAliases);
     comboBoxParentPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-    comboBoxParentPanel.add(new JLabel("Govbject TX Hash"));
+    comboBoxParentPanel.add(new JLabel("Proposal TX Hash"));
     comboBoxParentPanel.add(gobjectTxHash);
     comboBoxParentPanel.add(voteOutcome);
     comboBoxParentPanel.add(voteSignal);
@@ -165,7 +165,7 @@ public class GovernancePanel
     JButton startAllButton = new JButton("Vote All");
     buttonPanel.add(startAllButton);
 
-    JButton createNewGovobjectButton = new JButton("Create New GovObject");
+    JButton createNewGovobjectButton = new JButton("Create New Proposal");
     buttonPanel.add(createNewGovobjectButton);
 
     // JButton updateTableButton = new JButton(LOCAL_MENU_REFRESH);
