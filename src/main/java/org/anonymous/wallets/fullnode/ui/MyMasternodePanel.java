@@ -150,7 +150,6 @@ public class MyMasternodePanel
     startAliasButton.addActionListener(e -> {
       try{
         String[] aliases = MyMasternodePanel.this.clientCaller.getMyAliases();
-        Log.info(aliases.toString());
         String name = (String) JOptionPane.showInputDialog(MyMasternodePanel.this,
         "Please select from your list of aliases, \nprovided in the configuration file.",
         "Start Masternode By Alias",
@@ -163,7 +162,6 @@ public class MyMasternodePanel
           return;
         }
         String response = this.clientCaller.startMasternodeByAlias(name);
-        Log.info("response: " + response.toString());
         startAliasButton.setText("Starting " + name);
 
 
@@ -199,7 +197,6 @@ public class MyMasternodePanel
         MyMasternodePanel.this.updateMasternodesTable();
         Log.info("Updating masternode status");
 
-        Log.info("----------------------------------------------------");
         updateTableButton.setText("Updating!");
 
       } catch (Exception ex)
@@ -212,7 +209,6 @@ public class MyMasternodePanel
     startAllButton.addActionListener(e -> {
       try{
         String response = this.clientCaller.startAllMasternodes();
-        Log.info(response.toString());
         startAllButton.setText("Starting...");
 
       }catch (Exception ex){
@@ -225,7 +221,6 @@ public class MyMasternodePanel
       try
       {
         String response = this.clientCaller.startMissingMasternodes();
-        Log.info(response.toString());
         startMissingButton.setText("Starting...");
       } catch (Exception ex){
         startMissingButton.setText("Not synced!");
@@ -258,7 +253,6 @@ public class MyMasternodePanel
           long start = System.currentTimeMillis();
           String[][] data = MyMasternodePanel.this.getMasternodeListFromRPC();
           long end = System.currentTimeMillis();
-          Log.info("Gathering MY MASTERNODES: " + (end - start) + "ms.");
 
           return data;
         },
@@ -345,8 +339,6 @@ public class MyMasternodePanel
         return collateralTable;
       }
     } catch (Exception e) {
-      //TODO: handle exception
-      Log.info(e.toString());
       JTable table = new MasternodeTable(
           rowData, columnNames, this.parentFrame, this.clientCaller, this.installationObserver);
       table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
