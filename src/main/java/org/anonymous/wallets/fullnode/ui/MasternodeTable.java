@@ -26,8 +26,8 @@ import java.util.Map.Entry;
  */
 public class MasternodeTable extends DataTable {
 
-    private static final String BLOCK_EXPLORER_URL = "https://explorer.anonymous.org/tx/";
-    private static final String BLOCK_EXPLORER_TEST_URL = "https://testnet.anonymous.org/tx/";
+    private static final String BLOCK_EXPLORER_URL = "https://explorer.anonfork.io/insight/";
+    private static final String BLOCK_EXPLORER_TEST_URL = "https://texplorer.anonfork.io/insight/";
 
     private static final String LOCAL_MSG_SHOW_DETAILS = Util.local("LOCAL_MSG_SHOW_DETAILS");
     private static final String LOCAL_MSG_VIEW_ON_EXPLORER = Util.local("LOCAL_MSG_VIEW_ON_EXPLORER");
@@ -47,109 +47,13 @@ public class MasternodeTable extends DataTable {
     public MasternodeTable(final Object[][] rowData, final Object[] columnNames, final JFrame parent,
                             final ANONClientCaller caller, final ANONInstallationObserver installationObserver) {
         super(rowData, columnNames);
-
-        // JMenuItem showDetails = new JMenuItem(LOCAL_MSG_SHOW_DETAILS);
-        // popupMenu.add(showDetails);
-
-        // showDetails.addActionListener(e -> {
-        //     if ((lastRow >= 0) && (lastColumn >= 0)) {
-        //         try {
-        //             String txID = MasternodeTable.this.getModel().getValueAt(lastRow, 6).toString();
-        //             txID = txID.replaceAll("\"", ""); // In case it has quotes
-
-        //             Log.info("Transaction ID for detail dialog is: " + txID);
-        //             Map<String, String> details = caller.getRawTransactionDetails(txID);
-        //             String rawTrans = caller.getRawTransaction(txID);
-
-        //             DetailsDialog dd = new DetailsDialog(parent, details);
-        //             dd.setVisible(true);
-        //         } catch (Exception ex) {
-        //             Log.error("Unexpected error: ", ex);
-        //         }
-        //     } else {
-        //         // Log perhaps
-        //     }
-        // });
-
-        // JMenuItem showInExplorer = new JMenuItem(LOCAL_MSG_VIEW_ON_EXPLORER);
-        // popupMenu.add(showInExplorer);
-
-        // showInExplorer.addActionListener(e -> {
-        //     if ((lastRow >= 0) && (lastColumn >= 0)) {
-        //         try {
-        //             String txID = MasternodeTable.this.getModel().getValueAt(lastRow, 6).toString();
-        //             txID = txID.replaceAll("\"", ""); // In case it has quotes
-
-        //             Log.info("Transaction ID for block explorer is: " + txID);
-        //             String urlPrefix = BLOCK_EXPLORER_URL;
-        //             if (installationObserver.isOnTestNet()) {
-        //                 urlPrefix = BLOCK_EXPLORER_TEST_URL;
-        //             }
-        //             Desktop.getDesktop().browse(new URL(urlPrefix + txID).toURI());
-        //         } catch (Exception ex) {
-        //             Log.error("Unexpected error: ", ex);
-        //         }
-        //     } else {
-        //         // Log perhaps
-        //     }
-        // });
-
-        // JMenuItem showMemoField = new JMenuItem(LOCAL_MSG_SHOW_MEMO);
-        // popupMenu.add(showMemoField);
-
-        // showMemoField.addActionListener(e -> {
-        //     if ((lastRow >= 0) && (lastColumn >= 0)) {
-        //         Cursor oldCursor = parent.getCursor();
-        //         try {
-        //             String txID = MasternodeTable.this.getModel().getValueAt(lastRow, 6).toString();
-        //             txID = txID.replaceAll("\"", ""); // In case it has quotes
-
-        //             String acc = MasternodeTable.this.getModel().getValueAt(lastRow, 5).toString();
-        //             acc = acc.replaceAll("\"", ""); // In case it has quotes
-
-        //             boolean isZAddress = Util.isZAddress(acc);
-        //             if (!isZAddress) {
-        //                 JOptionPane.showMessageDialog(parent,
-        //                         LOCAL_MSG_NO_MEMO,
-        //                         LOCAL_MSG_NO_MEMO_TITLE, JOptionPane.ERROR_MESSAGE);
-        //                 return;
-        //             }
-
-        //             Log.info("Transaction ID for Memo field is: " + txID);
-        //             Log.info("Account for Memo field is: " + acc);
-        //             parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        //             // TODO: some day support outgoing Z transactions
-        //             String MemoField = caller.getMemoField(acc, txID);
-        //             parent.setCursor(oldCursor);
-        //             Log.info("Memo field is: " + MemoField);
-
-        //             if (MemoField != null) {
-        //                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        //                 clipboard.setContents(new StringSelection(MemoField), null);
-
-        //                 MemoField = Util.blockWrapString(MemoField, 80);
-        //                 JOptionPane.showMessageDialog(parent,
-        //                         LOCAL_MSG_MEMO_DETAIL_1 + ": \n" + MemoField + "\n\n"
-        //                                 + LOCAL_MSG_MEMO_DETAIL_2,
-        //                         LOCAL_MSG_MEMO, JOptionPane.PLAIN_MESSAGE);
-        //             } else {
-        //                 JOptionPane.showMessageDialog(parent,
-        //                         LOCAL_MSG_NO_MEMO_DETAIL,
-        //                         LOCAL_MSG_NO_MEMO_TITLE, JOptionPane.ERROR_MESSAGE);
-        //             }
-        //         } catch (Exception ex) {
-        //             parent.setCursor(oldCursor);
-        //             Log.error("", ex);
-        //         }
-        //     }
-        // });
-
     } // End constructor
 
     private static class DetailsDialog extends JDialog {
         public DetailsDialog(JFrame parent, Map<String, String> details) throws UnsupportedEncodingException {
+            
             this.setTitle(LOCAL_MSG_TXN_DETAILS);
-            this.setSize(600, 310);
+            this.setSize(700, 310);
             this.setLocation(100, 100);
             this.setLocationRelativeTo(parent);
             this.setModal(true);
@@ -170,8 +74,8 @@ public class MasternodeTable extends DataTable {
             int i = 0;
             int maxPreferredWidth = 400;
             for (Entry<String, String> ent : details.entrySet()) {
-                if (maxPreferredWidth < (ent.getValue().length() * 6)) {
-                    maxPreferredWidth = ent.getValue().length() * 6;
+                if (maxPreferredWidth < (ent.getValue().length() * 7)) {
+                    maxPreferredWidth = ent.getValue().length() * 7;
                 }
 
                 data[i][0] = ent.getKey();

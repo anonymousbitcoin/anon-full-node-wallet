@@ -623,9 +623,7 @@ public class SendCashPanel
 
   private void reportCompleteOperationToTheUser(String amount, String sourceAddress, String destinationAddress)
       throws InterruptedException, WalletCallException, IOException, URISyntaxException {
-        Log.info("THIS IS WORKING HERE LINE 625");
     if (clientCaller.isCompletedOperationSuccessful(operationStatusID)) {
-      Log.info("GOT INTO THE IF STATEMENT LINE 627");
       operationStatusLabel.setText(
           "<html><span style=\"color:green;font-weight:bold\">" + LOCAL_MSG_SUCCESSFUL + "</span></html>");
       String TXID = clientCaller.getSuccessfulOperationTXID(operationStatusID);
@@ -646,17 +644,15 @@ public class SendCashPanel
           options[0]);
 
       if (option == 1) {
-        Log.info("OPTION ONE!!!");
         // Copy the transaction ID to clipboard
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(TXID), null);
       } else if (option == 2) {
-        Log.info("OPTION TWO!!!");
         // Open block explorer
         Log.info("Transaction ID for block explorer is: " + TXID);
-        String urlPrefix = "https://explorer.anonymous.org/tx/";
+        String urlPrefix = "https://explorer.anonfork.io/insight/";
         if (installationObserver.isOnTestNet()) {
-          urlPrefix = "https://testnet.anonymous.org/tx/";
+          urlPrefix = "https://texplorer.anonfork.io/insight/";
         }
         Desktop.getDesktop().browse(new URL(urlPrefix + TXID).toURI());
       }
@@ -664,7 +660,6 @@ public class SendCashPanel
       // Call the backup tracker - to remind the user
       this.backupTracker.handleNewTransaction();
     } else {
-      Log.info("FAILED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       String errorMessage = clientCaller.getOperationFinalErrorMessage(operationStatusID);
       operationStatusLabel.setText(
           "<html><span style=\"color:red;font-weight:bold\">ERROR: " + errorMessage + "</span></html>");

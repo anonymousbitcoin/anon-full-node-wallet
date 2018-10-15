@@ -132,7 +132,6 @@ public class ANONClientCaller {
         CommandExecutor infoGetter = new CommandExecutor(
                 new String[]{zcashcli.getCanonicalPath(), "getinfo"});
         String info = infoGetter.execute();
-        Log.info(info.trim().toLowerCase(Locale.ROOT));
 
         if (info.trim().toLowerCase(Locale.ROOT).startsWith("error: couldn't connect to server")) {
             throw new IOException(info.trim());
@@ -200,51 +199,69 @@ public class ANONClientCaller {
             finalArr[i][6] = trans.get(6).toString().replace("\"","");
             finalArr[i][7] = trans.get(7).toString().replace("\"","");
             finalArr[i][8] = trans.get(8).toString().replace("\"","");
-            // String[] ar = finalArr[i];
-            // for(int j = 0; j < ar.length; j++) {
-            //     Log.info("----------------------------------\n");
-            //     Log.info(finalArr[i][j]);
-            //     // if(finalArr[i][j] < 0) {
-            //         // Log.info("It is null");
-            //     // }
-            // }
-
         }
-        // Log.info("----------------------------------\n");
-        // Log.info(finalArr[1][1].toString());
-        // Log.info("----------------------------------");
         return finalArr;
     }
 
     public synchronized String[][] getMyMasternodes() throws WalletCallException, IOException, InterruptedException {
 
         JsonArray objResponse = this.executeCommandAndGetJsonArray("masternode", "mymasternodes");
-
+        
+        
         if (objResponse.size() == 0){
             String[][] noMNArr = new String[1][];
-            noMNArr[0] = new String[6];
+            noMNArr[0] = new String[7];
             noMNArr[0][0] = "No Masternodes set in conf file.";
             noMNArr[0][1] = "";
             noMNArr[0][2] = "";
             noMNArr[0][3] = "";
             noMNArr[0][4] = "";
             noMNArr[0][5] = "";
+            // noMNArr[0][6] = "";
 
             return noMNArr;
         };
 
         String[][] finalArr = new String [objResponse.size()][];
         for(int i = 0 ; i < objResponse.size() ; i ++){
-            finalArr[i] = new String[6];
+            finalArr[i] = new String[7];
             JsonArray trans = objResponse.get(i).asArray();
 
             finalArr[i][0] = trans.get(0).toString().replace("\"","");
+
             finalArr[i][1] = trans.get(1).toString().replace("\"","");
             finalArr[i][2] = trans.get(2).toString().replace("\"","");
             finalArr[i][3] = trans.get(3).toString().replace("\"","");
             finalArr[i][4] = trans.get(4).toString().replace("\"","");
             finalArr[i][5] = trans.get(5).toString().replace("\"","");
         }
+
+
+        String[][] arr = new String[0][];
+
+        return finalArr;
+    }
+
+    public synchronized String[] getMyMasternodesAliases() throws WalletCallException, IOException, InterruptedException {
+
+        JsonArray objResponse = this.executeCommandAndGetJsonArray("masternode", "mymasternodes");
+        
+        if (objResponse.size() == 0){
+            String[] noMNArr = new String[1];
+            noMNArr[0] = "No Masternodes set in conf file.";
+
+            return noMNArr;
+        };
+
+        String[] finalArr = new String [objResponse.size()];
+        for(int i = 0 ; i < objResponse.size() ; i ++){
+            JsonArray trans = objResponse.get(i).asArray();
+
+            finalArr[i] = trans.get(0).toString().replace("\"","");
+        }
+
+
+        String[][] arr = new String[0][];
 
         return finalArr;
     }
@@ -282,30 +299,120 @@ public class ANONClientCaller {
             String returnString = stringBuilder.toString().replace("\"","");
 
             return returnString;
-        // }
 
-        // stringBuilder.append("<html>");
-        // stringBuilder.append("<span style=\"font-weight:bold;\">Asset ID: </span>");
-        // stringBuilder.append("<span>" + assetID + "</span><br/>");
-        // stringBuilder.append("<span style=\"font-weight:bold;\">Asset Name: </span>");
-        // stringBuilder.append("<span>" + assetName + "</span><br/>");
-        // stringBuilder.append("<span style=\"font-weight:bold;\">Attempt: </span>");
-        // stringBuilder.append("<span>" + attempt + "</span><br/>");
-        // stringBuilder.append("<span style=\"font-weight:bold;\">Is BlockChain Synced: </span>");
-        // stringBuilder.append("<span>" + isBlockchainSynced + "</span><br/>");
-        // stringBuilder.append("<span style=\"font-weight:bold;\">Is Masternode List Synced: </span>");
-        // stringBuilder.append("<span>" + isMasternodeListSynced + "</span><br/>");
-        // stringBuilder.append("<span style=\"font-weight:bold;\">Is Winners List Synced: </span>");
-        // stringBuilder.append("<span>" + isWinnersListSynced + "</span><br/>");
-        // stringBuilder.append("<span style=\"font-weight:bold;\">Is Synced: </span>");
-        // stringBuilder.append("<span>" + isSynced + "</span><br/>");
-        // stringBuilder.append("<span style=\"font-weight:bold;\">Is Failed: </span>");
-        // stringBuilder.append("<span>" + isFailed + "</span><br/>");
-        // stringBuilder.append("<html/>");
+    }
 
-        // String returnString = stringBuilder.toString().replace("\"","");
+    public synchronized String[] gobjectVoteAll(String voteSignal, String voteOutcome, String hash) throws WalletCallException, IOException, InterruptedException {
 
-        // return returnString;
+        JsonObject objResponse = this.executeCommandAndGetJsonObject("gobject", "vote-many", wrapStringParameter(hash.toLowerCase()), wrapStringParameter(voteSignal.toLowerCase()), wrapStringParameter(voteOutcome.toLowerCase()));
+
+        String overall = objResponse.get("overall").toString().replace("\"", "");
+        String detail = objResponse.get("detail").toString().replace("\"", "").replace("{", "").replace("}", "").replace(":", ": ").replace(",", ", ");
+        String[] completeResult = {overall, detail};
+
+        return completeResult;
+    }
+
+    public synchronized String[] gobjectVoteAliases(String voteSignal, String voteOutcome, String hash, String alias) throws WalletCallException, IOException, InterruptedException {
+
+        JsonObject objResponse = this.executeCommandAndGetJsonObject("gobject", "vote-alias", wrapStringParameter(hash.toLowerCase()), wrapStringParameter(voteSignal.toLowerCase()), wrapStringParameter(voteOutcome.toLowerCase()), wrapStringParameter(alias));
+
+        String overall = objResponse.get("overall").toString().replace("\"", "");
+        String detail = objResponse.get("detail").toString().replace("\"", "").replace("{", "").replace("}", "").replace(":", ": ").replace(",", ", ");
+        String[] completeResult = {overall, detail};
+
+        return completeResult;
+    }
+
+    public synchronized String prepareCommand(String command) throws WalletCallException, IOException, InterruptedException {
+
+        int begin = 0;
+        int end = 0;
+        String s1, command1 = "", command2 = "", command3 = "", command4 = "", command5 = "", command6 = "";
+        int i = 1;
+        while (end != -1){     
+            end = command.indexOf(" ", begin);
+
+            if ((end < command.length()) && ((begin < end)))
+                s1 = command.substring(begin, end + 1);
+            else
+                s1 = command.substring(begin);
+
+            begin = end + 1;
+            //  System.out.println(s1);
+            if(i == 1){
+                command1 = s1.trim();
+                System.out.println(command1.length());
+            } else if (i == 2) {
+                command2 = s1.trim();
+                System.out.println(command2.length());
+            } else if (i == 3) {
+                command3 = s1.trim();
+                System.out.println(command3.length());
+            } else if (i == 4) {
+                command4 = s1.trim();
+                System.out.println(command4.length());
+            } else if (i == 5) {
+                command5 = s1.trim();
+                System.out.println(command5.length());
+            } else if (i == 6) {
+                command6 = s1.trim();
+                System.out.println(command6.length());
+            }
+            i++;
+
+        }
+
+        String objResponse = this.executeCommandAndGetSingleStringResponse(wrapStringParameter(command1), wrapStringParameter(command2), wrapStringParameter(command3), wrapStringParameter(command4), wrapStringParameter(command5), wrapStringParameter(command6));
+        
+        return objResponse;
+    }
+
+    public synchronized String submitCommand(String command) throws WalletCallException, IOException, InterruptedException {
+
+        int begin = 0;
+        int end = 0;
+        String s1, command1 = "", command2 = "", command3 = "", command4 = "", command5 = "", command6 = "", command7 = "";
+        int i = 1;
+        while (end != -1){     
+            end = command.indexOf(" ", begin);
+
+            if ((end < command.length()) && ((begin < end)))
+                s1 = command.substring(begin, end + 1);
+            else
+                s1 = command.substring(begin);
+
+            begin = end + 1;
+            //  System.out.println(s1);
+            if(i == 1){
+                command1 = s1.trim();
+                System.out.println(command1.length());
+            } else if (i == 2) {
+                command2 = s1.trim();
+                System.out.println(command2.length());
+            } else if (i == 3) {
+                command3 = s1.trim();
+                System.out.println(command3.length());
+            } else if (i == 4) {
+                command4 = s1.trim();
+                System.out.println(command4.length());
+            } else if (i == 5) {
+                command5 = s1.trim();
+                System.out.println(command5.length());
+            } else if (i == 6) {
+                command6 = s1.trim();
+                System.out.println(command6.length());
+            }  else if (i == 7) {
+                command7 = s1.trim();
+                System.out.println(command6.length());
+            }
+            i++;
+
+        }
+
+        String objResponse = this.executeCommandAndGetSingleStringResponse(wrapStringParameter(command1), wrapStringParameter(command2), wrapStringParameter(command3), wrapStringParameter(command4), wrapStringParameter(command5), wrapStringParameter(command6), wrapStringParameter(command7));
+
+        return objResponse;
     }
 
     public synchronized String[] getMyAliases() throws WalletCallException, IOException, InterruptedException {
@@ -320,6 +427,68 @@ public class ANONClientCaller {
         }
 
         return finalArr;
+    }
+
+    public synchronized String[][] getGobjectList() throws WalletCallException, IOException, InterruptedException {
+
+        JsonArray objResponse = this.executeCommandAndGetJsonArray("masternode", "mymasternodes");
+        JsonObject gobjResponse = this.executeCommandAndGetJsonObject("gobject", "list");
+
+        String[][] lastArr = new String[gobjResponse.size()][7];
+
+        int i = 0;
+        for (String memberName : gobjResponse.names()) {
+
+                if(gobjResponse.get(memberName).asObject().get("DataString").toString().contains("watchdog"))
+                    continue;
+                String dataStringObject = gobjResponse.get(memberName).asObject().get("DataString").toString().substring(2, gobjResponse.get(memberName).asObject().get("DataString").toString().length() - 2).replace("\\", "");
+
+                String hash = gobjResponse.get(memberName).asObject().get("Hash").toString().replace("\"", "");
+    
+                String[] last = dataStringObject.substring(dataStringObject.lastIndexOf("{") + 1).replace("]", "").replace("\"end_epoch\":", " ").replace(",\"name\":", " ").replace(",\"payment_address\":", " ").replace(",\"payment_amount\":", " ").replace(",\"start_epoch\":", " ").replace(",\"type\":", " ").replace(",\"url\":", " ").replace("}", "").replace("\"created_at\":", " ").replace("\"type\":", " ").split(" ");
+    
+                List<String> lastAr = new ArrayList<String>(Arrays.asList(last));
+                lastAr.removeAll(Arrays.asList("", null, " "));
+    
+                lastArr[i][0] = hash;
+                lastArr[i][1] = lastAr.get(0) != null ? lastAr.get(0).replace("\"", "") : "null";
+                lastArr[i][2] = lastAr.get(1) != null ? lastAr.get(1).replace("\"", "") : "null";
+                lastArr[i][3] = lastAr.get(2) != null ? lastAr.get(2).replace("\"", "") : "null";
+                lastArr[i][4] = lastAr.get(3) != null ? lastAr.get(3).replace("\"", "") : "null";
+                lastArr[i][5] = lastAr.get(4) != null ? lastAr.get(4).replace("\"", "") : "null";
+                lastArr[i][6] = lastAr.get(5) != null ? lastAr.get(5).replace("\"", "") : "null";
+                i++;
+        }
+
+        if (gobjResponse.size() == 0){
+            String[][] noMNArr = new String[1][];
+            noMNArr[0] = new String[7];
+            noMNArr[0][0] = "No Governance Objects";
+            noMNArr[0][1] = "";
+            noMNArr[0][2] = "";
+            noMNArr[0][3] = "";
+            noMNArr[0][4] = "";
+            noMNArr[0][5] = "";
+            // noMNArr[0][6] = "";
+
+            return noMNArr;
+        };
+
+        String[][] finalArr = new String [objResponse.size()][];
+        for(int j = 0 ; j < objResponse.size() ; j ++){
+            finalArr[j] = new String[7];
+            JsonArray trans = objResponse.get(j).asArray();
+
+            finalArr[j][0] = trans.get(0).toString().replace("\"", "");
+
+            finalArr[j][1] = trans.get(1).toString().replace("\"", "");
+            finalArr[j][2] = trans.get(2).toString().replace("\"", "");
+            finalArr[j][3] = trans.get(3).toString().replace("\"", "");
+            finalArr[j][4] = trans.get(4).toString().replace("\"", "");
+            finalArr[j][5] = trans.get(5).toString().replace("\"", "");
+        }
+
+        return lastArr;
     }
 
     public synchronized String[][] getWalletPublicTransactions()
@@ -407,6 +576,23 @@ public class ANONClientCaller {
         for (int i = 0; i < jsonTransactions.size(); i++) {
             JsonObject trans = jsonTransactions.get(i).asObject();
             transactions.add(trans);
+        }
+
+        return transactions.toArray(new JsonObject[0]);
+    }
+
+    public synchronized JsonObject[] getMasternodeOutputs(String ZAddress)
+            throws WalletCallException, IOException, InterruptedException {
+        JsonArray jsonTransactions = executeCommandAndGetJsonArray(
+                "masternode", "outputsArr");
+        List<JsonObject> transactions = new ArrayList<JsonObject>();
+        for (int i = 0; i < jsonTransactions.size(); i++) {
+            JsonObject trans = jsonTransactions.get(i).asObject();
+            transactions.add(trans);
+        }
+
+        for(JsonObject collateral : transactions) {
+
         }
 
         return transactions.toArray(new JsonObject[0]);
@@ -1059,6 +1245,10 @@ public class ANONClientCaller {
         throw new WalletCallException("Unexpected response from wallet: " + strResult);
     }
 
+    private JsonObject executeCommandAndGetJsonObject(String command1)
+            throws WalletCallException, IOException, InterruptedException {
+        return this.executeCommandAndGetJsonObject(command1, null);
+    }
 
     private JsonObject executeCommandAndGetJsonObject(String command1, String command2)
             throws WalletCallException, IOException, InterruptedException {
@@ -1068,6 +1258,30 @@ public class ANONClientCaller {
     private JsonObject executeCommandAndGetJsonObject(String command1, String command2, String command3)
             throws WalletCallException, IOException, InterruptedException {
         JsonValue response = this.executeCommandAndGetJsonValue(command1, command2, command3);
+
+        if (response.isObject()) {
+            return response.asObject();
+        } else {
+            throw new WalletCallException("Unexpected non-object response from wallet: " + response.toString());
+        }
+
+    }
+
+    private JsonObject executeCommandAndGetJsonObject(String command1, String command2, String command3, String command4, String command5)
+            throws WalletCallException, IOException, InterruptedException {
+        JsonValue response = this.executeCommandAndGetJsonValue(command1, command2, command3, command4, command5);
+
+        if (response.isObject()) {
+            return response.asObject();
+        } else {
+            throw new WalletCallException("Unexpected non-object response from wallet: " + response.toString());
+        }
+
+    }
+
+    private JsonObject executeCommandAndGetJsonObject(String command1, String command2, String command3, String command4, String command5, String command6)
+            throws WalletCallException, IOException, InterruptedException {
+        JsonValue response = this.executeCommandAndGetJsonValue(command1, command2, command3, command4, command5, command6);
 
         if (response.isObject()) {
             return response.asObject();
@@ -1104,12 +1318,28 @@ public class ANONClientCaller {
 
     private JsonValue executeCommandAndGetJsonValue(String command1, String command2, String command3)
             throws WalletCallException, IOException, InterruptedException {
-        String strResponse = this.executeCommandAndGetSingleStringResponse(command1, command2, command3);
+        return this.executeCommandAndGetJsonValue(command1, command2, command3, null);   
+    }
+
+    private JsonValue executeCommandAndGetJsonValue(String command1, String command2, String command3, String command4)
+            throws WalletCallException, IOException, InterruptedException {
+        return this.executeCommandAndGetJsonValue(command1, command2, command3, command4, null);   
+    }
+
+    private JsonValue executeCommandAndGetJsonValue(String command1, String command2, String command3, String command4, String command5)
+            throws WalletCallException, IOException, InterruptedException {
+        return this.executeCommandAndGetJsonValue(command1, command2, command3, command4, command5, null);   
+    }
+
+    private JsonValue executeCommandAndGetJsonValue(String command1, String command2, String command3, String command4, String command5, String command6)
+            throws WalletCallException, IOException, InterruptedException {
+        String strResponse = this.executeCommandAndGetSingleStringResponse(command1, command2, command3, command4, command5, command6);
 
         JsonValue response = null;
         try {
             response = Json.parse(strResponse);
         } catch (ParseException pe) {
+
             throw new WalletCallException(strResponse + "\n" + pe.getMessage() + "\n", pe);
         }
 
@@ -1134,12 +1364,32 @@ public class ANONClientCaller {
         return executeCommandAndGetSingleStringResponse(command1, command2, command3, null);
     }
 
+    private String executeCommandAndGetSingleStringResponse(String command1, String command2, String command3, String command4)
+            throws WalletCallException, IOException, InterruptedException {
+        return executeCommandAndGetSingleStringResponse(command1, command2, command3, command4, null);
+    }
+
+    private String executeCommandAndGetSingleStringResponse(String command1, String command2, String command3, String command4, String command5)
+            throws WalletCallException, IOException, InterruptedException {
+        return executeCommandAndGetSingleStringResponse(command1, command2, command3, command4, command5, null);
+    }
+
+    private String executeCommandAndGetSingleStringResponse(String command1, String command2, String command3, String command4, String command5, String command6)
+            throws WalletCallException, IOException, InterruptedException {
+        return executeCommandAndGetSingleStringResponse(command1, command2, command3, command4, command5, command6, null);
+    }
 
     private String executeCommandAndGetSingleStringResponse(
-            String command1, String command2, String command3, String command4)
+            String command1, String command2, String command3, String command4, String command5, String command6, String command7)
             throws WalletCallException, IOException, InterruptedException {
         String[] params;
-        if (command4 != null) {
+        if (command7 != null) {
+            params = new String[]{this.zcashcli.getCanonicalPath(), command1, command2, command3, command4, command5, command6, command7};
+        } else if (command6 != null) {
+            params = new String[]{this.zcashcli.getCanonicalPath(), command1, command2, command3, command4, command5, command6};
+        } else if (command5 != null) {
+            params = new String[]{this.zcashcli.getCanonicalPath(), command1, command2, command3, command4, command5};
+        } else if (command4 != null) {
             params = new String[]{this.zcashcli.getCanonicalPath(), command1, command2, command3, command4};
         } else if (command3 != null) {
             params = new String[]{this.zcashcli.getCanonicalPath(), command1, command2, command3};

@@ -11,7 +11,6 @@ import org.anonymous.wallets.fullnode.util.*;
 import org.anonymous.wallets.fullnode.util.OSUtil.OS_TYPE;
 
 import javax.swing.*;
-import javax.swing.Timer;
 import javax.swing.border.EtchedBorder;
 
 import com.google.common.reflect.TypeResolver;
@@ -25,6 +24,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Clipboard;
 
 
 /**
@@ -33,7 +34,7 @@ import java.util.Date;
  * @author Ivan Vaklinov <ivan@vaklinov.com>
  */
 @SuppressWarnings({"deprecation"})
-public class MyMasternodePanel
+public class GovernancePanel
     extends WalletTabPanel {
   private JFrame parentFrame;
   private ANONInstallationObserver installationObserver;
@@ -54,8 +55,18 @@ public class MyMasternodePanel
   private int counter = 15;
   private JTable transactionsTable = null;
   private JScrollPane transactionsTablePane = null;
-  private String[][] lastMasternodesData = null;
+  private String[][] lastGovernancesData = null;
   private DataGatheringThread<String[][]> transactionGatheringThread = null;
+
+  private JComboBox voteOutcome = null;
+  private JComboBox voteSignal = null;
+  private JComboBox myMasternodeAliasList = null;
+  private JPanel comboBoxParentPanel = null;
+  private WalletTextField gobjectTxHash = null;
+  final JDialog frame = new JDialog(parentFrame, "Enter the Prepare Command", true);
+  
+    
+  JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
   private static final String small_icon_resource = "images/anon-44.png";
 
@@ -83,12 +94,17 @@ public class MyMasternodePanel
   private static final String LOCAL_MSG_UNCONFIRMED_TOOLTIP_B = Util.local("LOCAL_MSG_UNCONFIRMED_TOOLTIP_B");
   private static final String LOCAL_MSG_UNCONFIRMED_TOOLTIP_Z = Util.local("LOCAL_MSG_UNCONFIRMED_TOOLTIP_Z");
 
-  private static final String LOCAL_MSG_MYMSTRNDE_ALIAS = Util.local("LOCAL_MSG_MYMSTRNDE_ALIAS");
-  private static final String LOCAL_MSG_MYMSTRNDE_ADDRESS = Util.local("LOCAL_MSG_MYMSTRNDE_ADDRESS");
-  private static final String LOCAL_MSG_MYMSTRNDE_PRIVATEKEY = Util.local("LOCAL_MSG_MYMSTRNDE_PRIVATEKEY");
-  private static final String LOCAL_MSG_MYMSTRNDE_TXHASH = Util.local("LOCAL_MSG_MYMSTRNDE_TXHASH");
-  private static final String LOCAL_MSG_MYMSTRNDE_OUTPUTINDEX = Util.local("LOCAL_MSG_MYMSTRNDE_OUTPUTINDEX");
-  private static final String LOCAL_MSG_MYMSTRNDE_STATUS = Util.local("LOCAL_MSG_MYMSTRNDE_STATUS");
+  private static final String LOCAL_MSG_GOVERNANCE_STARTEPOCH = Util.local("LOCAL_MSG_GOVERNANCE_STARTEPOCH");
+  private static final String LOCAL_MSG_GOVERNANCE_NAME = Util.local("LOCAL_MSG_GOVERNANCE_NAME");
+  private static final String LOCAL_MSG_GOVERNANCE_HASH = Util.local("LOCAL_MSG_GOVERNANCE_HASH");
+  private static final String LOCAL_MSG_GOVERNANCE_PAYMENTADDRESS = Util.local("LOCAL_MSG_GOVERNANCE_PAYMENTADDRESS");
+  private static final String LOCAL_MSG_GOVERNANCE_PAYMENTAMOUNT = Util.local("LOCAL_MSG_GOVERNANCE_PAYMENTAMOUNT");
+  private static final String LOCAL_MSG_GOVERNANCE_ENDEPOCH = Util.local
+  ("LOCAL_MSG_GOVERNANCE_ENDEPOCH");
+  private static final String LOCAL_MSG_GOVERNANCE_TYPE = Util.local
+  ("LOCAL_MSG_GOVERNANCE_TYPE");
+  
+  
 
   private static final String LOCAL_MSG_SYNC = Util.local("LOCAL_MSG_SYNC");
   private static final String LOCAL_MSG_BLOCK = Util.local("LOCAL_MSG_BLOCK");
@@ -99,7 +115,7 @@ public class MyMasternodePanel
   private static final String daemon_txn_unconfirmed = "immature";
 
 
-  public MyMasternodePanel(JFrame parentFrame,
+  public GovernancePanel(JFrame parentFrame,
                         ANONInstallationObserver installationObserver,
                         ANONClientCaller clientCaller,
                         StatusUpdateErrorReporter errorReporter,
@@ -124,62 +140,60 @@ public class MyMasternodePanel
     buttonPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
     
     JButton resetMnsyncButton = new JButton("Reset Sync");
-    buttonPanel.add(resetMnsyncButton);
+    // buttonPanel.add(resetMnsyncButton);
+    
+    gobjectTxHash = new WalletTextField(13);
+    
+    voteOutcome = new JComboBox<>(new String[]{"Valid","Delete","Endorsed"});
+    voteSignal = new JComboBox<>(new String[]{"Yes", "No", "Abstain"});
+    String[] myMasternodeAliases = this.clientCaller.getMyMasternodesAliases().length != 0 ? this.clientCaller.getMyMasternodesAliases() : new String[]{"No Masternodes Available"};
+    myMasternodeAliasList = new JComboBox<>(myMasternodeAliases);
+    comboBoxParentPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+    comboBoxParentPanel.add(new JLabel("Proposal TX Hash"));
+    comboBoxParentPanel.add(gobjectTxHash);
+    comboBoxParentPanel.add(voteOutcome);
+    comboBoxParentPanel.add(voteSignal);
+    comboBoxParentPanel.add(myMasternodeAliasList);
+    buttonPanel.add(comboBoxParentPanel);
+
     
     // JButton startAliasButton = new JButton(LOCAL_MENU_NEW_B_ADDRESS);
-    JButton startAliasButton = new JButton("Start Alias");
+    JButton startAliasButton = new JButton("Vote Alias");
     buttonPanel.add(startAliasButton);
 
     // JButton startAllButton = new JButton(LOCAL_MENU_NEW_Z_ADDRESS);
-    JButton startAllButton = new JButton("Start All");
+    JButton startAllButton = new JButton("Vote All");
     buttonPanel.add(startAllButton);
 
-    // JButton startMissingButton = new JButton(LOCAL_MENU_REFRESH);
-    JButton startMissingButton = new JButton("Start Missing");
-    buttonPanel.add(startMissingButton);
+    JButton createNewGovobjectButton = new JButton("Create New Proposal");
+    buttonPanel.add(createNewGovobjectButton);
 
     // JButton updateTableButton = new JButton(LOCAL_MENU_REFRESH);
     JButton updateTableButton = new JButton("Update Table");
-    buttonPanel.add(updateTableButton);
+    // buttonPanel.add(updateTableButton);
 
     JLabel updateLabelStart = new JLabel("Table is updated every 5 seconds");
-    buttonPanel.add(updateLabelStart);
+    // buttonPanel.add(updateLabelStart);
 
     dashboard.add(buttonPanel, BorderLayout.SOUTH);
 
     startAliasButton.addActionListener(e -> {
-      try{
-        String[] aliases = MyMasternodePanel.this.clientCaller.getMyAliases();
-        String name = (String) JOptionPane.showInputDialog(MyMasternodePanel.this,
-        "Please select from your list of aliases, \nprovided in the configuration file.",
-        "Start Masternode By Alias",
-        JOptionPane.PLAIN_MESSAGE,
-        null,
-        aliases,
-        aliases[0]);
-
-        if(name == null || "".equals(name)){
-          return;
-        }
-        String response = this.clientCaller.startMasternodeByAlias(name);
-        startAliasButton.setText("Starting " + name);
-
-
-      }catch (Exception ex) {
-        Log.error("Error in startAlias:" + ex);
+      try {
+        this.voteAlias();
+      } catch (Exception exception) {
+        Log.info(exception.toString());
       }
-      counter = 5;
     });
 
     ActionListener updateTimer = e -> {
       try
       {
         if (counter == 0){
-          startAllButton.setText("Start All");
-          startAliasButton.setText("Start Alias");
-          startMissingButton.setText("Start Missing");
-          updateTableButton.setText("Update Table");
-          resetMnsyncButton.setText("Reset Sync");
+          // startAllButton.setText("Start All");
+          // startAliasButton.setText("Start Alias");
+          // startMissingButton.setText("Start Missing");
+          // updateTableButton.setText("Update Table");
+          // resetMnsyncButton.setText("Reset Sync");
           // counter = 5;
         }
         counter--;
@@ -192,39 +206,21 @@ public class MyMasternodePanel
     xy.start();
     this.timers.add(xy);
 
-    updateTableButton.addActionListener(e -> {
+    createNewGovobjectButton.addActionListener(e -> {
       try{
-        MyMasternodePanel.this.updateMasternodesTable();
-        Log.info("Updating masternode status");
-
-        updateTableButton.setText("Updating!");
-
+        this.createProposalSubmissionModal();
       } catch (Exception ex)
       {
-        Log.error("Eror in updateTableButton: " + ex);
+        Log.error("Eror in createNewGovobjectButton: " + ex);
       }
       counter = 5;
     });
 
     startAllButton.addActionListener(e -> {
       try{
-        String response = this.clientCaller.startAllMasternodes();
-        startAllButton.setText("Starting...");
-
+        this.voteAll();
       }catch (Exception ex){
         Log.error("Error in startAllButton: " + ex);
-      }
-      counter = 5;
-    });
-
-    startMissingButton.addActionListener(e -> {
-      try
-      {
-        String response = this.clientCaller.startMissingMasternodes();
-        startMissingButton.setText("Starting...");
-      } catch (Exception ex){
-        startMissingButton.setText("Not synced!");
-        Log.error("Error in startMissingButton: " + ex);
       }
       counter = 5;
     });
@@ -240,133 +236,187 @@ public class MyMasternodePanel
       }
     });
 
-    lastMasternodesData = getMasternodeListFromRPC();
+    lastGovernancesData = getGovernanceListFromRPC();
     dashboard.add(daemonStatusLabel = new JLabel(), BorderLayout.NORTH);
     
     dashboard.add(transactionsTablePane = new JScrollPane(
-            transactionsTable = this.createMasternodesTable(lastMasternodesData)),BorderLayout.CENTER);
+            transactionsTable = this.createGovernancesTable(lastGovernancesData)),BorderLayout.CENTER);
 
 
     // Thread and timer to update the transactions table
     this.transactionGatheringThread = new DataGatheringThread<>(
         () -> {
           long start = System.currentTimeMillis();
-          String[][] data = MyMasternodePanel.this.getMasternodeListFromRPC();
+          String[][] data = GovernancePanel.this.getGovernanceListFromRPC();
           long end = System.currentTimeMillis();
+          Log.info("Gathering MY MASTERNODES: " + (end - start) + "ms.");
 
           return data;
         },
         this.errorReporter, 20000);
     this.threads.add(this.transactionGatheringThread);
 
-    ActionListener alMasternodes = e -> {
+    ActionListener alGovernances = e -> {
       try {
-        MyMasternodePanel.this.updateMasternodesTable();
+        GovernancePanel.this.updateGovernancesTable();
       } catch (Exception ex) {
         Log.error("Unexpected error: ", ex);
-        MyMasternodePanel.this.errorReporter.reportError(ex);
+        GovernancePanel.this.errorReporter.reportError(ex);
       }
     };
-    Timer t = new Timer(5000, alMasternodes);
+    Timer t = new Timer(5000, alGovernances);
     t.start();
     this.timers.add(t);
 
     ActionListener alDeamonStatus = e -> {
-      try {
-        MyMasternodePanel.this.updateStatusLabels();
-      } catch (Exception ex) {
-        Log.error("Unexpected error: ", ex);
-        MyMasternodePanel.this.errorReporter.reportError(ex);
-      }
+      
     };
     Timer syncTimer = new Timer(1000, alDeamonStatus);
     syncTimer.start();
     this.timers.add(syncTimer);
+
+    WalletTextField cliPrepareField = new WalletTextField(21);
+    WalletTextField cliSubmitField = new WalletTextField(21);
+    frame.setPreferredSize(new Dimension(500, 250));
+    
+    panel.setLayout(new FlowLayout(FlowLayout.LEADING, 3, 3));
+    panel.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+
+    panel.add(cliPrepareField);
+    JButton prepareButton = new JButton("Prepare Proposal");
+    panel.add(prepareButton);
+    panel.add(cliSubmitField);
+
+    JLabel submissionInstruction = new JLabel("Paste the submission command and the Transaction ID after it\n");
+    JButton submitButton = new JButton("Submit Proposal");
+    panel.add(submitButton);
+    JTextArea responseMessage = new JTextArea();
+    panel.add(responseMessage);
+    panel.add(submissionInstruction);
+
+    responseMessage.setEditable(false); // as before
+    responseMessage.setBackground(null); // this is the same as a JLabel
+    responseMessage.setBorder(null); 
+
+    prepareButton.addActionListener(e -> {
+      try{
+        String response = this.clientCaller.prepareCommand(cliPrepareField.getText());
+        responseMessage.setText("Transaction ID: \n" + response);
+      } catch (Exception ex){
+        Log.error("Error in prepareButton: " + ex);
+        responseMessage.setText("Error: \n" + ex);
+      }
+    });
+
+    submitButton.addActionListener(e -> {
+      try{
+        String response = this.clientCaller.submitCommand(cliSubmitField.getText());
+        responseMessage.setText("Submitted: \n" + response);
+      } catch (Exception ex){
+        Log.error("Error in prepareButton: " + ex);
+        responseMessage.setText("Error: \n" + ex);
+      }
+    });
+
   }
 
-  private void updateStatusLabels() throws IOException, InterruptedException {
-    String text = "";
-    try {
-      text = this.clientCaller.getMasternodeSyncStatus();
-    } catch (Exception e) {
-      //TODO: handle exception
-    }
+  private void createProposalSubmissionModal() {
 
-    this.daemonStatusLabel.setText(text);
+    frame.getContentPane().add(panel);
+    frame.pack();
+    frame.setVisible(true);
+
+    
   }
 
-
-  private void updateMasternodesTable()
+  private void voteAll() 
       throws WalletCallException, IOException, InterruptedException {
-    String[][] newMasternodesData = this.transactionGatheringThread.getLastData();
+    String voteOutcome = this.voteOutcome.getItemAt(this.voteOutcome.getSelectedIndex()).toString();
+    String voteSignal = this.voteSignal.getItemAt(this.voteSignal.getSelectedIndex()).toString();
+    String gobjectTxHash = this.gobjectTxHash.getText();
+    String[] overallResult = this.clientCaller.gobjectVoteAll(voteOutcome, voteSignal, gobjectTxHash);
+
+    Object[] options = {"Ok"};
+
+    int option = JOptionPane.showOptionDialog(
+        GovernancePanel.this.getRootPane().getParent(),
+        "\nResult:" + " " + overallResult[0] + "\n" +
+            overallResult[1] + "\n" + "" + "\n" ,
+        "Gobject Voting Result",
+        JOptionPane.DEFAULT_OPTION,
+        JOptionPane.INFORMATION_MESSAGE,
+        null,
+        options,
+        options[0]);
+  }
+
+  private void voteAlias() throws WalletCallException, IOException, InterruptedException {
+      String voteOutcome = this.voteOutcome.getItemAt(this.voteOutcome.getSelectedIndex()).toString();
+      String voteSignal = this.voteSignal.getItemAt(this.voteSignal.getSelectedIndex()).toString();
+      String gobjectTxHash = this.gobjectTxHash.getText();
+      String masternodeAlias = this.myMasternodeAliasList.getItemAt(this.myMasternodeAliasList.getSelectedIndex()).toString();
+      String[] overallResult = this.clientCaller.gobjectVoteAliases(voteOutcome, voteSignal, gobjectTxHash, masternodeAlias);
+
+      Object[] options = {"Ok"};
+
+      int option = JOptionPane.showOptionDialog(
+        GovernancePanel.this.getRootPane().getParent(),
+        "\nResult:" + " " + overallResult[0] + "\n" +
+            overallResult[1] + "\n" + "" + "\n" ,
+        "Gobject Voting Result",
+        JOptionPane.DEFAULT_OPTION,
+        JOptionPane.INFORMATION_MESSAGE,
+        null,
+        options,
+        options[0]);
+  }
+
+  private void updateGovernancesTable()
+      throws WalletCallException, IOException, InterruptedException {
+    String[][] newGovernancesData = this.transactionGatheringThread.getLastData();
 
     // May be null - not even gathered once
-    if (newMasternodesData == null) {
+    if (newGovernancesData == null) {
       return;
     }
 
-    if (Util.arraysAreDifferent(lastMasternodesData, newMasternodesData)) {
+    if (Util.arraysAreDifferent(lastGovernancesData, newGovernancesData)) {
       Log.info("Updating table of transactions");
       this.remove(transactionsTablePane);
       this.add(transactionsTablePane = new JScrollPane(
-              transactionsTable = this.createMasternodesTable(newMasternodesData)),
+              transactionsTable = this.createGovernancesTable(newGovernancesData)),
           BorderLayout.CENTER);
     }
 
-    lastMasternodesData = newMasternodesData;
+    lastGovernancesData = newGovernancesData;
 
     this.validate();
     this.repaint();
   }
 
 
-  private JTable createMasternodesTable(String rowData[][])
+  private JTable createGovernancesTable(String rowData[][])
       throws WalletCallException, IOException, InterruptedException {
-    String columnNames[] = { LOCAL_MSG_MYMSTRNDE_ALIAS, LOCAL_MSG_MYMSTRNDE_ADDRESS, LOCAL_MSG_MYMSTRNDE_PRIVATEKEY, LOCAL_MSG_MYMSTRNDE_TXHASH, LOCAL_MSG_MYMSTRNDE_OUTPUTINDEX, LOCAL_MSG_MYMSTRNDE_STATUS};
-    
-    try {
-      if(rowData[6][0] != null) {
-        JTable collateralTable = new MasternodeTable(
-            rowData, columnNames, this.parentFrame, this.clientCaller, this.installationObserver);
-        collateralTable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-        collateralTable.getColumnModel().getColumn(0).setPreferredWidth(100);
-        collateralTable.getColumnModel().getColumn(1).setPreferredWidth(300);
-        collateralTable.getColumnModel().getColumn(2).setPreferredWidth(100);
-        collateralTable.getColumnModel().getColumn(3).setPreferredWidth(300);
-        collateralTable.getColumnModel().getColumn(4).setPreferredWidth(180);
-        collateralTable.getColumnModel().getColumn(5).setPreferredWidth(100);
-        collateralTable.getColumnModel().getColumn(6).setPreferredWidth(100);
-        return collateralTable;
-      }
-    } catch (Exception e) {
-      JTable table = new MasternodeTable(
-          rowData, columnNames, this.parentFrame, this.clientCaller, this.installationObserver);
-      table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-      table.getColumnModel().getColumn(0).setPreferredWidth(300);
-      table.getColumnModel().getColumn(1).setPreferredWidth(110);
-      table.getColumnModel().getColumn(2).setPreferredWidth(100);
-      table.getColumnModel().getColumn(3).setPreferredWidth(300);
-      table.getColumnModel().getColumn(4).setPreferredWidth(180);
-      table.getColumnModel().getColumn(5).setPreferredWidth(100);
-      return table;
-    }
+    String columnNames[] = {LOCAL_MSG_GOVERNANCE_HASH, LOCAL_MSG_GOVERNANCE_STARTEPOCH, LOCAL_MSG_GOVERNANCE_NAME, LOCAL_MSG_GOVERNANCE_PAYMENTADDRESS, LOCAL_MSG_GOVERNANCE_PAYMENTAMOUNT, LOCAL_MSG_GOVERNANCE_ENDEPOCH, LOCAL_MSG_GOVERNANCE_TYPE};
+
     JTable table = new MasternodeTable(
           rowData, columnNames, this.parentFrame, this.clientCaller, this.installationObserver);
       table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
       table.getColumnModel().getColumn(0).setPreferredWidth(300);
       table.getColumnModel().getColumn(1).setPreferredWidth(110);
       table.getColumnModel().getColumn(2).setPreferredWidth(100);
-      table.getColumnModel().getColumn(3).setPreferredWidth(300);
+      table.getColumnModel().getColumn(3).setPreferredWidth(200);
       table.getColumnModel().getColumn(4).setPreferredWidth(180);
       table.getColumnModel().getColumn(5).setPreferredWidth(100);
+
       return table;
     
   }
 
 
-  private String[][] getMasternodeListFromRPC() throws WalletCallException, IOException, InterruptedException {
+  private String[][] getGovernanceListFromRPC() throws WalletCallException, IOException, InterruptedException {
 
-    String[][] myMasternodes = this.clientCaller.getMyMasternodes();
-    return myMasternodes;
+    String[][] myGovernances = this.clientCaller.getGobjectList();
+    return myGovernances;
   }
 }
