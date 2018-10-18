@@ -144,7 +144,7 @@ public class GovernancePanel
     
     gobjectTxHash = new WalletTextField(13);
     
-    voteOutcome = new JComboBox<>(new String[]{"Valid","Delete","Endorsed"});
+    voteOutcome = new JComboBox<>(new String[]{"Funding","Delete","Valid"});
     voteSignal = new JComboBox<>(new String[]{"Yes", "No", "Abstain"});
     String[] myMasternodeAliases = this.clientCaller.getMyMasternodesAliases().length != 0 ? this.clientCaller.getMyMasternodesAliases() : new String[]{"No Masternodes Available"};
     myMasternodeAliasList = new JComboBox<>(myMasternodeAliases);
