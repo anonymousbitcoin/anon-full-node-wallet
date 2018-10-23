@@ -376,7 +376,6 @@ public class ANONWalletUI extends JFrame {
         this.dashboard.stopThreadsAndTimers();
         this.addresses.stopThreadsAndTimers();
         this.sendPanel.stopThreadsAndTimers();
-        this.messagingPanel.stopThreadsAndTimers();
 
         ANONWalletUI.this.setVisible(false);
         ANONWalletUI.this.dispose();
