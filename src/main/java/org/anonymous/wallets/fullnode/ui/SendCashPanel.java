@@ -650,9 +650,9 @@ public class SendCashPanel
       } else if (option == 2) {
         // Open block explorer
         Log.info("Transaction ID for block explorer is: " + TXID);
-        String urlPrefix = "https://explorer.anonfork.io/insight/";
+        String urlPrefix = "https://explorer.anonfork.io/insight/tx/";
         if (installationObserver.isOnTestNet()) {
-          urlPrefix = "https://texplorer.anonfork.io/insight/";
+          urlPrefix = "https://texplorer.anonfork.io/insight/tx/";
         }
         Desktop.getDesktop().browse(new URL(urlPrefix + TXID).toURI());
       }

@@ -26,8 +26,8 @@ import java.util.Map.Entry;
  */
 public class TransactionTable extends DataTable {
 
-    private static final String BLOCK_EXPLORER_URL = "https://explorer.anonfork.io/insight/";
-    private static final String BLOCK_EXPLORER_TEST_URL = "https://texplorer.anonfork.io/insight/";
+    private static final String BLOCK_EXPLORER_URL = "https://explorer.anonfork.io/insight/tx/";
+    private static final String BLOCK_EXPLORER_TEST_URL = "https://texplorer.anonfork.io/insight/tx/";
 
     private static final String LOCAL_MSG_SHOW_DETAILS = Util.local("LOCAL_MSG_SHOW_DETAILS");
     private static final String LOCAL_MSG_VIEW_ON_EXPLORER = Util.local("LOCAL_MSG_VIEW_ON_EXPLORER");
