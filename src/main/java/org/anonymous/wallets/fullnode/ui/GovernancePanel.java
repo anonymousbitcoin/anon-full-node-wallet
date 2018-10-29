@@ -397,9 +397,9 @@ public class GovernancePanel
 
   private JTable createGovernancesTable(String rowData[][])
       throws WalletCallException, IOException, InterruptedException {
-    String columnNames[] = {LOCAL_MSG_GOVERNANCE_HASH, LOCAL_MSG_GOVERNANCE_STARTEPOCH, LOCAL_MSG_GOVERNANCE_NAME, LOCAL_MSG_GOVERNANCE_PAYMENTADDRESS, LOCAL_MSG_GOVERNANCE_PAYMENTAMOUNT, LOCAL_MSG_GOVERNANCE_ENDEPOCH, LOCAL_MSG_GOVERNANCE_TYPE};
+    String columnNames[] = {LOCAL_MSG_GOVERNANCE_HASH, LOCAL_MSG_GOVERNANCE_STARTEPOCH, LOCAL_MSG_GOVERNANCE_NAME, LOCAL_MSG_GOVERNANCE_PAYMENTADDRESS, LOCAL_MSG_GOVERNANCE_PAYMENTAMOUNT, LOCAL_MSG_GOVERNANCE_ENDEPOCH, LOCAL_MSG_GOVERNANCE_TYPE, "URL"};
 
-    JTable table = new MasternodeTable(
+    JTable table = new GovernanceTable(
           rowData, columnNames, this.parentFrame, this.clientCaller, this.installationObserver);
       table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
       table.getColumnModel().getColumn(0).setPreferredWidth(300);
@@ -408,6 +408,7 @@ public class GovernancePanel
       table.getColumnModel().getColumn(3).setPreferredWidth(200);
       table.getColumnModel().getColumn(4).setPreferredWidth(180);
       table.getColumnModel().getColumn(5).setPreferredWidth(100);
+      table.getColumnModel().getColumn(6).setPreferredWidth(100);
 
       return table;
     
