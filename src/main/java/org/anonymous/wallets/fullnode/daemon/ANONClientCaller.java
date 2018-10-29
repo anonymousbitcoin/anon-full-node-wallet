@@ -434,7 +434,7 @@ public class ANONClientCaller {
         JsonArray objResponse = this.executeCommandAndGetJsonArray("masternode", "mymasternodes");
         JsonObject gobjResponse = this.executeCommandAndGetJsonObject("gobject", "list");
 
-        String[][] lastArr = new String[gobjResponse.size()][7];
+        String[][] finalGobjectList = new String[gobjResponse.size()][8];
 
         int i = 0;
         for (String memberName : gobjResponse.names()) {
@@ -445,31 +445,33 @@ public class ANONClientCaller {
 
                 String hash = gobjResponse.get(memberName).asObject().get("Hash").toString().replace("\"", "");
     
-                String[] last = dataStringObject.substring(dataStringObject.lastIndexOf("{") + 1).replace("]", "").replace("\"end_epoch\":", " ").replace(",\"name\":", " ").replace(",\"payment_address\":", " ").replace(",\"payment_amount\":", " ").replace(",\"start_epoch\":", " ").replace(",\"type\":", " ").replace(",\"url\":", " ").replace("}", "").replace("\"created_at\":", " ").replace("\"type\":", " ").split(" ");
+                String[] gobjectListAsArray = dataStringObject.substring(dataStringObject.lastIndexOf("{") + 1).replace("]", "").replace("\"end_epoch\":", " ").replace(",\"name\":", " ").replace(",\"payment_address\":", " ").replace(",\"payment_amount\":", " ").replace(",\"start_epoch\":", " ").replace(",\"type\":", " ").replace(",\"url\":", " ").replace("}", "").replace("\"created_at\":", " ").replace("\"type\":", " ").split(" ");
     
-                List<String> lastAr = new ArrayList<String>(Arrays.asList(last));
-                lastAr.removeAll(Arrays.asList("", null, " "));
+                List<String> gobjecListAsList = new ArrayList<String>(Arrays.asList(gobjectListAsArray));
+                gobjecListAsList.removeAll(Arrays.asList("", null, " "));
     
-                lastArr[i][0] = hash;
-                lastArr[i][1] = lastAr.get(0) != null ? lastAr.get(0).replace("\"", "") : "null";
-                lastArr[i][2] = lastAr.get(1) != null ? lastAr.get(1).replace("\"", "") : "null";
-                lastArr[i][3] = lastAr.get(2) != null ? lastAr.get(2).replace("\"", "") : "null";
-                lastArr[i][4] = lastAr.get(3) != null ? lastAr.get(3).replace("\"", "") : "null";
-                lastArr[i][5] = lastAr.get(4) != null ? lastAr.get(4).replace("\"", "") : "null";
-                lastArr[i][6] = lastAr.get(5) != null ? lastAr.get(5).replace("\"", "") : "null";
+                finalGobjectList[i][0] = hash;
+                finalGobjectList[i][1] = gobjecListAsList.get(0) != null ? gobjecListAsList.get(0).replace("\"", "") : "null";
+                finalGobjectList[i][2] = gobjecListAsList.get(1) != null ? gobjecListAsList.get(1).replace("\"", "") : "null";
+                finalGobjectList[i][3] = gobjecListAsList.get(2) != null ? gobjecListAsList.get(2).replace("\"", "") : "null";
+                finalGobjectList[i][4] = gobjecListAsList.get(3) != null ? gobjecListAsList.get(3).replace("\"", "") : "null";
+                finalGobjectList[i][5] = gobjecListAsList.get(4) != null ? gobjecListAsList.get(4).replace("\"", "") : "null";
+                finalGobjectList[i][6] = gobjecListAsList.get(5) != null ? gobjecListAsList.get(5).replace("\"", "") : "null";
+                finalGobjectList[i][7] = gobjecListAsList.get(6) != null ? gobjecListAsList.get(6).replace("\"", "") : "null";
                 i++;
         }
 
         if (gobjResponse.size() == 0){
             String[][] noMNArr = new String[1][];
-            noMNArr[0] = new String[7];
+            noMNArr[0] = new String[8];
             noMNArr[0][0] = "No Governance Objects";
             noMNArr[0][1] = "";
             noMNArr[0][2] = "";
             noMNArr[0][3] = "";
             noMNArr[0][4] = "";
             noMNArr[0][5] = "";
-            // noMNArr[0][6] = "";
+            noMNArr[0][6] = "";
+            noMNArr[0][7] = "";
 
             return noMNArr;
         };
@@ -488,7 +490,7 @@ public class ANONClientCaller {
             finalArr[j][5] = trans.get(5).toString().replace("\"", "");
         }
 
-        return lastArr;
+        return finalGobjectList;
     }
 
     public synchronized String[][] getWalletPublicTransactions()
