@@ -397,7 +397,7 @@ public class GovernancePanel
 
   private JTable createGovernancesTable(String rowData[][])
       throws WalletCallException, IOException, InterruptedException {
-    String columnNames[] = {LOCAL_MSG_GOVERNANCE_HASH, LOCAL_MSG_GOVERNANCE_STARTEPOCH, LOCAL_MSG_GOVERNANCE_NAME, LOCAL_MSG_GOVERNANCE_PAYMENTADDRESS, LOCAL_MSG_GOVERNANCE_PAYMENTAMOUNT, LOCAL_MSG_GOVERNANCE_ENDEPOCH, LOCAL_MSG_GOVERNANCE_TYPE, "URL"};
+    String columnNames[] = {LOCAL_MSG_GOVERNANCE_HASH, LOCAL_MSG_GOVERNANCE_ENDEPOCH, LOCAL_MSG_GOVERNANCE_NAME, LOCAL_MSG_GOVERNANCE_PAYMENTADDRESS, LOCAL_MSG_GOVERNANCE_PAYMENTAMOUNT, LOCAL_MSG_GOVERNANCE_STARTEPOCH, LOCAL_MSG_GOVERNANCE_TYPE, "URL"};
 
     JTable table = new GovernanceTable(
           rowData, columnNames, this.parentFrame, this.clientCaller, this.installationObserver);
